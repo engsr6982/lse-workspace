@@ -1,0 +1,15 @@
+{
+    "Debug": true,
+    "Version": "1.0.0",
+    "EntryFile": "index",
+    "Listen": {
+        "Enable": true,
+        "Item": "minecraft:stick",
+        "RunCmd": "menu"
+    },
+    "RegCmd": {
+        "CmdName": "menu",
+        "CmdAlias": "菜单",
+        "Describe": "打开菜单"
+    }
+}

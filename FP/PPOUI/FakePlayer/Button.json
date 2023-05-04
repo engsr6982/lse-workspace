@@ -1,0 +1,64 @@
+{
+    "main": [
+        {
+            "name": "添加假人",
+            "image": "textures/ui/book_addtextpage_default"
+        },
+        {
+            "name": "假人传送",
+            "image": "textures/ui/item_container_transfer_mode"
+        },
+        {
+            "name": "假人管理",
+            "image": ""
+        },
+        {
+            "name": "模拟操作",
+            "image": ""
+        },
+        {
+            "name": "下线假人",
+            "image": "textures/ui/icon_trash"
+        }
+    ],
+    "simulation": [
+        {
+            "name": "模拟朝向",
+            "image": "textures/ui/icon_steve"
+        },
+        {
+            "name": "模拟破坏",
+            "image": "textures/ui/anvil_icon"
+        },
+        {
+            "name": "模拟攻击",
+            "image": "textures/ui/icon_recipe_equipment"
+        },
+        {
+            "name": "模拟使用物品",
+            "image": ""
+        }
+    ],
+    "DummyManagement": [
+        {
+            "name": "查看所有假人",
+            "image": ""
+        },
+        {
+            "name": "上线所有假人",
+            "image": ""
+        },
+        {
+            "name": "下线所有假人",
+            "image": ""
+        },
+        {
+            "name": "编辑假人",
+            "image": ""
+        },
+        {
+            "name": "删除假人",
+            "image": ""
+        }
+    ]
+}

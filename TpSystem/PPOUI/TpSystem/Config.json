@@ -1,0 +1,7 @@
+{
+	"RandomTransmission": true,
+	"RandomTransferSettings": {
+		"Min": 500,
+		"Max": 9000
+	}
+}

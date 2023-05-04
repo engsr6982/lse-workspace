@@ -1,0 +1,41 @@
+{
+    "Title": "默认入口文件",
+    "Describe": "默认菜单文件",
+    "Button": [
+        {
+            "name": "执行命令",
+            "Describe": "( •̀ ω •́ )y",
+            "image": "",
+            "type": "command",
+            "open": "menu"
+        },
+        {
+            "name": "执行命令(OP)",
+            "Describe": "( •̀ ω •́ )y",
+            "image": "",
+            "type": "op_command",
+            "open": "menu"
+        },
+        {
+            "name": "子菜单",
+            "Describe": "( •̀ ω •́ )y",
+            "image": "",
+            "type": "form",
+            "open": "test"
+        },
+        {
+            "name": "子菜单(OP)",
+            "Describe": "( •̀ ω •́ )y",
+            "image": "",
+            "type": "op_form",
+            "open": "test"
+        },
+        {
+            "name": "OPtools - 踢出玩家(OP)",
+            "Describe": "( •̀ ω •́ )y",
+            "image": "",
+            "type": "optools",
+            "open": "Kick_Ui"
+        }
+    ]
+}

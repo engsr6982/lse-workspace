@@ -1,0 +1,8 @@
+# 屏蔽带-Compress的文件
+*-Compress.js
+
+*mcid.js
+
+node_modules
+
+SecondaryDevelopment.md

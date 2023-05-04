@@ -1,0 +1,34 @@
+[
+    {
+        "name": "^帮助$",
+        "msg": "请仔细阅读～",
+        "img": "https://mcid.25565.top/robot_cmd.jpeg",
+        "type": "help",
+        "Admin": false,
+        "Enable": true
+    },
+    {
+        "name": "^签到$",
+        "type": "sgin",
+        "Admin": false,
+        "Enable": true
+    },
+    {
+        "name": "^打卡$",
+        "type": "sgin",
+        "Admin": false,
+        "Enable": true
+    },
+    {
+        "name": "^随机图片$",
+        "type": "image",
+        "Admin": false,
+        "Enable": true
+    },
+    {
+        "name": "^兑换\\s[a-zA-Z0-9]+\\s[1-9]\\d*$",
+        "type": "convert",
+        "Admin": false,
+        "Enable": true
+    }
+]

@@ -1,0 +1,41 @@
+{
+    "Enable": true,
+    "Group": [],
+    "Admin": [],
+    "WebSocket": {
+        "host": "127.0.0.1",
+        "port": 5000,
+        "key": ""
+    },
+    "MCSM_Config": {
+        "host": "http://127.0.0.1",
+        "port": 23333,
+        "apikey": ""
+    },
+    "Remote": [
+        {
+            "name": "守护进程1",
+            "uuid": "a4137402hjs64ff993haoanf708756c405",
+            "data": [
+                {
+                    "name": "实例1",
+                    "uuid": "c111b5f6c2184ahsis052cc46fe0b975"
+                },
+                {
+                    "name": "实例2",
+                    "uuid": "c111b5f6c2184ahkds052cc46fe0b975"
+                }
+            ]
+        },
+        {
+            "name": "守护进程2",
+            "uuid": "7ab50ef0aea6422f844559gsjsce0069",
+            "data": [
+                {
+                    "name": "实例2",
+                    "uuid": "2a729b64209a4e0d8poeibca1f6fe1d6e"
+                }
+            ]
+        }
+    ]
+}

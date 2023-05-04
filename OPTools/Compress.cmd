@@ -1,0 +1,1 @@
+uglifyjs OPTools.js -c -o OPTools-Compress.js

@@ -1,0 +1,14 @@
+[
+	{
+		"name": "aaa",
+		"GoOnline": true,
+		"Invincible": false,
+		"Resurrection": true,
+		"pos": {
+			"x": 17,
+			"y": 68,
+			"z": -139,
+			"dimid": 0
+		}
+	}
+]

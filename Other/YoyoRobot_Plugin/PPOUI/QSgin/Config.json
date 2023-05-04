@@ -1,0 +1,30 @@
+{
+    "Enable": true,
+    "Group": [948914545,424958821],
+    "Admin": [],
+    "WebSocket": {
+        "host": "127.0.0.1",
+        "port": 5000,
+        "key": "TqMZ6TsRbH"
+    },
+    "Integral": {
+        "Random": true,
+        "IncreasePoints": 10,
+        "Random_Range": "0-100"
+    },
+    "Sgin_image": {
+        "Enable": true,
+        "Img_URL": "https://api.yimian.xyz/img?tpye=moe"
+    },
+    "Money": {
+        "LLMoney": false,
+        "taxRate": "0.2",
+        "Money_Cmd": "money add {} {}"
+    },
+    "Game_Sgin": {
+        "Sgin": true,
+        "Sgin_init": false,
+        "Key_Exchange": true,
+        "From_Txt": "请选择一个操作\nCDK请在Q群兑换获取CDK"
+    }
+}

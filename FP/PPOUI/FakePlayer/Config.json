@@ -1,0 +1,8 @@
+{
+    "time": 10,
+    "AutomaticOnline": true,
+    "InterceptDamage": true,
+    "AutomaticResurrection": true,
+    "NameRegx": "^[a-zA-Z0-9][a-zA-Z0-9\\s]*$",
+    "AddPrompt": "添加假人，名称仅允许英文、数字、空格\n%Error%"
+}
