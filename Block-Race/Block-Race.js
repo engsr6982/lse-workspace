@@ -1,7 +1,7 @@
 // LiteLoader-AIDS automatic generated
 /// <reference path="c:\Users\Administrator\Documents\aids/dts/HelperLib-master/src/index.d.ts"/> 
 
-const Plugin = {
+const PLUGIN_INFO = {
     name: 'Block-Race',
     introduction: '',
     version: [0, 0, 1],
@@ -16,8 +16,11 @@ const Plugin = {
         /* version */ PLUGIN_INFO.version,
         /* otherInformation */ PLUGIN_INFO
     );
-    if (!file.exists('.\\plugins\\PPOUI\\debug')) {
+    if (file.exists('.\\plugins\\PPOUI\\debug')) {
         PLUGIN_INFO.debugger = true;
+    }
+    {
+        const Command = mc.newCommand(``, ``, PermType.Any);
     }
 })()
 
@@ -91,6 +94,7 @@ class Forms {
         const Team = ['红队', '蓝队', '黄队', '绿队'];
         const fm = mc.newSimpleForm()
         fm.setTitle('§e选择队伍');
+        fm.setContent(`选择并加入一个队伍`);
         fm.addButton(`【${Team[0]}】`);
         fm.addButton(`【${Team[1]}】`);
         if (team_4) {
@@ -107,4 +111,23 @@ class Forms {
     }
 }
 
+/* 核心缓存 */
+let Game_Cache = {
+    GameStatus: false
+};
 
+
+
+/* 监听事件 */
+{
+    // 监听进服
+    mc.listen('onJoin', (player) => {
+        if (Game_Cache.GameStatus) {
+
+        }
+    });
+    // 退出事件
+    mc.listen('onLeft', (player) => {
+
+    })
+}

@@ -48,7 +48,7 @@ class FileOperation {
     /**
      * 读取配置文件
      */
-    ReadFile() {
+    static ReadFile() {
         /* 检查文件 */
         if (!file.exists(_Home_FilePath)) file.writeTo(_Home_FilePath, '{}');
         if (!file.exists(_Warp_FilePath)) file.writeTo(_Warp_FilePath, '[]');
@@ -73,7 +73,7 @@ class FileOperation {
     /**
      * 保存并重新读取配置文件
      */
-    SaveFile() {
+    static SaveFile() {
         file.writeTo(_Home_FilePath, JSON.stringify(Home, null, '\t'));
         file.writeTo(_Warp_FilePath, JSON.stringify(Warp, null, '\t'));
         file.writeTo(_PlayerSeting_FilePath, JSON.stringify(PlayerSeting, null, '\t'));
@@ -83,8 +83,6 @@ class FileOperation {
         this.ReadFile();
     }
 };
-
-const FileOperation = new FileOperation();
 
 FileOperation.ReadFile();
 
@@ -526,13 +524,16 @@ function Main(pl) {
                     pl.sendModalForm(PLUGINS_JS, `确认执行此操作？`, '确认', '返回', (pl, res) => {
                         switch (res) {
                             case true:
-                                const RandomCoordinates = new IntPos(RandomNumber(), 255, RandomNumber(), pl.blockPos.dimid);
-                                if (pl.teleport(RandomCoordinates)) {
-                                    mc.runcmdEx(`effect "${pl.realName}" resistance 30 255 true`);
-                                    pl.tell(Gm_Tell + '传送完成！');
-                                } else {
-                                    pl.tell(Gm_Tell + '传送失败！');
-                                }
+                                // const RandomCoordinates = new IntPos(RandomNumber(), 255, RandomNumber(), pl.blockPos.dimid);
+                                // if (pl.teleport(RandomCoordinates)) {
+                                //     mc.runcmdEx(`effect "${pl.realName}" resistance 30 255 true`);
+                                //     pl.tell(Gm_Tell + '传送完成！');
+                                // } else {
+                                //     pl.tell(Gm_Tell + '传送失败！');
+                                // }
+                                (async function (pl) {
+                                    // todo mc.getblock方法优化
+                                })(pl)
                                 break;
                             case false:
                                 Main(pl);
@@ -954,7 +955,7 @@ const Other = {
      */
     RandomID(num = 16) {
         let str = '';
-        const char = 'abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM';
+        const char = 'QWERTYUIOPASDFGHJKLZXCVBNM';
         for (let i = 0; i < num; i++) {
             let index = Math.floor(Math.random() * char.length);
             str += char[index];
@@ -1001,29 +1002,30 @@ const Other = {
     }
 }
 
-/* 监听进服事件 */
-mc.listen('onJoin', (pl) => {
-    if (pl.isSimulatedPlayer()) return;
-    if (!PlayerSeting.hasOwnProperty(pl.realName)) {
-        logger.warn(`玩家${pl.realName}的配置不存在，正在新建配置...`);
-        PlayerSeting[pl.realName] = {
-            AcceptTransmission: true,
-            SecondaryConfirmation: true
+{
+    /* 监听进服事件 */
+    mc.listen('onJoin', (pl) => {
+        if (pl.isSimulatedPlayer()) return;
+        if (!PlayerSeting.hasOwnProperty(pl.realName)) {
+            logger.warn(`玩家${pl.realName}的配置不存在，正在新建配置...`);
+            PlayerSeting[pl.realName] = {
+                AcceptTransmission: true,
+                SecondaryConfirmation: true
+            }
+            FileOperation.SaveFile();
         }
-        FileOperation.SaveFile()
-    }
-})
-
-/* 监听死亡事件 */
-mc.listen('onPlayerDie', (pl, sou) => {
-    if (pl.isSimulatedPlayer()) return;
-    const data = {
-        time: system.getTimeStr(),
-        x: pl.blockPos.x,
-        y: pl.blockPos.y,
-        z: pl.blockPos.z,
-        dimid: pl.blockPos.dimid
-    }
-    Death[pl.realName] = data;
-    FileOperation.SaveFile();
-})
+    })
+    /* 监听死亡事件 */
+    mc.listen('onPlayerDie', (pl, sou) => {
+        if (pl.isSimulatedPlayer()) return;
+        const data = {
+            time: system.getTimeStr(),
+            x: pl.blockPos.x,
+            y: pl.blockPos.y,
+            z: pl.blockPos.z,
+            dimid: pl.blockPos.dimid
+        }
+        Death[pl.realName] = data;
+        FileOperation.SaveFile();
+    })
+}

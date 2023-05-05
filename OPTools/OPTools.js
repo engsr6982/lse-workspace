@@ -902,7 +902,7 @@ function Main_Set(pl) {
                     fm.addInput(Tr("set.input.0"), "String", Config.get("Kick_Txt"));
                     fm.addInput(Tr("set.input.1"), "String", Config.get("Broad_head"));
                     fm.addInput(Tr("set.input.2"), "String", Config.get("Clear_Cmd"));
-                    fm.addSwitch(Tr("set.cleaner"), Func_Module.isTrue_false(Config.get("Cleaner_API")));
+                    fm.addSwitch(Tr("set.cleaner"), Boolean(Config.get("Cleaner_API")).valueOf());
                     pl.sendForm(fm, (pl, data) => {
                         if (data == null) return Close_Tell(pl);
                         Config.set("Kick_Txt", data[1]);
@@ -1876,48 +1876,48 @@ function ConsoleCmd_Ui(pl) {
 }
 
 /* GUI封禁功能 */
-function Ban_Ui(pl) {
-    const Online_Players = Func_Module.GET_ALL_ONLINE_PLAYERS();
-    const fm = Func_Module.CustomForm();
-    fm.addDropdown(Tr("ban.player"), Online_Players, 0);/* 0选择玩家 */
-    fm.addInput(Tr("ban.input"), "String");/* 1输入玩家 */
-    fm.addStepSlider(Tr("ban.step.txt"), [Tr("ban.step.0"), Tr("ban.step.1")]);
-    fm.addInput(Tr("ban.time"), "Number");/* 3封禁时间 */
-    fm.addInput(Tr("ban.reason"), "String");/* 4原因 */
-    fm.addSwitch(Tr("ban.mode"));/* 5在线离线 */
-    fm.addSwitch(Tr("ban.broad.switch"), true);/* Bord */
-    pl.sendForm(fm, (pl, data) => {
-        if (data == null) return Close_Tell(pl);
-        let Player;/* 存储玩家 */
+function Ban_Ui(player) {
+    const onlinePlayers = Func_Module.GET_ALL_ONLINE_PLAYERS();
+    const form = Func_Module.CustomForm();
+    form.addDropdown(Tr("ban.player"), onlinePlayers, 0);/* 0选择玩家 */
+    form.addInput(Tr("ban.input"), "String");/* 1输入玩家 */
+    form.addStepSlider(Tr("ban.step.txt"), [Tr("ban.step.0"), Tr("ban.step.1")]);
+    form.addInput(Tr("ban.time"), "Number");/* 3封禁时间 */
+    form.addInput(Tr("ban.reason"), "String");/* 4原因 */
+    form.addSwitch(Tr("ban.mode"));/* 5在线离线 */
+    form.addSwitch(Tr("ban.broad.switch"), true);/* Bord */
+    player.sendForm(form, (player, data) => {
+        if (data == null) return Close_Tell(player);
+        let selectedPlayer;/* 存储玩家 */
         let time;/* 存储时间 */
-        let Reason;/* 存储原因 */
+        let reason;/* 存储原因 */
         if (data[5] == 1) {
-            Player = data[1];/* 离线 */
+            selectedPlayer = data[1];/* 离线 */
         } else {
-            Player = Online_Players[data[0]];/* 在线 */
+            selectedPlayer = onlinePlayers[data[0]];/* 在线 */
         };
         if (data[3] !== "") {/* 判断时间输入框 */
             if (!Func_Module.num(data[3])) {
-                return pl.tell(Gm_Tell + Tr("input.num"));
+                return player.tell(Gm_Tell + Tr("input.num"));
             } else {
                 time = data[3];
             }
         } else {
             time = "";/* 输入框为空 */
         };
-        if (data[4] == "") { Reason = "" } else { Reason = data[4] }
-        let Cmds = Config.get('Ban_Cmd');/* 读取命令 */
+        if (data[4] == "") { reason = "" } else { reason = data[4] }
+        const commands = Config.get('Ban_Cmd');/* 读取命令 */
         switch (data[2]) {
             case 0:
                 /* ban */
-                CmdEx(Cmds.Ban = _toSpace(Cmds.Ban.replace('${Player}', Player).replace('${time}', time).replace('${Reason}', Reason)));
-                if (data[6] == 1) { mc.broadcast(Tr("ban.broad", { name: Player, reason: Reason, time: time })) };
-                pl.tell(Gm_Tell + Tr("ban.succes", Player, time, Reason));
+                CmdEx(commands.Ban = _toSpace(commands.Ban.replace('${Player}', selectedPlayer).replace('${time}', time).replace('${Reason}', reason)));
+                if (data[6] == 1) { mc.broadcast(Tr("ban.broad", { name: selectedPlayer, reason: reason, time: time })) };
+                player.tell(Gm_Tell + Tr("ban.succes", selectedPlayer, time, reason));
                 break;
             case 1:
                 /* unban */
-                CmdEx(Cmds.UnBan = _toSpace(Cmds.UnBan.replace('${Player}', data[1])));
-                pl.tell(Gm_Tell + Tr("unban.succes", data[1]));
+                CmdEx(commands.UnBan = _toSpace(commands.UnBan.replace('${Player}', data[1])));
+                player.tell(Gm_Tell + Tr("unban.succes", data[1]));
                 break;
         }
         /**
@@ -1930,7 +1930,6 @@ function Ban_Ui(pl) {
         }
     })
 }
-
 /* 查看玩家信息 */
 function PlayerInfo(pl) {
     const Online_Players = Func_Module.GET_ALL_ONLINE_PLAYERS();
@@ -2235,53 +2234,48 @@ function SIMULATE_PLAYER_MANAGEMENT_Ui(pl) {
     }
 }
 
-/**==============================================================
- *  !                          功能模块
-    ==============================================================*/
-const Func_Module = {
+// todo 
+
+/**
+ * 功能模块
+ */
+class Func_Module {
     /**
-     * 10位随机ID
-     * @returns ID
+     * 随机ID
+     * @param {Number} num 长度
+     * @returns 
      */
-    RandomID() {
+    static RandomID(num = 10) {
         let str = '';
-        const char = 'abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM';
-        for (let i = 0; i < 10; i++) {
+        const char = '1234567890QWERTYUIOPASDFGHJKLZXCVBNM';
+        for (let i = 0; i < num; i++) {
             let index = Math.floor(Math.random() * char.length);
             str += char[index];
         }
         return str;
-    },
+    }
     /**
      * 按钮表单头
      */
-    SimpleForm() {
+    static SimpleForm() {
         const fm = mc.newSimpleForm();
         fm.setTitle(Tr("cmd", PLUGINS_NAME));
         return fm;
-    },
+    }
     /**
      * 自定义表单头
      */
-    CustomForm() {
+    static CustomForm() {
         const fm = mc.newCustomForm();
         fm.setTitle(Tr("cmd", PLUGINS_NAME));
         return fm;
-    },
-    /**
-     * 0/1转true/false
-     * @param {Boolean} sw 0/1
-     * @returns 
-     */
-    isTrue_false(sw) {
-        return sw === 1 ? true : false;
-    },
+    }
     /**
      * 管理权限判断
      * @param {String} pl 玩家对象
      * @returns true有、false无
      */
-    qx(pl) {
+    static qx(pl) {
         let tmp = User_Data.get('op')
         if (tmp.indexOf(pl.xuid) !== -1) {
             return true
@@ -2289,12 +2283,12 @@ const Func_Module = {
             /* pl.tell(Gm_Tell + Tr("cmd.error")) */
             return false
         }
-    },
+    }
     /**
      * 获取所有在线玩家名
      * @returns Arry 玩家名
      */
-    GET_ALL_ONLINE_PLAYERS() {
+    static GET_ALL_ONLINE_PLAYERS() {
         let Arry = [];
         mc.getOnlinePlayers().forEach(pl => {
             if (Config.get('FilterSimulatedPlayers') && !pl.isSimulatedPlayer()) {
@@ -2304,12 +2298,12 @@ const Func_Module = {
             }
         });
         return Arry;
-    },
+    }
     /**
      * 获取所有模拟玩家
      * @returns Arry
      */
-    GET_ALL_SimulatedPlayer() {
+    static GET_ALL_SimulatedPlayer() {
         let Arry = [];
         mc.getOnlinePlayers().forEach(pl => {
             if (pl.isSimulatedPlayer()) {
@@ -2317,77 +2311,57 @@ const Func_Module = {
             }
         })
         return Arry
-    },
+    }
     /**
      *  写入日志
      *  @param {*} title 模块
      *  @param {*} zt 触发主体
      *  @param {*} txt 日志内容
      */
-    Write_Logs(title, zt, txt) {
-        let time_data = system.getTimeObj();/* 获取时间对象 */
-        let time = `-${time_data.Y}-${time_data.M}-${time_data.D}`;
-        let Log_File;/*日志文件路径*/let write;/* 预写入内容 */
-        if (Config.get('Log').Output_csv == true) {
-            if (Config.get('Log').Date_Differentiation == true) {
-                Log_File = `.\\logs\\OPTools\\OPTools${time}.csv`
-                write = '时间,模块,触发主体,内容\n'
-            } else {
-                Log_File = `.\\logs\\OPTools\\OPTools.csv`
-                write = '时间,模块,触发主体,内容\n'
-            }
-        } else {
-            if (Config.get('Log').Date_Differentiation == true) {
-                Log_File = `.\\logs\\OPTools\\OPTools${time}.log`
-            } else {
-                Log_File = `.\\logs\\OPTools\\OPTools.log`
-            }
-        }
-        if (!File.exists(Log_File)) {
-            File.writeTo(Log_File, write);
+    static Write_Logs(module, trigger, content) {
+        const { Output_csv, Date_Differentiation, Output_Colsole } = Config.get('Log');
+        const timeObj = system.getTimeObj();
+        const time = `-${timeObj.Y}-${timeObj.M}-${timeObj.D}`;
+        const logPath = Output_csv ? (Date_Differentiation ? `.\\logs\\OPTools\\OPTools${time}.csv` : `.\\logs\\OPTools\\OPTools.csv`) : (Date_Differentiation ? `.\\logs\\OPTools\\OPTools${time}.log` : `.\\logs\\OPTools\\OPTools.log`);
+        const logHeader = '时间,模块,触发主体,内容\n';
+        if (!File.exists(logPath)) {
+            File.writeTo(logPath, logHeader);
             logger.warn(`File <OPTools log> does not exist, creating file...`);
-        };
-        if (Config.get('Log').Output_Colsole == true) { logger.info(`${title} ${zt} ${txt}`) }
-        if (title == '' || title == null) { title = '' }
-        File.writeLine(Log_File, `${system.getTimeStr()},${title},${zt},${txt}`);
-    },
+        }
+        if (Output_Colsole) {
+            logger.info(`${module} ${trigger} ${content}`);
+        }
+        File.writeLine(logPath, `${system.getTimeStr()},${module || ''},${trigger},${content}`);
+    }
     /**
      *  传送功能
      *  @param {String} pl1 调用接口的玩家
      *  @param {Integer} pl2 目标玩家/坐标
      *  @returns 
      */
-    Tep(pl1, pl2) {
-        if (pl1.teleport(pl2)) {
-            return true;
-        } else {
-            return false;
-        }
-    },
+    static Tep(pl1, pl2) {
+        return pl1.teleport(pl2);
+    }
     /**
      *  输入内容是否为数字
      *  @param {String} nums 待检查的字符串
      *  @returns 
      */
-    num(nums) {
+    static num(nums) {
         const reg = /^[0-9]+.?[0-9]*$/;
         if (reg.test(nums)) {
             return true;
         }
         return false;
-    },
+    }
     /**
      *  广播消息
      *  @param {String} txt 待广播的内容
      *  @param {Number} num 广播模式
      *  @returns 
      */
-    Broad(txt, num) {
-        if (mc.broadcast(txt, num)) {
-            return true;
-        } else {
-            return false;
-        }
+    static Broad(txt, num) {
+        return mc.broadcast(txt, num);
     }
 }
 /**
@@ -2410,15 +2384,15 @@ function Close_Tell(pl) {
     pl.tell(Gm_Tell + Tr("close"));
 }
 
-/**==============================================================
- *  !                        权限组模块
-    ==============================================================*/
-const Permission_Group = {
+/**
+ * 权限组模块
+ */
+class Permission_Group {
     /**
      * 创建组
      * @param {String} name 名称
      */
-    CREATE_GROUP(name) {
+    static CREATE_GROUP(name) {
         let arr = User_Data.get('user');
         const GUID = system.randomGuid();
         const tmp = {
@@ -2430,38 +2404,38 @@ const Permission_Group = {
         arr.push(tmp);
         User_Data.set('user', arr);
         return GUID;
-    },
+    }
     /**
      * 删除组
      * @param {String} guid 权限组ID
      */
-    DELETE_GROUP(guid) {
+    static DELETE_GROUP(guid) {
         let arr = User_Data.get('user');
         const index = arr.findIndex(item => item.guid === guid);
         if (index >= 0) {
             arr.splice(index, 1);
             User_Data.set('user', arr);
         }
-    },
+    }
     /**
      * 重复权限判断
      * @param {Number} mode 模式 0权限 1用户
      * @param {*} guid 权限组ID
      * @param {*} value 权限/用户 ID
      */
-    REPEAT_CHECK(mode, guid, value) {
+    static REPEAT_CHECK(mode, guid, value) {
         let arr = User_Data.get('user');
         const index = arr.findIndex(item => item.guid === guid);
         if (index < 0) return null;
         const checkArray = mode === 0 ? arr[index].Permission : arr[index].data;
         return !checkArray.includes(value);
-    },
+    }
     /**
      * 添加权限
      * @param {String} guid 权限组ID
      * @param {String} key 权限值
      */
-    ADD_PERMISSION(guid, key) {
+    static ADD_PERMISSION(guid, key) {
         if (!Permission_Group.REPEAT_CHECK(0, guid, key)) return false;
         let arr = User_Data.get('user');
         const index = arr.findIndex(item => item.guid === guid);
@@ -2469,13 +2443,13 @@ const Permission_Group = {
         arr[index].Permission.push(key);
         User_Data.set('user', arr);
         return true;
-    },
+    }
     /**
      * 删除权限
      * @param {String} guid 权限组ID
      * @param {String} key 权限值
      */
-    DELETE_PERMISSIONS(guid, key) {
+    static DELETE_PERMISSIONS(guid, key) {
         let arr = User_Data.get('user');
         const res = arr.findIndex(i => i.guid === guid); /* 获取权限组索引 */
         if (res === -1) return false;
@@ -2483,13 +2457,13 @@ const Permission_Group = {
         arr[res].Permission.splice(qx, 1); /* 删除权限 */
         User_Data.set('user', arr);
         return true;
-    },
+    }
     /**
      * 添加用户
      * @param {String} guid 权限组ID
      * @param {String} xuid 玩家XUID
      */
-    ADD_USER(guid, xuid) {
+    static ADD_USER(guid, xuid) {
         if (!Permission_Group.REPEAT_CHECK(1, guid, xuid)) return false;
         let arr = User_Data.get('user');
         const index = arr.findIndex(item => item.guid === guid);
@@ -2497,13 +2471,13 @@ const Permission_Group = {
         arr[index].data.push(xuid);
         User_Data.set('user', arr);
         return true;
-    },
+    }
     /**
      * 删除用户
      * @param {String} guid 权限组ID
      * @param {String} xuid 玩家XUID
      */
-    DELETE_USER(guid, xuid) {
+    static DELETE_USER(guid, xuid) {
         let arr = User_Data.get('user');
         const index = arr.findIndex(item => item.guid === guid);
         if (index < 0) return;
@@ -2512,104 +2486,105 @@ const Permission_Group = {
             arr[index].data.splice(sy, 1);
             User_Data.set('user', arr);
         }
-    },
+    }
     /**
      * 权限组是否存在
      * @param {String} guid 权限组ID
      * @returns 
      */
-    INSPECTION_TEAM(guid) {
+    static INSPECTION_TEAM(guid) {
         return User_Data.get('user').some(item => item.guid === guid);
-    },
+    }
     /**
      * 用户是否存在权限组内
      * @param {String} guid 权限组ID
      * @param {String} xuid 玩家XUID
      * @returns 
      */
-    AFTER_INSPECTION(guid, xuid) {
+    static AFTER_INSPECTION(guid, xuid) {
         let arr = User_Data.get('user');
         const index = arr.findIndex(item => item.guid === guid);
         if (index < 0) return false;
         return arr[index].data.includes(xuid);
-    },
+    }
     /**
      * 获取用户所在权限组
      * @param {String} xuid 用户ID
      * @returns 权限组
      */
-    USERS_GROUP(xuid) {
+    static USERS_GROUP(xuid) {
         return User_Data.get('user').find(item => item.data.includes(xuid));
-    },
+    }
     /**
      * 检查用户是否拥有权限
      * @param {String} xuid 用户ID
      * @param {String} key 权限值
      * @returns null用户不存在任何权限组
      */
-    CHECK_PERMISSIONS(xuid, key) {
+    static CHECK_PERMISSIONS(xuid, key) {
         const group = Permission_Group.USERS_GROUP(xuid);
         return group?.Permission.includes(key) ?? null;
-    },
+    }
     /**
      * 获取所有权限组
      * @returns 名称和ID
      */
-    ALL_GROUPS() {
+    static ALL_GROUPS() {
         const arr = User_Data.get('user');
         return arr.map(({ name, guid }) => ({ name, guid }));
-    },
+    }
     /**
      * 获取指定权限组数据
      * @param {*} guid 权限组
      * @returns 权限组数据
      */
-    GET_GROUP(guid) {
+    static GET_GROUP(guid) {
         let arr = User_Data.get('user');
         const index = arr.findIndex(item => item.guid === guid);
         return index >= 0 ? arr[index] : null;
-    },
+    }
     /**
      * 修改权限组名称
      * @param {*} guid 要修改的权限组
      * @param {*} name 要更改的名称
      */
-    RENAME_GROUP(guid, name) {
+    static RENAME_GROUP(guid, name) {
         let arr = User_Data.get('user');
         const index = arr.findIndex(item => item.guid === guid);
         if (index < 0) return false;
         arr[index].name = name;
         User_Data.set('user', arr);
         return true;
-    },
+    }
 };
 
-/**==========================================================
- *  !                       导出接口
- * ==========================================================
+/**
+ * 导出接口
  */
-const PERMISSION_GROUP_INTERFACE_Map = {
-    CREATE_GROUP: Permission_Group.CREATE_GROUP,
-    DELETE_GROUP: Permission_Group.DELETE_GROUP,
-    ADD_PERMISSION: Permission_Group.ADD_PERMISSION,
-    DELETE_PERMISSIONS: Permission_Group.DELETE_PERMISSIONS,
-    ADD_USER: Permission_Group.ADD_USER,
-    DELETE_USER: Permission_Group.DELETE_USER,
-    INSPECTION_TEAM: Permission_Group.INSPECTION_TEAM,
-    AFTER_INSPECTION: Permission_Group.AFTER_INSPECTION,
-    USERS_GROUP: Permission_Group.USERS_GROUP,
-    CHECK_PERMISSIONS: Permission_Group.CHECK_PERMISSIONS,
-    ALL_GROUPS: Permission_Group.ALL_GROUPS,
-    GET_GROUP: Permission_Group.GET_GROUP,
-    RENAME_GROUP: Permission_Group.RENAME_GROUP
-};
-function PERMISSION_GROUP_INTERFACE(type, ...args) {
-    return PERMISSION_GROUP_INTERFACE_Map[type](...args);
-}
-ll.export(PERMISSION_GROUP_INTERFACE, 'PERMISSION_GROUP');
+{
+    const PERMISSION_GROUP_INTERFACE_Map = {
+        CREATE_GROUP: Permission_Group.CREATE_GROUP,
+        DELETE_GROUP: Permission_Group.DELETE_GROUP,
+        ADD_PERMISSION: Permission_Group.ADD_PERMISSION,
+        DELETE_PERMISSIONS: Permission_Group.DELETE_PERMISSIONS,
+        ADD_USER: Permission_Group.ADD_USER,
+        DELETE_USER: Permission_Group.DELETE_USER,
+        INSPECTION_TEAM: Permission_Group.INSPECTION_TEAM,
+        AFTER_INSPECTION: Permission_Group.AFTER_INSPECTION,
+        USERS_GROUP: Permission_Group.USERS_GROUP,
+        CHECK_PERMISSIONS: Permission_Group.CHECK_PERMISSIONS,
+        ALL_GROUPS: Permission_Group.ALL_GROUPS,
+        GET_GROUP: Permission_Group.GET_GROUP,
+        RENAME_GROUP: Permission_Group.RENAME_GROUP
+    };
+    function PERMISSION_GROUP_INTERFACE(type, ...args) {
+        return PERMISSION_GROUP_INTERFACE_Map[type](...args);
+    }
+    ll.export(PERMISSION_GROUP_INTERFACE, 'PERMISSION_GROUP');
 
-/* 内部表单GUI导出 */
-function Form_inside_API(xuid, type) {
-    if (!xuid && type == null) return MAPPING_TABLE[type](mc.getPlayer(xuid));
+    /* 内部表单GUI导出 */
+    function Form_inside_API(xuid, type) {
+        if (!xuid && type == null) return MAPPING_TABLE[type](mc.getPlayer(xuid));
+    }
+    ll.export(Form_inside_API, 'Form_inside_API');
 }
-ll.export(Form_inside_API, 'Form_inside_API');
