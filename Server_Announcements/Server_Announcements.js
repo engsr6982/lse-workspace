@@ -35,13 +35,13 @@ const Config = data.openConfig(Conf_Path + 'Config.json', 'json', JSON.stringify
         "FORM_TITLE": "公告",  //表单标题
         "PROMPT_CONTENT": "表单已放弃",  //关闭表单时提示
         "CONTENT": "欢迎加入服务器\nQQ群:123xxxxx",   //公告内容
-        "BACKUP": "",
-        "CLOSED_PLAYERS": []  //存储关闭弹窗的玩家
+        "CLOSED_PLAYERS": [],  //存储关闭弹窗的玩家
+        "BACKUP": ""
     }
 ))
 function Conf_reload() {
     Config.reload()
-    colorLog('green', '重载配置文件完成')
+    // colorLog('green', '重载配置文件完成')
 }
 
 
@@ -56,6 +56,7 @@ function Conf_reload() {
     Command.setCallback((_, ori, out, res) => {
         switch (res.re) {
             case "reload":
+                if (ori.type !== 7) return out.error('此命令仅限控制台执行!');
                 if (Config.get('INSPECTION_MODE') == 0 || Config.get('INSPECTION_MODE') == 1 || Config.get('INSPECTION_MODE') == 2) {
                     if (Config.get('BACKUP') == '') {
                         UPDATE_BACKUP()
@@ -68,6 +69,7 @@ function Conf_reload() {
                     }
                 }
                 Conf_reload();
+                out.success('操作完成');
                 PROFILE_CHECK();
                 break;
             default:
@@ -103,7 +105,7 @@ function Conf_reload() {
         }
         PROFILE_CHECK()
     })
-    mc.listen('onServerStarted', d => {
+    mc.listen('onServerStarted', () => {
         if (Config.get('INSPECTION_MODE') == 0 || Config.get('INSPECTION_MODE') == 1) {
             if (Config.get('BACKUP') == '') {
                 UPDATE_BACKUP()
@@ -138,7 +140,7 @@ function UPDATE_BACKUP(ClearPlayer = false) {
  * 配置项检查
  */
 function PROFILE_CHECK() {
-    if (!Config.get('INSPECTION_MODE').test(/[0-2]/g)) {
+    if (!RegExp(/[0-2]/g).test(Config.get('INSPECTION_MODE'))) {
         logger.error(`检测到配置项“检测模式(INSPECTION_MODE)”配置错误,允许值0,1,2,当前配置值:${Config.get('INSPECTION_MODE')}\n详细内容请前往MineBBS查看，链接:${PLUGINS_URL}`)
     }
 }
