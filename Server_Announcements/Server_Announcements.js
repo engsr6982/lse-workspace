@@ -5,7 +5,7 @@
 
 const PLUGINS_NAME = "Server_Announcements";
 const PLUGINS_JS = `${PLUGINS_NAME}服务器公告插件`;
-const PLUGINS_VERSION = [2, 0, 1]
+const PLUGINS_VERSION = [2, 1, 0]
 const PLUGINS_ZZ = "PPOUI";
 const PLUGINS_URL = "https://www.minebbs.com/resources/server_announcements.5218/";
 ll.registerPlugin(
@@ -22,7 +22,7 @@ ll.registerPlugin(
 const Conf_Path = `.\\Plugins\\PPOUI\\${PLUGINS_NAME}\\`;
 const Config = data.openConfig(Conf_Path + 'Config.json', 'json', JSON.stringify(
     {
-        "version": "2.0.0",  //配置文件版本
+        "version": "2.1.0",  //配置文件版本
         "Command": {
             "name": "sa",// 顶层命令
             "alias": "公告",//命令别名
@@ -58,12 +58,12 @@ function Conf_reload() {
             case "reload":
                 if (Config.get('INSPECTION_MODE') == 0 || Config.get('INSPECTION_MODE') == 1 || Config.get('INSPECTION_MODE') == 2) {
                     if (Config.get('BACKUP') == '') {
-                        UPDATE_BACKUP(1)
+                        UPDATE_BACKUP()
                     } else {
                         if (Config.get('BACKUP') == Config.get('CONTENT')) {
                         } else {
                             log('检测到公告变更，正在处理...');
-                            UPDATE_BACKUP(0)
+                            UPDATE_BACKUP(true)
                         }
                     }
                 }
@@ -87,14 +87,12 @@ function Conf_reload() {
     mc.listen('onJoin', (pl) => {
         if (Config.get('INSPECTION_MODE') == 0 || Config.get('INSPECTION_MODE') == 2) {
             if (Config.get('BACKUP') == '') {
-                UPDATE_BACKUP(1)
-            }
-            else {
+                UPDATE_BACKUP()
+            } else {
                 if (Config.get('BACKUP') == Config.get('CONTENT')) {
-                }
-                else {
+                } else {
                     log('检测到公告变更，正在处理...')
-                    UPDATE_BACKUP(0)
+                    UPDATE_BACKUP(true)
                 }
             }
         }
@@ -108,14 +106,12 @@ function Conf_reload() {
     mc.listen('onServerStarted', d => {
         if (Config.get('INSPECTION_MODE') == 0 || Config.get('INSPECTION_MODE') == 1) {
             if (Config.get('BACKUP') == '') {
-                UPDATE_BACKUP(1)
-            }
-            else {
+                UPDATE_BACKUP()
+            } else {
                 if (Config.get('BACKUP') == Config.get('CONTENT')) {
-                }
-                else {
+                } else {
                     log('检测到公告变更，正在处理...')
-                    UPDATE_BACKUP(0)
+                    UPDATE_BACKUP(true)
                 }
             }
         }
@@ -123,65 +119,78 @@ function Conf_reload() {
     })
 }
 
-
-function UPDATE_BACKUP(num) {
-    if (num == 0) {
+/**
+ * 更新备份
+ * @param {Boolean} ClearPlayer 是否清除玩家 默认false
+ */
+function UPDATE_BACKUP(ClearPlayer = false) {
+    if (ClearPlayer) {
+        // 清除保存的玩家
         let tmp = Config.get('CLOSED_PLAYERS')
         tmp.splice(tmp)
         Config.set('CLOSED_PLAYERS', tmp)
-        Config.set('BACKUP', Config.get('CONTENT'))
     }
-    if (num == 1) {
-        Config.set('BACKUP', Config.get('CONTENT'))
-    }
+    // 更新备份
+    Config.set('BACKUP', Config.get('CONTENT'))
 }
+
+/**
+ * 配置项检查
+ */
 function PROFILE_CHECK() {
-    if (Config.get('INSPECTION_MODE') !== 0 && Config.get('INSPECTION_MODE') !== 1 && Config.get('INSPECTION_MODE') !== 2) {
+    if (!Config.get('INSPECTION_MODE').test(/[0-2]/g)) {
         logger.error(`检测到配置项“检测模式(INSPECTION_MODE)”配置错误,允许值0,1,2,当前配置值:${Config.get('INSPECTION_MODE')}\n详细内容请前往MineBBS查看，链接:${PLUGINS_URL}`)
     }
 }
+
+
+/**
+ * 查询玩家
+ * @param {Object} pl 玩家对象
+ * @returns {boolean} 是否为非关闭玩家
+ */
 function qx(pl) {
-    let tmp = Config.get('CLOSED_PLAYERS')
-    if (tmp.indexOf(pl.realName) !== -1) {
-        return false
-    }
-    else {
-        return true
-    }
+    const closedPlayers = Config.get('CLOSED_PLAYERS');
+    return !closedPlayers.includes(pl.realName);
 }
+/**
+ * 主界面
+ * @param {Object} pl 玩家对象
+ * @param {number} num 数字
+ */
 function MainGUI(pl, num) {
-    let fm = mc.newCustomForm()
+    const fm = mc.newCustomForm()
         .setTitle(Config.get('FORM_TITLE'))
-        .addLabel(Config.get('CONTENT'))
-    if (Config.get('NO_PROMPT_SWITCH') == true) {
-        let SWITCH_STATUS
-        if (num == 1) {
-            if (qx(pl)) { SWITCH_STATUS = false } else { SWITCH_STATUS = true }
-        } else {
-            SWITCH_STATUS = Config.get('SWITCH_DEFAULT_STATE')
-        }
-        fm.addSwitch('不再弹出', SWITCH_STATUS)
+        .addLabel(Config.get('CONTENT'));
+    if (Config.get('NO_PROMPT_SWITCH')) {
+        const isClosedPlayer = !qx(pl);
+        const switchStatus = num === 1 ? isClosedPlayer : Config.get('SWITCH_DEFAULT_STATE');
+        fm.addSwitch('不再弹出', switchStatus);
     }
     pl.sendForm(fm, (pl, dt) => {
-        if (dt == null) { Close_Tell(pl); return }
-        if (Config.get('NO_PROMPT_SWITCH') == true) {
-            if (dt[1] == 1) {
-                let tmp = Config.get('CLOSED_PLAYERS')
-                if (tmp.indexOf(pl.realName) == -1) {
-                    let tmp = Config.get('CLOSED_PLAYERS')
-                    tmp.push(pl.realName)
-                    Config.set('CLOSED_PLAYERS', tmp)
-                    Conf_reload()
+        if (dt === null) {
+            Close_Tell(pl);
+            return;
+        }
+        if (Config.get('NO_PROMPT_SWITCH')) {
+            const index = Number(dt[1]);
+            const closedPlayers = Config.get('CLOSED_PLAYERS');
+            if (index === 1) {
+                if (!closedPlayers.includes(pl.realName)) {
+                    closedPlayers.push(pl.realName);
+                    Config.set('CLOSED_PLAYERS', closedPlayers);
+                    Conf_reload();
+                }
+            } else {
+                const playerIndex = closedPlayers.indexOf(pl.realName);
+                if (playerIndex !== -1) {
+                    closedPlayers.splice(playerIndex, 1);
+                    Config.set('CLOSED_PLAYERS', closedPlayers);
+                    Conf_reload();
                 }
             }
-            else {
-                let tmp = Config.get('CLOSED_PLAYERS')
-                tmp.splice(tmp.indexOf(pl.realName), 1)
-                Config.set('CLOSED_PLAYERS', tmp)
-                Conf_reload()
-            }
         }
-    })
+    });
 }
 
 // 关闭提示
