@@ -9,21 +9,26 @@ const PLUGIN_INFO = {
     filepath: `.\\plugins\\PPOUI\\Block-Race\\`,
     debugger: false
 };
-(() => {
+{
     ll.registerPlugin(
         /* name */ PLUGIN_INFO.name,
         /* introduction */ PLUGIN_INFO.introduction,
         /* version */ PLUGIN_INFO.version,
-        /* otherInformation */ PLUGIN_INFO
+        /* otherInformation */ {
+            "名称": PLUGIN_INFO.name
+        }
     );
+    logger.warn('警告：插件不稳定测试中！ 请勿用于生产环境！后果自负！');
     if (file.exists('.\\plugins\\PPOUI\\debug')) {
         PLUGIN_INFO.debugger = true;
+        logger.setTitle(`${PLUGIN_INFO.name} Debug`);
+        logger.setLogLevel(5);
     }
-    {
-        const Command = mc.newCommand(``, ``, PermType.Any);
-    }
-})()
+}
 
+/**
+ * 消息类
+ */
 class Message {
     /**
      * 广播任务完成消息
@@ -86,6 +91,9 @@ class Message {
     }
 }
 
+/**
+ * 表单类
+ */
 class Forms {
     static Team(player, team_4 = false) {
         if (!player) {
@@ -111,9 +119,95 @@ class Forms {
     }
 }
 
-/* 核心缓存 */
+/**
+ * 功能类
+ */
+class Mod {
+    /**
+     * 随机ID
+     * @param {Number} num 长度
+     * @returns 
+     */
+    static RandomID(num = 10) {
+        let str = '';
+        const char = '1234567890QWERTYUIOPASDFGHJKLZXCVBNM';
+        for (let i = 0; i < num; i++) {
+            let index = Math.floor(Math.random() * char.length);
+            str += char[index];
+        }
+        return str;
+    }
+    /**
+     * 保存对局数据
+     */
+    static SaveCache() {
+        logger.info('保存对局数据...');
+        try {
+            const Time = system.getTimeStr();
+            const Cache_JSON = JSON.stringify(Game_Cache, null, '\t');
+            if (file.writeTo(PLUGIN_INFO.filepath + `Cache\\${Time + this.RandomID(6)}.json`, Cache_JSON)) {
+                logger.info('保存成功！');
+            }
+        } catch (e) {
+            logger.error(`保存失败！\n` + e);
+        }
+    }
+}
+
+/**
+ * 游戏缓存
+ */
 let Game_Cache = {
-    GameStatus: false
+    GameStatus: false,//游戏状态
+    TargetScore: 0,//目标分数
+    WinningTeam: "",//胜利队伍
+    Team: {
+        Red: {
+            Roll: 1,//可轮换词条次数
+            Score: 0,//当前分数
+            Player: {
+                "Steve": {
+                    Score: 0,//贡献分数
+                    CompletedEntry: 0//完成词条
+                }
+            },//队伍玩家
+            MissionEntry: [],//任务词条
+            RecordPoint: {
+                "test": {
+                    x: 0,
+                    y: 0,
+                    z: 0,
+                    dimid: 0
+                }
+            },//队伍记录点
+            Chest: {}//队伍箱子
+        },
+        Blue: {
+            Roll: 1,
+            Score: 0,
+            Player: {},
+            MissionEntry: [],
+            RecordPoint: {},
+            Chest: {}
+        },
+        Yellow: {
+            Roll: 1,
+            Score: 0,
+            Player: {},
+            MissionEntry: [],
+            RecordPoint: {},
+            Chest: {}
+        },
+        Green: {
+            Roll: 1,
+            Score: 0,
+            Player: {},
+            MissionEntry: [],
+            RecordPoint: {},
+            Chest: {}
+        }
+    },
+    QuitPlayer: []//退出玩家
 };
 
 
@@ -131,3 +225,57 @@ let Game_Cache = {
 
     })
 }
+
+/* 注册命令 */
+{
+    /* 注册顶层 */
+    const Command = mc.newCommand(`br`, `方块竞速`, PermType.Any);
+
+    // br save
+    Command.setEnum('save', ['save']);
+    Command.mandatory('action', ParamType.Enum, 'save', 'save', 1);
+    Command.overload(['save']);
+
+    // br reload
+    Command.setEnum('Reload', ['reload']);
+    Command.mandatory('action', ParamType.Enum, 'Reload', 'Reload', 1);
+    Command.overload(['Reload']);
+
+    // br join <red|blue|yellow|green>
+    Command.setEnum('joinm', ['join']);
+    Command.setEnum('teamm', ['red', 'blue', 'yellow', 'green']);
+    Command.mandatory('action', ParamType.Enum, 'joinm', 'joinm', 1);
+    Command.mandatory('team', ParamType.Enum, 'teamm', 'teamm', 1);
+    Command.overload('joinm', 'teamm');
+
+    // br roll <int>
+    Command.setEnum('roll', ['roll']);
+    Command.mandatory('action', ParamType.Enum, 'roll', 'roll', 1);
+    Command.mandatory('int', ParamType.Int);
+    Command.overload(['roll', 'int']);
+
+    // br record <add|del|tp> <text>
+    Command.setEnum('record', ['record']);
+    Command.mandatory('action', ParamType.Enum, 'record','record',1);
+    Command.setEnum('rtypem', ['add', 'del', 'tp']);
+    Command.mandatory('record_type', ParamType.Enum, 'rtypem', 'rtypem',1);
+    Command.mandatory('record_name', ParamType.RawText);
+    Command.overload(['record', 'rtypem', 'record_name']);
+
+    // br tp <player>
+    Command.setEnum('tp', ['tp']);
+    Command.mandatory('action', ParamType.Enum, 'tp', 'tp',1);
+    Command.mandatory('player', ParamType.Player);
+    Command.overload(['tp', 'player']);
+
+    Command.setCallback((_, ori, out, res) => {
+        logger.debug(JSON.stringify(res));
+        switch (res.action) {
+        }
+    })
+    Command.setup()
+    mc.listen('onServerStarted', () => {
+        mc.runcmd('/? br')
+    })
+}
+
