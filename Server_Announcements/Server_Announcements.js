@@ -5,7 +5,7 @@
 
 const PLUGINS_NAME = "Server_Announcements";
 const PLUGINS_JS = `${PLUGINS_NAME}服务器公告插件`;
-const PLUGINS_VERSION = [2, 1, 0]
+const PLUGINS_VERSION = [2, 1, 1]
 const PLUGINS_ZZ = "PPOUI";
 const PLUGINS_URL = "https://www.minebbs.com/resources/server_announcements.5218/";
 ll.registerPlugin(
@@ -170,14 +170,15 @@ function MainGUI(pl, num) {
         fm.addSwitch('不再弹出', switchStatus);
     }
     pl.sendForm(fm, (pl, dt) => {
-        if (dt === null) {
+        if (dt == null) {
             Close_Tell(pl);
             return;
         }
+        logger.info(JSON.stringify(dt));
         if (Config.get('NO_PROMPT_SWITCH')) {
             const index = Number(dt[1]);
             const closedPlayers = Config.get('CLOSED_PLAYERS');
-            if (index === 1) {
+            if (index == 1) {
                 if (!closedPlayers.includes(pl.realName)) {
                     closedPlayers.push(pl.realName);
                     Config.set('CLOSED_PLAYERS', closedPlayers);
