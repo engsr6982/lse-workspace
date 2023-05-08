@@ -124,6 +124,15 @@ class Forms {
  */
 class Mod {
     /**
+     * 获取时间字符串
+     * @returns 
+     */
+    static getTimieStr() {
+        // windows不支持：文件名
+        const obj = system.getTimeObj();
+        return `${obj.Y}-${obj.M}-${obj.D}_${obj.h}-${obj.m}-${obj.s}`;
+    }
+    /**
      * 随机ID
      * @param {Number} num 长度
      * @returns 
@@ -140,13 +149,14 @@ class Mod {
     /**
      * 保存对局数据
      */
-    static SaveCache() {
+    static SaveCache(filename = `${this.getTimieStr()}_${this.RandomID(8)}`) {
         logger.info('保存对局数据...');
         try {
-            const Time = system.getTimeStr();
-            const Cache_JSON = JSON.stringify(Game_Cache, null, '\t');
-            if (file.writeTo(PLUGIN_INFO.filepath + `Cache\\${Time + this.RandomID(6)}.json`, Cache_JSON)) {
+            logger.debug(PLUGIN_INFO.filepath + `Cache\\${filename}.json`);
+            if (file.writeTo(PLUGIN_INFO.filepath + `Cache\\${filename}.json`, JSON.stringify(Game_Cache))) {
                 logger.info('保存成功！');
+            } else {
+                logger.error('保存失败！');
             }
         } catch (e) {
             logger.error(`保存失败！\n` + e);
@@ -230,11 +240,13 @@ let Game_Cache = {
 {
     /* 注册顶层 */
     const Command = mc.newCommand(`br`, `方块竞速`, PermType.Any);
+    Command.setAlias('方块竞速');
 
-    // br save
+    // br save [filename: string]
     Command.setEnum('save', ['save']);
     Command.mandatory('action', ParamType.Enum, 'save', 'save', 1);
-    Command.overload(['save']);
+    Command.optional('filename', ParamType.String);
+    Command.overload(['save', 'filename']);
 
     // br reload
     Command.setEnum('Reload', ['reload']);
@@ -256,21 +268,40 @@ let Game_Cache = {
 
     // br record <add|del|tp> <text>
     Command.setEnum('record', ['record']);
-    Command.mandatory('action', ParamType.Enum, 'record','record',1);
+    Command.mandatory('action', ParamType.Enum, 'record', 'record', 1);
     Command.setEnum('rtypem', ['add', 'del', 'tp']);
-    Command.mandatory('record_type', ParamType.Enum, 'rtypem', 'rtypem',1);
+    Command.mandatory('record_type', ParamType.Enum, 'rtypem', 'rtypem', 1);
     Command.mandatory('record_name', ParamType.RawText);
     Command.overload(['record', 'rtypem', 'record_name']);
 
     // br tp <player>
     Command.setEnum('tp', ['tp']);
-    Command.mandatory('action', ParamType.Enum, 'tp', 'tp',1);
+    Command.mandatory('action', ParamType.Enum, 'tp', 'tp', 1);
     Command.mandatory('player', ParamType.Player);
     Command.overload(['tp', 'player']);
+
+    // /br start
+    Command.setEnum('start', ['start']);
+    Command.mandatory('action', ParamType.Enum, 'start', 'start', 1);
+    Command.overload(['start']);
+
+    // /br gui
+    Command.setEnum('gui', ['gui']);
+    Command.mandatory('action', ParamType.Enum, 'gui', 'gui', 1);
+    Command.overload(['gui']);
 
     Command.setCallback((_, ori, out, res) => {
         logger.debug(JSON.stringify(res));
         switch (res.action) {
+            case 'gui':
+                break;
+            case 'save':
+                Mod.SaveCache();
+                break;
+            case 'start':
+                break;
+            case 'reload':
+                break;
         }
     })
     Command.setup()
