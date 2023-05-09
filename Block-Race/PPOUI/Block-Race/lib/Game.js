@@ -40,10 +40,21 @@ export class Game_API {
     /**
      * 启动游戏
      */
-    static Start() {
-
+    static async Start() {
+        let count = 30;
         const ID = setInterval(() => {
-
+            
         }, 1000);
     }
+
+    static async on(Event, Callback) {
+        switch (Event) {
+            case "":
+                break;
+            default:
+                return logger.error("参数错误");
+        }
+    }
+
+
 }

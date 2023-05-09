@@ -4,6 +4,7 @@ import {PLUGIN_INFO} from "../lib/Cache.js";
  * 消息类
  */
 export class Message {
+    
     /**
      * 广播任务完成消息
      * @param {String} team 队伍

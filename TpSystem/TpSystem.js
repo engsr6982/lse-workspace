@@ -524,15 +524,36 @@ function Main(pl) {
                     pl.sendModalForm(PLUGINS_JS, `确认执行此操作？`, '确认', '返回', (pl, res) => {
                         switch (res) {
                             case true:
-                                // const RandomCoordinates = new IntPos(RandomNumber(), 255, RandomNumber(), pl.blockPos.dimid);
+                                const RandomCoordinates = new IntPos(RandomNumber(), 255, RandomNumber(), pl.blockPos.dimid);
                                 // if (pl.teleport(RandomCoordinates)) {
                                 //     mc.runcmdEx(`effect "${pl.realName}" resistance 30 255 true`);
                                 //     pl.tell(Gm_Tell + '传送完成！');
                                 // } else {
                                 //     pl.tell(Gm_Tell + '传送失败！');
                                 // }
+                                let count = 5;
+                                let Y = 255;
+                                const BackUpPos = pl.blockPos;
+                                let Pos_Ok = null;
                                 (async function (pl) {
                                     // todo mc.getblock方法优化
+                                    while (count > 0) {
+                                        pl.teleport(RandomCoordinates);
+
+                                        while (Y > 0) {
+                                            Pos_Ok = mc.getBlock(RandomCoordinates.x, Y, RandomCoordinates.z, RandomCoordinates.dimid);
+                                            if (Pos_Ok == null) {
+                                                Pos_Ok = null;
+                                                Y = 255;
+                                            } else {
+                                                Y = Pos_Ok.y;
+                                                pl.teleport(RandomCoordinates.x, Y, RandomCoordinates.z, RandomCoordinates.dimid);
+                                                pl.tell('传送完成！');
+                                            }
+                                        }
+                                        count--;
+                                    }
+                                    pl.tell('传送失败！\n获取安全坐标失败!');
                                 })(pl)
                                 break;
                             case false:
@@ -900,7 +921,7 @@ function Delivery_Core(from, to, type, pos, txt) {
         'textures/ui/realms_green_check',
         'textures/ui/realms_red_x'
     ]
-    const onReceiveRequest = (_, id) => {
+    const onReceiveRequest = (_pl, id) => {
         switch (id) {
             case 0:/* 接受请求 */
                 if (targetPos) {
@@ -922,7 +943,7 @@ function Delivery_Core(from, to, type, pos, txt) {
                 }
                 break;
             default:
-                Other.CloseTell(pl);
+                Other.CloseTell(_pl);
                 break;
         }
     };
