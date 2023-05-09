@@ -3,7 +3,7 @@
 
 /* 注册命令 */
 import { RegCommand } from "./plugins/PPOUI/Block-Race/lib/Command/RegCmd.js";
-import { PLUGIN_INFO, Game_Cache } from "./plugins/PPOUI/Block-Race/lib/Cache.js";
+import { PLUGIN_INFO } from "./plugins/PPOUI/Block-Race/lib/Cache.js";
 
 
 function init() {
