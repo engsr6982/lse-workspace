@@ -23,7 +23,7 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
     Gm_Tell = `§e§l[§d${PLUGINS_NAME}§c Debug§e]§r§a `;
     mc.listen("onUseItemOn", (pl, it, bl, si) => {
         if (it.type == 'minecraft:stick') {
-            pl.runcmd("tps mgr");
+            pl.runcmd("tps ");
         }
     })
 }
@@ -536,27 +536,30 @@ function Main(pl) {
                                     const ID = setInterval(() => {
                                         if (pl.blockPos.y != Pos_Y) {
                                             _run();
+                                            logger.debug('Start _run')
                                             clearInterval(ID);
+                                            return;
                                         }
-                                    }, 100)
+                                        logger.debug('等待...');
+                                    }, 200)
 
-                                    function _run() {
-                                        // todo 此处经常性导致假死
-                                        while (1) {
-                                            if (Block_Obj == null) {
-                                                Pos_Y--;
+                                    async function _run() {
+                                        Pos_Y = 301;
+                                        for(Pos_Y = Pos_Y; Pos_Y > 0 ; Pos_Y--){
+                                            if (Block_Obj == null || Block_Obj.type == 'minecraft:air' ) {
                                                 UpdatePos_Y(Pos_Y);
                                                 Block_Obj = mc.getBlock(to_Pos);
+                                                logger.debug(Pos_Y, Block_Obj);
                                             } else {
                                                 if (["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
                                                     // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
                                                     pl.teleport(BackUpPos);
                                                     pl.tell(Gm_Tell + `查询安全坐标失败！`);
-                                                    return;
-                                                }
-                                                if (Block_Obj.type != "minecraft:air") {
+                                                    break;
+                                                } else if (Block_Obj.type != "minecraft:air") {
                                                     pl.teleport(to_Pos);
                                                     pl.tell(Gm_Tell + `传送完成！`);
+                                                    logger.debug(to_Pos);
                                                     break;
                                                 }
                                             }
