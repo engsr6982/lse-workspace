@@ -545,8 +545,9 @@ function Main(pl) {
 
                                     async function _run() {
                                         Pos_Y = 301;
-                                        for(Pos_Y = Pos_Y; Pos_Y > 0 ; Pos_Y--){
-                                            if (Block_Obj == null || Block_Obj.type == 'minecraft:air' ) {
+                                        pl.tell(Gm_Tell + `寻找安全坐标...`)
+                                        for (Pos_Y = Pos_Y; Pos_Y > 0; Pos_Y--) {
+                                            if (Block_Obj == null || Block_Obj.type == 'minecraft:air') {
                                                 UpdatePos_Y(Pos_Y);
                                                 Block_Obj = mc.getBlock(to_Pos);
                                                 logger.debug(Pos_Y, Block_Obj);
