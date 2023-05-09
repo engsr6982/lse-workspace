@@ -524,36 +524,49 @@ function Main(pl) {
                     pl.sendModalForm(PLUGINS_JS, `确认执行此操作？`, '确认', '返回', (pl, res) => {
                         switch (res) {
                             case true:
-                                const RandomCoordinates = new IntPos(RandomNumber(), 255, RandomNumber(), pl.blockPos.dimid);
-                                // if (pl.teleport(RandomCoordinates)) {
-                                //     mc.runcmdEx(`effect "${pl.realName}" resistance 30 255 true`);
-                                //     pl.tell(Gm_Tell + '传送完成！');
-                                // } else {
-                                //     pl.tell(Gm_Tell + '传送失败！');
-                                // }
-                                let count = 5;
-                                let Y = 255;
-                                const BackUpPos = pl.blockPos;
-                                let Pos_Ok = null;
-                                (async function (pl) {
-                                    // todo mc.getblock方法优化
-                                    while (count > 0) {
-                                        pl.teleport(RandomCoordinates);
+                                (function (pl) {
+                                    pl.tell(Gm_Tell + `准备传送...`);
+                                    let Pos_Y = 500;
+                                    let to_Pos = new IntPos(RandomNumber(), Pos_Y, RandomNumber(), pl.blockPos.dimid);
+                                    let Block_Obj = mc.getBlock(to_Pos);
+                                    const BackUpPos = pl.blockPos;
 
-                                        while (Y > 0) {
-                                            Pos_Ok = mc.getBlock(RandomCoordinates.x, Y, RandomCoordinates.z, RandomCoordinates.dimid);
-                                            if (Pos_Ok == null) {
-                                                Pos_Ok = null;
-                                                Y = 255;
+                                    pl.teleport(to_Pos);
+                                    pl.tell(Gm_Tell + `等待区块加载...`);
+                                    const ID = setInterval(() => {
+                                        if (pl.blockPos.y != Pos_Y) {
+                                            _run();
+                                            clearInterval(ID);
+                                        }
+                                    }, 100)
+
+                                    function _run() {
+                                        // todo 此处经常性导致假死
+                                        while (1) {
+                                            if (Block_Obj == null) {
+                                                Pos_Y--;
+                                                UpdatePos_Y(Pos_Y);
+                                                Block_Obj = mc.getBlock(to_Pos);
                                             } else {
-                                                Y = Pos_Ok.y;
-                                                pl.teleport(RandomCoordinates.x, Y, RandomCoordinates.z, RandomCoordinates.dimid);
-                                                pl.tell('传送完成！');
+                                                if (["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
+                                                    // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
+                                                    pl.teleport(BackUpPos);
+                                                    pl.tell(Gm_Tell + `查询安全坐标失败！`);
+                                                    return;
+                                                }
+                                                if (Block_Obj.type != "minecraft:air") {
+                                                    pl.teleport(to_Pos);
+                                                    pl.tell(Gm_Tell + `传送完成！`);
+                                                    break;
+                                                }
                                             }
                                         }
-                                        count--;
                                     }
-                                    pl.tell('传送失败！\n获取安全坐标失败!');
+
+                                    function UpdatePos_Y(Y) {
+                                        const Back = to_Pos;
+                                        to_Pos = new IntPos(Back.x, Y, Back.z, Back.dimid);
+                                    }
                                 })(pl)
                                 break;
                             case false:
