@@ -803,6 +803,7 @@ mc.listen("onServerStarted", () => {
 /**
  *  真命令注册
  */
+//todo 23/5/10 自定义命令别名
 const Cmd = mc.newCommand('tools', Tr("cmd", PLUGINS_NAME), PermType.Any);
 Cmd.setAlias('optools');
 Cmd.setEnum("ChangeAction", ["add", "remove"]);
@@ -2234,7 +2235,7 @@ function SIMULATE_PLAYER_MANAGEMENT_Ui(pl) {
     }
 }
 
-// todo 
+// todo 2023/4/25 修复耐久，物品锁和死亡不掉落NBT
 
 /**
  * 功能模块

@@ -89,6 +89,9 @@ if(LISTEN_SWITCH==true){
         }
     })
 }
+
+
+//todo 2023/1/03 能不能加入一个发送附件（物品）的功能，有的时候给别人留东西结果他下线了
 function MainGUI(pl){
     let fm = mc.newSimpleForm()
     .setTitle(`${PLUGINS_JS}`)

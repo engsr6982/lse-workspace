@@ -262,6 +262,8 @@ const Forms = {
     }
 }
 
+//todo 2023/4/11 密码更改表单
+
 const Tell = (pl, txt) => {
     if (Config.get('achievementBarPrompt')) {
         pl.sendToast('[Login]插件', txt)

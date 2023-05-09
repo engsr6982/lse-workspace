@@ -138,6 +138,7 @@ let _SIMULATED_ATTACK = [];
 /**
  *  注册命令
  */
+//todo 2023/5/10 增强命令
 const Cmd = mc.newCommand('fp', '模拟玩家GUI', PermType.Any);
 Cmd.setEnum("ChangeAction", ["add", "remove"]);
 Cmd.setEnum("ChangeAction_1", ["op", "user"]);

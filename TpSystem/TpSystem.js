@@ -88,6 +88,8 @@ FileOperation.ReadFile();
 
 
 /* 命令注册 */
+//todo 23/5/10 重新注册命令  命令接受/拒绝请求
+//todo 自定义顶层命令
 (() => {
     const Cmd = mc.newCommand('tps', '传送系统GUI', PermType.Any);
     Cmd.setEnum('Option', ['gui', 'mgr', 'reload']);
@@ -115,7 +117,9 @@ FileOperation.ReadFile();
     Cmd.setup();
 })()
 
+
 /* 主表单 */
+//todo 2023/5/10 拆分表单模块
 function Main(pl) {
     const fm = Other.SimpleForm();
     fm.addButton('家园传送', 'textures/ui/village_hero_effect');
