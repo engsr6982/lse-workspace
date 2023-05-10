@@ -556,12 +556,13 @@ function Main(pl) {
                                                 Block_Obj = mc.getBlock(to_Pos);
                                                 logger.debug(Pos_Y, Block_Obj);
                                             } else {
-                                                if (["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
+                                                if (Pos_Y < -60 || ["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
                                                     // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
                                                     pl.teleport(BackUpPos);
                                                     pl.tell(Gm_Tell + `查询安全坐标失败！`);
                                                     break;
                                                 } else if (Block_Obj.type != "minecraft:air") {
+                                                    UpdatePos_Y(Pos_Y + 1);
                                                     pl.teleport(to_Pos);
                                                     pl.tell(Gm_Tell + `传送完成！`);
                                                     logger.debug(to_Pos);
