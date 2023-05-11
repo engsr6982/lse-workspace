@@ -29,12 +29,6 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
 }
 
 const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
-const _Config_FilePath = _FilePath + 'Config.json';
-const _Home_FilePath = _FilePath + 'Home.json';
-const _Warp_FilePath = _FilePath + 'Warp.json';
-const _PlayerSeting_FilePath = _FilePath + 'PlayerSeting.json';
-const _Death_FilePath = _FilePath + 'Death.json';
-const _MergeRequest_FilePath = _FilePath + 'MergeRequest.json';
 
 /**配置文件 */let Config = {};
 /**家 */let Home = {};
@@ -42,44 +36,77 @@ const _MergeRequest_FilePath = _FilePath + 'MergeRequest.json';
 /**玩家配置 */let PlayerSeting = {};
 /**死亡信息 */let Death = {};
 /**合并请求 */let MergeRequest = [];
+/**表单UI */let MainUI = {};
 
 /**文件操作 */
 class FileOperation {
+    static _Config_FilePath = _FilePath + 'Config.json';
+    static _Home_FilePath = _FilePath + 'Home.json';
+    static _Warp_FilePath = _FilePath + 'Warp.json';
+    static _PlayerSeting_FilePath = _FilePath + 'PlayerSeting.json';
+    static _Death_FilePath = _FilePath + 'Death.json';
+    static _MergeRequest_FilePath = _FilePath + 'MergeRequest.json';
+    static _MainUI = _FilePath + 'GUI\\MainUI.json';
+
     /**
      * 读取配置文件
      */
     static ReadFile() {
         /* 检查文件 */
-        if (!file.exists(_Home_FilePath)) file.writeTo(_Home_FilePath, '{}');
-        if (!file.exists(_Warp_FilePath)) file.writeTo(_Warp_FilePath, '[]');
-        if (!file.exists(_PlayerSeting_FilePath)) file.writeTo(_PlayerSeting_FilePath, '{}');
-        if (!file.exists(_Config_FilePath)) file.writeTo(_Config_FilePath, JSON.stringify({
-            "RandomTransmission": true,
-            "RandomTransferSettings": {
-                "Min": 1000,
-                "Max": 5000
+        if (!file.exists(this._Home_FilePath)) file.writeTo(this._Home_FilePath, '{}');
+        if (!file.exists(this._Warp_FilePath)) file.writeTo(this._Warp_FilePath, '[]');
+        if (!file.exists(this._PlayerSeting_FilePath)) file.writeTo(this._PlayerSeting_FilePath, '{}');
+        if (!file.exists(this._Config_FilePath)) file.writeTo(this._Config_FilePath, JSON.stringify(
+            {
+                "Command": {
+                    "name": "tps",
+                    "Describe": "传送系统"
+                },
+                "Money": {
+                    "Enable": true,
+                    "LLMoney": true,
+                    "MoneyName": "money"
+                },
+                "RandomTransmission": true,
+                "RandomTransferSettings": {
+                    "Min": 1000,
+                    "Max": 5000
+                }
             }
-        }, null, '\t'));
-        if (!file.exists(_Death_FilePath)) file.writeTo(_Death_FilePath, '{}');
-        if (!file.exists(_MergeRequest_FilePath)) file.writeTo(_MergeRequest_FilePath, '[]');
+            , null, '\t'));
+        if (!file.exists(this._Death_FilePath)) file.writeTo(this._Death_FilePath, '{}');
+        if (!file.exists(this._MergeRequest_FilePath)) file.writeTo(this._MergeRequest_FilePath, '[]');
+        if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(
+            [
+                { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "", "open": "" },
+                { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "", "open": "" },
+                { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "", "open": "" },
+                { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "", "open": "" },
+                { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "", "open": "" },
+                { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "", "open": "" }
+            ]
+            , null, '\t'
+        ))
         /* 读取文件 */
-        Home = JSON.parse(file.readFrom(_Home_FilePath));
-        Warp = JSON.parse(file.readFrom(_Warp_FilePath));
-        PlayerSeting = JSON.parse(file.readFrom(_PlayerSeting_FilePath));
-        Config = JSON.parse(file.readFrom(_Config_FilePath));
-        Death = JSON.parse(file.readFrom(_Death_FilePath));
-        MergeRequest = JSON.parse(file.readFrom(_MergeRequest_FilePath));
+        Home = JSON.parse(file.readFrom(this._Home_FilePath));
+        Warp = JSON.parse(file.readFrom(this._Warp_FilePath));
+        PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting_FilePath));
+        Config = JSON.parse(file.readFrom(this._Config_FilePath));
+        Death = JSON.parse(file.readFrom(this._Death_FilePath));
+        MergeRequest = JSON.parse(file.readFrom(this._MergeRequest_FilePath));
+        MainUI = JSON.parse(file.readFrom(this._MainUI));
     }
     /**
      * 保存并重新读取配置文件
      */
     static SaveFile() {
-        file.writeTo(_Home_FilePath, JSON.stringify(Home, null, '\t'));
-        file.writeTo(_Warp_FilePath, JSON.stringify(Warp, null, '\t'));
-        file.writeTo(_PlayerSeting_FilePath, JSON.stringify(PlayerSeting, null, '\t'));
-        file.writeTo(_Config_FilePath, JSON.stringify(Config, null, '\t'));
-        file.writeTo(_Death_FilePath, JSON.stringify(Death, null, '\t'));
-        file.writeTo(_MergeRequest_FilePath, JSON.stringify(MergeRequest, null, '\t'));
+        file.writeTo(this._Home_FilePath, JSON.stringify(Home, null, '\t'));
+        file.writeTo(this._Warp_FilePath, JSON.stringify(Warp, null, '\t'));
+        file.writeTo(this._PlayerSeting_FilePath, JSON.stringify(PlayerSeting, null, '\t'));
+        file.writeTo(this._Config_FilePath, JSON.stringify(Config, null, '\t'));
+        file.writeTo(this._Death_FilePath, JSON.stringify(Death, null, '\t'));
+        file.writeTo(this._MergeRequest_FilePath, JSON.stringify(MergeRequest, null, '\t'));
+        file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
         this.ReadFile();
     }
 };
@@ -110,17 +137,350 @@ FileOperation.ReadFile();
                 break;
             default:
                 if (ori.type !== 0) return out.error('此命令仅限玩家执行');
-                Main(ori.player);
+                Main(ori.player, MainUI);
                 break;
         }
     })
     Cmd.setup();
 })()
 
+class HomeForms {
+    static Home_Panel(pl) {
+        const fm = Other.SimpleForm();
+        fm.addButton('新建家', 'textures/ui/color_plus');
+        fm.addButton('前往家', 'textures/ui/send_icon');
+        fm.addButton('编辑家', 'textures/ui/book_edit_default');
+        fm.addButton('删除家', 'textures/ui/trash_default');
+        fm.addButton('并入公共传送点', 'textures/ui/share_microsoft');
+        fm.addButton('返回上一页', 'textures/ui/icon_import');
+        pl.sendForm(fm, (pl, id) => {
+            switch (id) {
+                case 0:
+                    this.CreateHome(pl);
+                    break;
+                case 1:/* 前往家 */
+                    this.GoHome(pl);
+                    break;
+                case 2:/* 编辑家 */
+                    this.EditHome(pl);
+                    break;
+                case 3:/* 删除家 */
+                    this.DeleteHome(pl);
+                    break;
+                case 4:/* 并入公共传送点 */
+                    this.MergeRequest_UI(pl);
+                    break;
+                case 5:
+                    Main(pl);
+                    break;
+                default:
+                    Other.CloseTell(pl);
+                    break;
+            }
+        })
+    }
+    static CreateHome(pl) {
+        const fm = Other.CustomForm();
+        fm.addLabel('');
+        fm.addInput('输入传送点名称', 'String');
+        pl.sendForm(fm, (pl, dt) => {
+            if (dt == null) return Other.CloseTell(pl);
+            if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！');
+            if (!Home.hasOwnProperty(pl.realName)) {
+                Home[pl.realName] = [];
+            }
+            Home[pl.realName].push({
+                "name": dt[1],
+                "x": pl.blockPos.x,
+                "y": pl.blockPos.y,
+                "z": pl.blockPos.z,
+                "dimid": pl.blockPos.dimid
+            });
+            FileOperation.SaveFile();
+            pl.tell(Gm_Tell + '家园已保存');
+        })
+    }
+    static GoHome(pl) {
+        if (Home.hasOwnProperty(pl.realName)) {
+            if (Home[pl.realName].length !== 0) {
+                this.SelectAction(pl, Home[pl.realName], id => {
+                    const Pos = new IntPos(Home[pl.realName][id].x, Home[pl.realName][id].y, Home[pl.realName][id].z, Home[pl.realName][id].dimid);
+                    if (PlayerSeting[pl.realName].SecondaryConfirmation) {
+                        pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`, '确认', '返回上一页', (_, res) => {
+                            switch (res) {
+                                case true:
+                                    if (pl.teleport(Pos)) {
+                                        pl.tell(Gm_Tell + '传送成功！');
+                                    } else {
+                                        pl.tell(Gm_Tell + '传送失败!');
+                                    }
+                                    break;
+                                case false:
+                                    GoHome(pl);
+                                    break;
+                                default:
+                                    Other.CloseTell(pl);
+                                    break;
+                            }
+                        });
+                    } else {
+                        if (pl.teleport(Pos)) {
+                            pl.tell(Gm_Tell + '传送成功！');
+                        } else {
+                            pl.tell(Gm_Tell + '传送失败!');
+                        }
+                    }
+                })
+            } else {
+                this.NoHome(pl)
+            }
+        } else {
+            this.NoHome(pl)
+        }
+    }
+    static EditHome(pl) {
+        if (Home.hasOwnProperty(pl.realName)) {
+            if (Home[pl.realName].length !== 0) {
+                this.SelectAction(pl, Home[pl.realName], (id) => {
+                    const fm = Other.SimpleForm();
+                    fm.addButton('修改名称', 'textures/ui/book_edit_default');
+                    fm.addButton('更新坐标到当前位置', 'textures/ui/refresh');
+                    fm.addButton('返回上一页', 'textures/ui/icon_import');
+                    pl.sendForm(fm, (pl, id1) => {
+                        switch (id1) {
+                            case 0:
+                                EditHomeName(pl);
+                                function EditHomeName(pl) {
+                                    const fm = Other.CustomForm();
+                                    fm.addLabel(`名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`)
+                                    fm.addInput('修改家名称', 'String', Home[pl.realName][id].name);
+                                    pl.sendForm(fm, (pl, dt) => {
+                                        if (dt == null) return Other.CloseTell(pl);
+                                        if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！')
+                                        Home[pl.realName][id].name = dt[1];
+                                        FileOperation.SaveFile();
+                                        pl.tell(Gm_Tell + '操作已保存');
+                                    })
+                                }
+                                break;
+                            case 1:
+                                Home[pl.realName][id].x = pl.blockPos.x;
+                                Home[pl.realName][id].y = pl.blockPos.y;
+                                Home[pl.realName][id].z = pl.blockPos.z;
+                                Home[pl.realName][id].dimid = pl.blockPos.dimid;
+                                FileOperation.SaveFile();
+                                pl.tell(Gm_Tell + '更新完成！');
+                                break;
+                            case 2:
+                                EditHome(pl);
+                                break;
+                            default:
+                                Other.CloseTell(pl);
+                                break;
+                        }
+                    })
+                })
+            } else {
+                this.NoHome(pl)
+            }
+        } else {
+            this.NoHome(pl)
+        }
+    }
+    static DeleteHome(pl) {
+        if (Home.hasOwnProperty(pl.realName)) {
+            if (Home[pl.realName].length !== 0) {
+                this.SelectAction(pl, Home[pl.realName], id => {
+                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`, '确认删除', '返回上一页', (_, res) => {
+                        switch (res) {
+                            case true:
+                                Home[pl.realName].splice(id, 1);
+                                FileOperation.SaveFile();
+                                pl.tell(Gm_Tell + '删除成功！');
+                                break;
+                            case false:
+                                GoHome(pl);
+                                break;
+                            default:
+                                Other.CloseTell(pl);
+                                break;
+                        }
+                    });
+                });
+            } else {
+                this.NoHome(pl)
+            }
+        } else {
+            this.NoHome(pl)
+        }
+    }
+    static MergeRequest_UI(pl) {
+        const fm = Other.SimpleForm();
+        fm.addButton('发送请求', 'textures/ui/backup_replace');
+        fm.addButton('撤销请求', 'textures/ui/redX1');
+        fm.addButton('返回上一页', 'textures/ui/icon_import');
+        pl.sendForm(fm, (pl, id1) => {
+            switch (id1) {
+                case 0:/* 发送请求 */
+                    sendMergeRequest_UI(pl);
+                    function sendMergeRequest_UI(pl) {
+                        if (Home.hasOwnProperty(pl.realName)) {
+                            if (Home[pl.realName].length !== 0) {
+                                this.SelectAction(pl, Home[pl.realName], (id) => {
+                                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
+                                        switch (res) {
+                                            case true:
+                                                MergeRequest.push({
+                                                    player: pl.realName,
+                                                    guid: Other.RandomID(),
+                                                    time: system.getTimeStr(),
+                                                    data: Home[pl.realName][id]
+                                                });
+                                                FileOperation.SaveFile();
+                                                pl.tell(Gm_Tell + '发送成功！');
+                                                break;
+                                            case false:
+                                                sendMergeRequest_UI(pl);
+                                                break;
+                                            default:
+                                                Other.CloseTell(pl);
+                                                break;
+                                        }
+                                    });
+                                })
+                            } else {
+                                this.NoHome(pl)
+                            }
+                        } else {
+                            this.NoHome(pl)
+                        }
+                    }
+                    break;
+                case 1:/* 撤销请求 */
+                    WithdrawalRequest(pl);
+                    function WithdrawalRequest(pl) {
+                        const fm = Other.SimpleForm();
+                        let AllButtons = [];
+                        MergeRequest.forEach(i => {
+                            if (i.player == pl.realName) {
+                                fm.addButton(`时间： ${i.time}b`)
+                                AllButtons.push(i);
+                            }
+                        });
+                        fm.addButton('返回上一页', 'textures/ui/icon_import');
+                        pl.sendForm(fm, (pl, id) => {
+                            if (id == null) return Other.CloseTell(pl);
+                            if (id == AllButtons.length) return MergeRequest_UI(pl);
+                            const GUID = AllButtons[id].guid;
+                            const index = MergeRequest.findIndex(i => i.guid === GUID);
+                            pl.sendModalForm(PLUGINS_JS, `时间: ${MergeRequest[index].time}\nGUID: ${MergeRequest[index].guid}\n\n名称： ${MergeRequest[index].data.name}\n坐标： ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}\n维度： ${DimidToDimension(MergeRequest[index].data.dimid)}`, '撤销此请求', '返回上一页', (_, res) => {
+                                switch (res) {
+                                    case true:
+                                        MergeRequest.splice(index, 1);
+                                        FileOperation.SaveFile();
+                                        pl.tell(Gm_Tell + '撤销成功！');
+                                        break;
+                                    case false:
+                                        WithdrawalRequest(pl);
+                                        break;
+                                    default:
+                                        Other.CloseTell(pl);
+                                        break;
+                                }
+                            });
+                        })
+                    }
+                    break;
+                case 2:
+                    Home_Panel(pl);
+                    break;
+                default:
+                    Other.CloseTell(pl);
+                    break;
+            }
+        })
+    }
+    /**
+     * 无家园传送点
+     * @param {Object} pl 玩家
+     */
+    static NoHome(pl) {
+        pl.tell(Gm_Tell + '你还没有家园传送点,无法继续执行操作！');
+    }
+    /**
+     * 选择传送点
+     * @param {Object} pl 玩家
+     * @param {Array} Array 按钮数组
+     * @param {Number} callback 数组索引ID
+     */
+    static SelectAction(pl, Array, callback) {
+        const fm = Other.SimpleForm();
+        fm.setContent('· 选择一个家');
+        Array.forEach(i => {
+            fm.addButton(`${i.name}\n${DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
+        });
+        fm.addButton('返回上一页', 'textures/ui/icon_import');
+        pl.sendForm(fm, (pl, id) => {
+            if (id == null) return Other.CloseTell(pl);
+            if (id == Array.length) return Home_Panel(pl);
+            callback(id);
+        })
+    }
+}
+
+const HomeForms = new HomeForms();
+
+const MAPPING_TABLE = {
+    HomeUi: HomeForms.Home_Panel
+}
+
+/**
+ * GUI主页
+ * @param {Object} pl 玩家对象
+ * @param {Array} Arry 菜单数组
+ */
+function Main(pl, Arry = []) {
+    const fm = Other.SimpleForm();
+    fm.setContent(`· 选择一个操作`);
+    const Bt = Arry;
+    Bt.forEach((i) => {
+        fm.addButton(i.name, i.image);
+    });
+    if (Bt.length == 0) return pl.tell(`数组为空！ 无法发送表单！`);
+    pl.sendForm(fm, (pl, id) => {
+        if (id == null) return Other.CloseTell(pl);
+        const sw = Bt[id];
+        switch (sw.type) {
+            case "inside":
+                MAPPING_TABLE[sw.open](pl);
+                break;
+            case "command":
+                pl.runcmd(sw.open);
+                break;
+            case "form":
+                if (!File.exists(_FilePath + `GUI\\${sw.open}.json`)) {
+                    File.writeTo(_FilePath + `GUI\\${sw.open}.json`, '[]');
+                    return pl.tell(`§c§l文件<${sw.open}.json>不存在！`, 5);
+                };
+                try {
+                    let Menu_Arry = JSON.parse(File.readFrom(_FilePath + `GUI\\${sw.open}.json`));
+                    logger.debug(Menu_Arry);
+                    Main(pl, Menu_Arry);
+                } catch (e) {
+                    if (e instanceof SyntaxError) {
+                        return pl.tell(`§c§l文件<${sw.open}.json>语法错误！`, 5);
+                    }
+                };
+                break;
+        }
+    })
+}
+
+
 
 /* 主表单 */
 //todo 2023/5/10 拆分表单模块
-function Main(pl) {
+function Mainss(pl) {
     const fm = Other.SimpleForm();
     fm.addButton('家园传送', 'textures/ui/village_hero_effect');
     fm.addButton('公共传送', 'textures/ui/icon_best3');
@@ -132,283 +492,6 @@ function Main(pl) {
         switch (id) {
             case 0:/* 家园传送 */
                 Home_Panel(pl);
-                function Home_Panel(pl) {
-                    const fm = Other.SimpleForm();
-                    fm.addButton('新建家', 'textures/ui/color_plus');
-                    fm.addButton('前往家', 'textures/ui/send_icon');
-                    fm.addButton('编辑家', 'textures/ui/book_edit_default');
-                    fm.addButton('删除家', 'textures/ui/trash_default');
-                    fm.addButton('并入公共传送点', 'textures/ui/share_microsoft');
-                    fm.addButton('返回上一页', 'textures/ui/icon_import');
-                    pl.sendForm(fm, (pl, id) => {
-                        switch (id) {
-                            case 0:/* 新建家 */
-                                ((pl) => {
-                                    const fm = Other.CustomForm();
-                                    fm.addLabel('');
-                                    fm.addInput('输入传送点名称', 'String');
-                                    pl.sendForm(fm, (pl, dt) => {
-                                        if (dt == null) return Other.CloseTell(pl);
-                                        if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！')
-                                        if (!Home.hasOwnProperty(pl.realName)) {
-                                            Home[pl.realName] = [];
-                                        }
-                                        Home[pl.realName].push({
-                                            "name": dt[1],
-                                            "x": pl.blockPos.x,
-                                            "y": pl.blockPos.y,
-                                            "z": pl.blockPos.z,
-                                            "dimid": pl.blockPos.dimid
-                                        });
-                                        FileOperation.SaveFile();
-                                        pl.tell(Gm_Tell + '家园已保存');
-                                    })
-                                })(pl)
-                                break;
-                            case 1:/* 前往家 */
-                                GoHome(pl);
-                                function GoHome(pl) {
-                                    if (Home.hasOwnProperty(pl.realName)) {
-                                        if (Home[pl.realName].length !== 0) {
-                                            SelectAction(pl, Home[pl.realName], id => {
-                                                const Pos = new IntPos(Home[pl.realName][id].x, Home[pl.realName][id].y, Home[pl.realName][id].z, Home[pl.realName][id].dimid);
-                                                if (PlayerSeting[pl.realName].SecondaryConfirmation) {
-                                                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`, '确认', '返回上一页', (_, res) => {
-                                                        switch (res) {
-                                                            case true:
-                                                                if (pl.teleport(Pos)) {
-                                                                    pl.tell(Gm_Tell + '传送成功！');
-                                                                } else {
-                                                                    pl.tell(Gm_Tell + '传送失败!');
-                                                                }
-                                                                break;
-                                                            case false:
-                                                                GoHome(pl);
-                                                                break;
-                                                            default:
-                                                                Other.CloseTell(pl);
-                                                                break;
-                                                        }
-                                                    });
-                                                } else {
-                                                    if (pl.teleport(Pos)) {
-                                                        pl.tell(Gm_Tell + '传送成功！');
-                                                    } else {
-                                                        pl.tell(Gm_Tell + '传送失败!');
-                                                    }
-                                                }
-                                            })
-                                        } else {
-                                            NoHome(pl)
-                                        }
-                                    } else {
-                                        NoHome(pl)
-                                    }
-                                }
-                                break;
-                            case 2:/* 编辑家 */
-                                EditHome(pl);
-                                function EditHome(pl) {
-                                    if (Home.hasOwnProperty(pl.realName)) {
-                                        if (Home[pl.realName].length !== 0) {
-                                            SelectAction(pl, Home[pl.realName], (id) => {
-                                                const fm = Other.SimpleForm();
-                                                fm.addButton('修改名称', 'textures/ui/book_edit_default');
-                                                fm.addButton('更新坐标到当前位置', 'textures/ui/refresh');
-                                                fm.addButton('返回上一页', 'textures/ui/icon_import');
-                                                pl.sendForm(fm, (pl, id1) => {
-                                                    switch (id1) {
-                                                        case 0:
-                                                            EditName(pl);
-                                                            function EditName(pl) {
-                                                                const fm = Other.CustomForm();
-                                                                fm.addLabel(`名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`)
-                                                                fm.addInput('修改家名称', 'String', Home[pl.realName][id].name);
-                                                                pl.sendForm(fm, (pl, dt) => {
-                                                                    if (dt == null) return Other.CloseTell(pl);
-                                                                    if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！')
-                                                                    Home[pl.realName][id].name = dt[1];
-                                                                    FileOperation.SaveFile();
-                                                                    pl.tell(Gm_Tell + '操作已保存');
-                                                                })
-                                                            }
-                                                            break;
-                                                        case 1:
-                                                            Home[pl.realName][id].x = pl.blockPos.x;
-                                                            Home[pl.realName][id].y = pl.blockPos.y;
-                                                            Home[pl.realName][id].z = pl.blockPos.z;
-                                                            Home[pl.realName][id].dimid = pl.blockPos.dimid;
-                                                            FileOperation.SaveFile();
-                                                            pl.tell(Gm_Tell + '更新完成！');
-                                                            break;
-                                                        case 2:
-                                                            EditHome(pl);
-                                                            break;
-                                                        default:
-                                                            Other.CloseTell(pl);
-                                                            break;
-                                                    }
-                                                })
-                                            })
-                                        } else {
-                                            NoHome(pl)
-                                        }
-                                    } else {
-                                        NoHome(pl)
-                                    }
-                                }
-                                break;
-                            case 3:/* 删除家 */
-                                if (Home.hasOwnProperty(pl.realName)) {
-                                    if (Home[pl.realName].length !== 0) {
-                                        SelectAction(pl, Home[pl.realName], id => {
-                                            pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`, '确认删除', '返回上一页', (_, res) => {
-                                                switch (res) {
-                                                    case true:
-                                                        Home[pl.realName].splice(id, 1);
-                                                        FileOperation.SaveFile();
-                                                        pl.tell(Gm_Tell + '删除成功！');
-                                                        break;
-                                                    case false:
-                                                        GoHome(pl);
-                                                        break;
-                                                    default:
-                                                        Other.CloseTell(pl);
-                                                        break;
-                                                }
-                                            });
-                                        });
-                                    } else {
-                                        NoHome(pl)
-                                    }
-                                } else {
-                                    NoHome(pl)
-                                }
-                                break;
-                            case 4:/* 并入公共传送点 */
-                                MergeRequest_UI(pl);
-                                function MergeRequest_UI(pl) {
-                                    const fm = Other.SimpleForm();
-                                    fm.addButton('发送请求', 'textures/ui/backup_replace');
-                                    fm.addButton('撤销请求', 'textures/ui/redX1');
-                                    fm.addButton('返回上一页', 'textures/ui/icon_import');
-                                    pl.sendForm(fm, (pl, id1) => {
-                                        switch (id1) {
-                                            case 0:/* 发送请求 */
-                                                sendMergeRequest_UI(pl);
-                                                function sendMergeRequest_UI(pl) {
-                                                    if (Home.hasOwnProperty(pl.realName)) {
-                                                        if (Home[pl.realName].length !== 0) {
-                                                            SelectAction(pl, Home[pl.realName], (id) => {
-                                                                pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
-                                                                    switch (res) {
-                                                                        case true:
-                                                                            MergeRequest.push({
-                                                                                player: pl.realName,
-                                                                                guid: Other.RandomID(),
-                                                                                time: system.getTimeStr(),
-                                                                                data: Home[pl.realName][id]
-                                                                            });
-                                                                            FileOperation.SaveFile();
-                                                                            pl.tell(Gm_Tell + '发送成功！');
-                                                                            break;
-                                                                        case false:
-                                                                            sendMergeRequest_UI(pl);
-                                                                            break;
-                                                                        default:
-                                                                            Other.CloseTell(pl);
-                                                                            break;
-                                                                    }
-                                                                });
-                                                            })
-                                                        } else {
-                                                            NoHome(pl)
-                                                        }
-                                                    } else {
-                                                        NoHome(pl)
-                                                    }
-                                                }
-                                                break;
-                                            case 1:/* 撤销请求 */
-                                                WithdrawalRequest(pl);
-                                                function WithdrawalRequest(pl) {
-                                                    const fm = Other.SimpleForm();
-                                                    let AllButtons = [];
-                                                    MergeRequest.forEach(i => {
-                                                        if (i.player == pl.realName) {
-                                                            fm.addButton(`时间： ${i.time}b`)
-                                                            AllButtons.push(i);
-                                                        }
-                                                    });
-                                                    fm.addButton('返回上一页', 'textures/ui/icon_import');
-                                                    pl.sendForm(fm, (pl, id) => {
-                                                        if (id == null) return Other.CloseTell(pl);
-                                                        if (id == AllButtons.length) return MergeRequest_UI(pl);
-                                                        const GUID = AllButtons[id].guid;
-                                                        const index = MergeRequest.findIndex(i => i.guid === GUID);
-                                                        pl.sendModalForm(PLUGINS_JS, `时间: ${MergeRequest[index].time}\nGUID: ${MergeRequest[index].guid}\n\n名称： ${MergeRequest[index].data.name}\n坐标： ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}\n维度： ${DimidToDimension(MergeRequest[index].data.dimid)}`, '撤销此请求', '返回上一页', (_, res) => {
-                                                            switch (res) {
-                                                                case true:
-                                                                    MergeRequest.splice(index, 1);
-                                                                    FileOperation.SaveFile();
-                                                                    pl.tell(Gm_Tell + '撤销成功！');
-                                                                    break;
-                                                                case false:
-                                                                    WithdrawalRequest(pl);
-                                                                    break;
-                                                                default:
-                                                                    Other.CloseTell(pl);
-                                                                    break;
-                                                            }
-                                                        });
-                                                    })
-                                                }
-                                                break;
-                                            case 2:
-                                                Home_Panel(pl);
-                                                break;
-                                            default:
-                                                Other.CloseTell(pl);
-                                                break;
-                                        }
-                                    })
-                                }
-                                break;
-                            case 5:
-                                Main(pl);
-                                break;
-                            default:
-                                Other.CloseTell(pl);
-                                break;
-                        }
-                        /**
-                         * 无家园传送点
-                         * @param {Object} pl 玩家
-                         */
-                        function NoHome(pl) {
-                            pl.tell(Gm_Tell + '你还没有家园传送点,无法继续执行操作！');
-                        }
-                        /**
-                         * 选择传送点
-                         * @param {Object} pl 玩家
-                         * @param {Array} Array 按钮数组
-                         * @param {Number} callback 数组索引ID
-                         */
-                        function SelectAction(pl, Array, callback) {
-                            const fm = Other.SimpleForm();
-                            fm.setContent('· 选择一个家');
-                            Array.forEach(i => {
-                                fm.addButton(`${i.name}\n${DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
-                            });
-                            fm.addButton('返回上一页', 'textures/ui/icon_import');
-                            pl.sendForm(fm, (pl, id) => {
-                                if (id == null) return Other.CloseTell(pl);
-                                if (id == Array.length) return Home_Panel(pl);
-                                callback(id);
-                            })
-                        }
-                    })
-                }
                 break;
             case 1:/* 公共传送 */
                 Warp_Panel(pl);
@@ -993,12 +1076,12 @@ function Delivery_Core(from, to, type, pos, txt) {
 }
 
 
-const Other = {
+class Other {
     /**
      * 位随机ID
      * @returns ID
      */
-    RandomID(num = 16) {
+    static RandomID(num = 16) {
         let str = '';
         const char = 'QWERTYUIOPASDFGHJKLZXCVBNM';
         for (let i = 0; i < num; i++) {
@@ -1006,43 +1089,43 @@ const Other = {
             str += char[index];
         }
         return str;
-    },
+    }
     /**
      * 获取所有在线玩家名
      * @returns Array[Name, ...]
      */
-    GetOnlinePlayers() {
+    static GetOnlinePlayers() {
         let OnlinePlayers = [];
         mc.getOnlinePlayers().forEach(pl => {
             if (pl.isSimulatedPlayer()) return;
             OnlinePlayers.push(pl.realName);
         })
         return OnlinePlayers;
-    },
+    }
     /**
      * 按钮表单
      * @returns 
      */
-    SimpleForm() {
+    static SimpleForm() {
         const fm = mc.newSimpleForm();
         fm.setTitle(PLUGINS_JS);
         fm.setContent(`· 选择一个操作`);
         return fm;
-    },
+    }
     /**
      * 自定义表单
      * @returns 
      */
-    CustomForm() {
+    static CustomForm() {
         const fm = mc.newCustomForm();
         fm.setTitle(PLUGINS_JS);
         return fm;
-    },
+    }
     /**
      * 放弃表单
      * @param {Object} pl 玩家对象
      */
-    CloseTell(pl) {
+    static CloseTell(pl) {
         pl.tell(Gm_Tell + `表单已放弃`);
     }
 }
