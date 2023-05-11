@@ -144,6 +144,9 @@ FileOperation.ReadFile();
     Cmd.setup();
 })()
 
+/**
+ * 家园传送表单
+ */
 class HomeForms {
     static Home_Panel(pl) {
         const fm = Other.SimpleForm();
@@ -171,7 +174,7 @@ class HomeForms {
                     HomeForms.MergeRequest_UI(pl);
                     break;
                 case 5:
-                    Main(pl);
+                    Main(pl, MainUI);
                     break;
                 default:
                     Other.CloseTell(pl);
@@ -425,6 +428,17 @@ class HomeForms {
             if (id == Array.length) return HomeForms.Home_Panel(pl);
             callback(id);
         })
+    }
+}
+
+class Forms {
+    static PublicTransportation(pl) {
+    }
+    static PlayerTransportation(pl) {
+    }
+    static RandomTransportation(pl) {
+    }
+    static PersonalSettings(pl) {
     }
 }
 
@@ -976,6 +990,28 @@ function Seting(pl) {
                 break;
         }
     })
+}
+
+/**
+ * 扣除经济
+ * @param {Object} pl 
+ * @param {Number} Money 
+ * @returns 
+ */
+function You_Money_is_My_Money__My_Money_is_My_Money (pl, delMoney) {
+    if (delMoney == 0 || !Config.Money.Enable) {
+        return null;
+    }
+    if (Config.Money.LLMoney) {
+        // LL
+        if (pl.getMoney() > delMoney) {
+            // 经济充足
+        } else {
+            return false;
+        }
+    } else {
+        // Socre
+    }
 }
 
 /**
