@@ -156,19 +156,19 @@ class HomeForms {
         pl.sendForm(fm, (pl, id) => {
             switch (id) {
                 case 0:
-                    this.CreateHome(pl);
+                    HomeForms.CreateHome(pl);
                     break;
                 case 1:/* 前往家 */
-                    this.GoHome(pl);
+                    HomeForms.GoHome(pl);
                     break;
                 case 2:/* 编辑家 */
-                    this.EditHome(pl);
+                    HomeForms.EditHome(pl);
                     break;
                 case 3:/* 删除家 */
-                    this.DeleteHome(pl);
+                    HomeForms.DeleteHome(pl);
                     break;
                 case 4:/* 并入公共传送点 */
-                    this.MergeRequest_UI(pl);
+                    HomeForms.MergeRequest_UI(pl);
                     break;
                 case 5:
                     Main(pl);
@@ -203,7 +203,7 @@ class HomeForms {
     static GoHome(pl) {
         if (Home.hasOwnProperty(pl.realName)) {
             if (Home[pl.realName].length !== 0) {
-                this.SelectAction(pl, Home[pl.realName], id => {
+                HomeForms.SelectAction(pl, Home[pl.realName], id => {
                     const Pos = new IntPos(Home[pl.realName][id].x, Home[pl.realName][id].y, Home[pl.realName][id].z, Home[pl.realName][id].dimid);
                     if (PlayerSeting[pl.realName].SecondaryConfirmation) {
                         pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`, '确认', '返回上一页', (_, res) => {
@@ -216,7 +216,7 @@ class HomeForms {
                                     }
                                     break;
                                 case false:
-                                    GoHome(pl);
+                                    HomeForms.GoHome(pl);
                                     break;
                                 default:
                                     Other.CloseTell(pl);
@@ -232,16 +232,16 @@ class HomeForms {
                     }
                 })
             } else {
-                this.NoHome(pl)
+                HomeForms.NoHome(pl)
             }
         } else {
-            this.NoHome(pl)
+            HomeForms.NoHome(pl)
         }
     }
     static EditHome(pl) {
         if (Home.hasOwnProperty(pl.realName)) {
             if (Home[pl.realName].length !== 0) {
-                this.SelectAction(pl, Home[pl.realName], (id) => {
+                HomeForms.SelectAction(pl, Home[pl.realName], (id) => {
                     const fm = Other.SimpleForm();
                     fm.addButton('修改名称', 'textures/ui/book_edit_default');
                     fm.addButton('更新坐标到当前位置', 'textures/ui/refresh');
@@ -272,7 +272,7 @@ class HomeForms {
                                 pl.tell(Gm_Tell + '更新完成！');
                                 break;
                             case 2:
-                                EditHome(pl);
+                                HomeForms.EditHome(pl);
                                 break;
                             default:
                                 Other.CloseTell(pl);
@@ -281,16 +281,16 @@ class HomeForms {
                     })
                 })
             } else {
-                this.NoHome(pl)
+                HomeForms.NoHome(pl)
             }
         } else {
-            this.NoHome(pl)
+            HomeForms.NoHome(pl)
         }
     }
     static DeleteHome(pl) {
         if (Home.hasOwnProperty(pl.realName)) {
             if (Home[pl.realName].length !== 0) {
-                this.SelectAction(pl, Home[pl.realName], id => {
+                HomeForms.SelectAction(pl, Home[pl.realName], id => {
                     pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`, '确认删除', '返回上一页', (_, res) => {
                         switch (res) {
                             case true:
@@ -299,7 +299,7 @@ class HomeForms {
                                 pl.tell(Gm_Tell + '删除成功！');
                                 break;
                             case false:
-                                GoHome(pl);
+                                HomeForms.GoHome(pl);
                                 break;
                             default:
                                 Other.CloseTell(pl);
@@ -308,10 +308,10 @@ class HomeForms {
                     });
                 });
             } else {
-                this.NoHome(pl)
+                HomeForms.NoHome(pl)
             }
         } else {
-            this.NoHome(pl)
+            HomeForms.NoHome(pl)
         }
     }
     static MergeRequest_UI(pl) {
@@ -326,7 +326,7 @@ class HomeForms {
                     function sendMergeRequest_UI(pl) {
                         if (Home.hasOwnProperty(pl.realName)) {
                             if (Home[pl.realName].length !== 0) {
-                                this.SelectAction(pl, Home[pl.realName], (id) => {
+                                HomeForms.SelectAction(pl, Home[pl.realName], (id) => {
                                     pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
                                         switch (res) {
                                             case true:
@@ -349,10 +349,10 @@ class HomeForms {
                                     });
                                 })
                             } else {
-                                this.NoHome(pl)
+                                HomeForms.NoHome(pl)
                             }
                         } else {
-                            this.NoHome(pl)
+                            HomeForms.NoHome(pl)
                         }
                     }
                     break;
@@ -392,7 +392,7 @@ class HomeForms {
                     }
                     break;
                 case 2:
-                    Home_Panel(pl);
+                    HomeForms.Home_Panel(pl);
                     break;
                 default:
                     Other.CloseTell(pl);
@@ -427,8 +427,6 @@ class HomeForms {
         })
     }
 }
-
-const HomeForms = new HomeForms();
 
 const MAPPING_TABLE = {
     HomeUi: HomeForms.Home_Panel
