@@ -422,7 +422,7 @@ class HomeForms {
         fm.addButton('返回上一页', 'textures/ui/icon_import');
         pl.sendForm(fm, (pl, id) => {
             if (id == null) return Other.CloseTell(pl);
-            if (id == Array.length) return Home_Panel(pl);
+            if (id == Array.length) return HomeForms.Home_Panel(pl);
             callback(id);
         })
     }
