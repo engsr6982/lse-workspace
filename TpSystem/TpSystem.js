@@ -431,14 +431,200 @@ class HomeForms {
     }
 }
 
+/**
+ * 其他表单
+ */
 class Forms {
     static PublicTransportation(pl) {
+        if (Warp.length == 0) return pl.tell(Gm_Tell + '无公共传送点！无法继续执行操作！');
+        SelectAction(pl, Warp, id => {
+            const Pos = new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid);
+            if (PlayerSeting[pl.realName].SecondaryConfirmation) {
+                pl.sendModalForm(PLUGINS_JS, `名称： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${DimidToDimension(Warp[id].dimid)}`, '确认', '返回上一页', (_, res) => {
+                    switch (res) {
+                        case true:
+                            if (pl.teleport(Pos)) {
+                                pl.tell(Gm_Tell + '传送成功！');
+                            } else {
+                                pl.tell(Gm_Tell + '传送失败!');
+                            }
+                            break;
+                        case false:
+                            Warp_Panel(pl);
+                            break;
+                        default:
+                            Other.CloseTell(pl);
+                            break;
+                    }
+                });
+            } else {
+                if (pl.teleport(Pos)) {
+                    pl.tell(Gm_Tell + '传送成功！');
+                } else {
+                    pl.tell(Gm_Tell + '传送失败!');
+                }
+            }
+        });
+        /**
+         * 选择传送点
+         * @param {Object} pl 玩家
+         * @param {Array} Array 按钮数组
+         * @param {Number} callback 数组索引ID
+         */
+        function SelectAction(pl, Array, callback) {
+            const fm = Other.SimpleForm();
+            fm.setContent('· 选择一个公共传送点');
+            Array.forEach(i => {
+                fm.addButton(`${i.name}\n${DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
+            });
+            fm.addButton('返回上一页', 'textures/ui/icon_import');
+            pl.sendForm(fm, (pl, id) => {
+                if (id == null) return Other.CloseTell(pl);
+                if (id == Array.length) return Main(pl);
+                callback(id);
+            })
+        }
     }
     static PlayerTransportation(pl) {
+        const OnlinePlayers = Other.GetOnlinePlayers();
+        let DeliveryType = Array.of('传送至TA', 'TA传送至我');
+        let Hone_List = [];
+        if (Home.hasOwnProperty(pl.realName)) {
+            if (Home[pl.realName].length !== 0) {
+                Home[pl.realName].forEach(i => {
+                    Hone_List.push(i.name);
+                });
+                DeliveryType.push('TA传送至家');
+            }
+        }
+        const fm = Other.CustomForm();
+        fm.addDropdown('选择一个玩家', OnlinePlayers, 0);
+        fm.addDropdown('选择一个家', Hone_List);
+        fm.addDropdown('传送类型', DeliveryType, 0);
+        pl.sendForm(fm, (pl, dt) => {
+            if (dt == null) return Other.CloseTell(pl);
+            switch (dt[2]) {
+                case 0:/* ME => TA */
+                    if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
+                    Delivery_Core(pl, mc.getPlayer(OnlinePlayers[dt[0]]), 0, '', 'TA传送至我');
+                    break;
+                case 1:/* TA => ME */
+                    if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
+                    Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 1, '', '传送至TA');
+                    break;
+                case 2:/* TA => Home */
+                    if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
+                    Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 2, { x: Home[pl.realName][dt[1]].x, y: Home[pl.realName][dt[1]].y, z: Home[pl.realName][dt[1]].z, dimid: Home[pl.realName][dt[1]].dimid }, '传送至TA家园');
+                    break;
+            }
+        })
+    }
+    static DeathTransportation(pl) {
+        if (Death.hasOwnProperty(pl.realName)) {
+            pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}`, '确认前往', '返回主页', (pl, res) => {
+                switch (res) {
+                    case true:
+                        pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid));
+                        pl.tell(Gm_Tell + '传送完成！');
+                        break;
+                    case false:
+                        Main(pl);
+                        break;
+                    default:
+                        Other.CloseTell(pl);
+                        break;
+                }
+            })
+        } else {
+            pl.tell(Gm_Tell + '你还没有死亡信息！');
+        }
     }
     static RandomTransportation(pl) {
+        if (!Config.RandomTransmission) return pl.tell(Gm_Tell + '管理员关闭了此功能！');
+        pl.sendModalForm(PLUGINS_JS, `确认执行此操作？`, '确认', '返回', (pl, res) => {
+            switch (res) {
+                case true:
+                    (function (pl) {
+                        pl.tell(Gm_Tell + `准备传送...`);
+                        let Pos_Y = 500;
+                        let to_Pos = new IntPos(RandomNumber(), Pos_Y, RandomNumber(), pl.blockPos.dimid);
+                        let Block_Obj = mc.getBlock(to_Pos);
+                        const BackUpPos = pl.blockPos;
+
+                        pl.teleport(to_Pos);
+                        pl.tell(Gm_Tell + `等待区块加载...`);
+                        const ID = setInterval(() => {
+                            if (pl.blockPos.y != Pos_Y) {
+                                _run();
+                                logger.debug('Start _run')
+                                clearInterval(ID);
+                                return;
+                            }
+                            logger.debug('等待...');
+                        }, 200)
+
+                        async function _run() {
+                            Pos_Y = 301;
+                            pl.tell(Gm_Tell + `寻找安全坐标...`)
+                            for (Pos_Y = Pos_Y; Pos_Y > 0; Pos_Y--) {
+                                if (Block_Obj == null || Block_Obj.type == 'minecraft:air') {
+                                    UpdatePos_Y(Pos_Y);
+                                    Block_Obj = mc.getBlock(to_Pos);
+                                    logger.debug(Pos_Y, Block_Obj);
+                                } else {
+                                    if (Pos_Y < -60 || ["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
+                                        // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
+                                        pl.teleport(BackUpPos);
+                                        pl.tell(Gm_Tell + `查询安全坐标失败！`);
+                                        break;
+                                    } else if (Block_Obj.type != "minecraft:air") {
+                                        UpdatePos_Y(Pos_Y + 1);
+                                        pl.teleport(to_Pos);
+                                        pl.tell(Gm_Tell + `传送完成！`);
+                                        logger.debug(to_Pos);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        function UpdatePos_Y(Y) {
+                            const Back = to_Pos;
+                            to_Pos = new IntPos(Back.x, Y, Back.z, Back.dimid);
+                        }
+                    })(pl)
+                    break;
+                case false:
+                    Main(pl);
+                    break;
+                default:
+                    Other.CloseTell(pl);
+                    break;
+            }
+        })
+        /**
+         * 正负随机数生成
+         * @returns 
+         */
+        function RandomNumber() {
+            const num = Math.floor(Math.random() * (Config.RandomTransferSettings.Max - Config.RandomTransferSettings.Min + 1)) + Config.RandomTransferSettings.Min;
+            return Math.random() < 0.5 ? -num : num;
+        }
     }
     static PersonalSettings(pl) {
+        const fm = Other.CustomForm();
+        fm.addSwitch('接受传送请求', PlayerSeting[pl.realName].AcceptTransmission);
+        fm.addSwitch('传送时二次确认', PlayerSeting[pl.realName].SecondaryConfirmation);
+        pl.sendForm(fm, (pl, dt) => {
+            if (dt == null) return Other.CloseTell(pl);
+            const data = {
+                AcceptTransmission: Boolean(dt[0]).valueOf(),
+                SecondaryConfirmation: Boolean(dt[1]).valueOf()
+            };
+            PlayerSeting[pl.realName] = data;
+            FileOperation.SaveFile();
+            pl.tell(Gm_Tell + '操作已保存');
+        })
     }
 }
 
@@ -488,232 +674,6 @@ function Main(pl, Arry = []) {
     })
 }
 
-
-
-/* 主表单 */
-//todo 2023/5/10 拆分表单模块
-function Mainss(pl) {
-    const fm = Other.SimpleForm();
-    fm.addButton('家园传送', 'textures/ui/village_hero_effect');
-    fm.addButton('公共传送', 'textures/ui/icon_best3');
-    fm.addButton('玩家传送', 'textures/ui/icon_multiplayer');
-    fm.addButton('死亡传送', 'textures/ui/friend_glyph_desaturated');
-    fm.addButton('随机传送', 'textures/ui/mashup_world');
-    fm.addButton('个人设置', 'textures/ui/icon_setting');
-    pl.sendForm(fm, (pl, id) => {
-        switch (id) {
-            case 0:/* 家园传送 */
-                Home_Panel(pl);
-                break;
-            case 1:/* 公共传送 */
-                Warp_Panel(pl);
-                function Warp_Panel(pl) {
-                    if (Warp.length == 0) return pl.tell(Gm_Tell + '无公共传送点！无法继续执行操作！');
-                    SelectAction(pl, Warp, id => {
-                        const Pos = new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid);
-                        if (PlayerSeting[pl.realName].SecondaryConfirmation) {
-                            pl.sendModalForm(PLUGINS_JS, `名称： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${DimidToDimension(Warp[id].dimid)}`, '确认', '返回上一页', (_, res) => {
-                                switch (res) {
-                                    case true:
-                                        if (pl.teleport(Pos)) {
-                                            pl.tell(Gm_Tell + '传送成功！');
-                                        } else {
-                                            pl.tell(Gm_Tell + '传送失败!');
-                                        }
-                                        break;
-                                    case false:
-                                        Warp_Panel(pl);
-                                        break;
-                                    default:
-                                        Other.CloseTell(pl);
-                                        break;
-                                }
-                            });
-                        } else {
-                            if (pl.teleport(Pos)) {
-                                pl.tell(Gm_Tell + '传送成功！');
-                            } else {
-                                pl.tell(Gm_Tell + '传送失败!');
-                            }
-                        }
-                    });
-                    /**
-                     * 选择传送点
-                     * @param {Object} pl 玩家
-                     * @param {Array} Array 按钮数组
-                     * @param {Number} callback 数组索引ID
-                     */
-                    function SelectAction(pl, Array, callback) {
-                        const fm = Other.SimpleForm();
-                        fm.setContent('· 选择一个公共传送点');
-                        Array.forEach(i => {
-                            fm.addButton(`${i.name}\n${DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
-                        });
-                        fm.addButton('返回上一页', 'textures/ui/icon_import');
-                        pl.sendForm(fm, (pl, id) => {
-                            if (id == null) return Other.CloseTell(pl);
-                            if (id == Array.length) return Main(pl);
-                            callback(id);
-                        })
-                    }
-                }
-                break;
-            case 2:/* 玩家传送 */
-                TP_Panel(pl);
-                function TP_Panel(pl) {
-                    const OnlinePlayers = Other.GetOnlinePlayers();
-                    let DeliveryType = Array.of('传送至TA', 'TA传送至我');
-                    let Hone_List = [];
-                    if (Home.hasOwnProperty(pl.realName)) {
-                        if (Home[pl.realName].length !== 0) {
-                            Home[pl.realName].forEach(i => {
-                                Hone_List.push(i.name);
-                            });
-                            DeliveryType.push('TA传送至家');
-                        }
-                    }
-                    const fm = Other.CustomForm();
-                    fm.addDropdown('选择一个玩家', OnlinePlayers, 0);
-                    fm.addDropdown('选择一个家', Hone_List);
-                    fm.addDropdown('传送类型', DeliveryType, 0);
-                    pl.sendForm(fm, (pl, dt) => {
-                        if (dt == null) return Other.CloseTell(pl);
-                        switch (dt[2]) {
-                            case 0:/* ME => TA */
-                                if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                                Delivery_Core(pl, mc.getPlayer(OnlinePlayers[dt[0]]), 0, '', 'TA传送至我');
-                                break;
-                            case 1:/* TA => ME */
-                                if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                                Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 1, '', '传送至TA');
-                                break;
-                            case 2:/* TA => Home */
-                                if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                                Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 2, { x: Home[pl.realName][dt[1]].x, y: Home[pl.realName][dt[1]].y, z: Home[pl.realName][dt[1]].z, dimid: Home[pl.realName][dt[1]].dimid }, '传送至TA家园');
-                                break;
-                        }
-                    })
-                }
-                break;
-            case 3:/* 死亡传送 */
-                ((pl) => {
-                    if (Death.hasOwnProperty(pl.realName)) {
-                        pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}`, '确认前往', '返回主页', (pl, res) => {
-                            switch (res) {
-                                case true:
-                                    pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid));
-                                    pl.tell(Gm_Tell + '传送完成！');
-                                    break;
-                                case false:
-                                    Main(pl);
-                                    break;
-                                default:
-                                    Other.CloseTell(pl);
-                                    break;
-                            }
-                        })
-                    } else {
-                        pl.tell(Gm_Tell + '你还没有死亡信息！');
-                    }
-                })(pl)
-                break;
-            case 4:/* 随机传送 */
-                ((pl) => {
-                    if (!Config.RandomTransmission) return pl.tell(Gm_Tell + '管理员关闭了此功能！');
-                    pl.sendModalForm(PLUGINS_JS, `确认执行此操作？`, '确认', '返回', (pl, res) => {
-                        switch (res) {
-                            case true:
-                                (function (pl) {
-                                    pl.tell(Gm_Tell + `准备传送...`);
-                                    let Pos_Y = 500;
-                                    let to_Pos = new IntPos(RandomNumber(), Pos_Y, RandomNumber(), pl.blockPos.dimid);
-                                    let Block_Obj = mc.getBlock(to_Pos);
-                                    const BackUpPos = pl.blockPos;
-
-                                    pl.teleport(to_Pos);
-                                    pl.tell(Gm_Tell + `等待区块加载...`);
-                                    const ID = setInterval(() => {
-                                        if (pl.blockPos.y != Pos_Y) {
-                                            _run();
-                                            logger.debug('Start _run')
-                                            clearInterval(ID);
-                                            return;
-                                        }
-                                        logger.debug('等待...');
-                                    }, 200)
-
-                                    async function _run() {
-                                        Pos_Y = 301;
-                                        pl.tell(Gm_Tell + `寻找安全坐标...`)
-                                        for (Pos_Y = Pos_Y; Pos_Y > 0; Pos_Y--) {
-                                            if (Block_Obj == null || Block_Obj.type == 'minecraft:air') {
-                                                UpdatePos_Y(Pos_Y);
-                                                Block_Obj = mc.getBlock(to_Pos);
-                                                logger.debug(Pos_Y, Block_Obj);
-                                            } else {
-                                                if (Pos_Y < -60 || ["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
-                                                    // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
-                                                    pl.teleport(BackUpPos);
-                                                    pl.tell(Gm_Tell + `查询安全坐标失败！`);
-                                                    break;
-                                                } else if (Block_Obj.type != "minecraft:air") {
-                                                    UpdatePos_Y(Pos_Y + 1);
-                                                    pl.teleport(to_Pos);
-                                                    pl.tell(Gm_Tell + `传送完成！`);
-                                                    logger.debug(to_Pos);
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    function UpdatePos_Y(Y) {
-                                        const Back = to_Pos;
-                                        to_Pos = new IntPos(Back.x, Y, Back.z, Back.dimid);
-                                    }
-                                })(pl)
-                                break;
-                            case false:
-                                Main(pl);
-                                break;
-                            default:
-                                Other.CloseTell(pl);
-                                break;
-                        }
-                    })
-                    /**
-                     * 正负随机数生成
-                     * @returns 
-                     */
-                    function RandomNumber() {
-                        const num = Math.floor(Math.random() * (Config.RandomTransferSettings.Max - Config.RandomTransferSettings.Min + 1)) + Config.RandomTransferSettings.Min;
-                        return Math.random() < 0.5 ? -num : num;
-                    }
-                })(pl);
-                break;
-            case 5:/* 个人设置 */
-                (function (pl) {
-                    const fm = Other.CustomForm();
-                    fm.addSwitch('接受传送请求', PlayerSeting[pl.realName].AcceptTransmission);
-                    fm.addSwitch('传送时二次确认', PlayerSeting[pl.realName].SecondaryConfirmation);
-                    pl.sendForm(fm, (pl, dt) => {
-                        if (dt == null) return Other.CloseTell(pl);
-                        const data = {
-                            AcceptTransmission: Boolean(dt[0]).valueOf(),
-                            SecondaryConfirmation: Boolean(dt[1]).valueOf()
-                        };
-                        PlayerSeting[pl.realName] = data;
-                        FileOperation.SaveFile();
-                        pl.tell(Gm_Tell + '操作已保存');
-                    })
-                })(pl)
-                break;
-            default:
-                Other.CloseTell(pl);
-                break;
-        }
-    })
-}
 
 /* 设置GUI */
 function Seting(pl) {
@@ -998,7 +958,7 @@ function Seting(pl) {
  * @param {Number} Money 
  * @returns 
  */
-function You_Money_is_My_Money__My_Money_is_My_Money (pl, delMoney) {
+function You_Money_is_My_Money__My_Money_is_My_Money(pl, delMoney) {
     if (delMoney == 0 || !Config.Money.Enable) {
         return null;
     }
