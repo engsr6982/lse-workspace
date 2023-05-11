@@ -78,12 +78,12 @@ class FileOperation {
         if (!file.exists(this._MergeRequest_FilePath)) file.writeTo(this._MergeRequest_FilePath, '[]');
         if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(
             [
-                { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "", "open": "" },
-                { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "", "open": "" },
-                { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "", "open": "" },
-                { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "", "open": "" },
-                { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "", "open": "" },
-                { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "", "open": "" }
+                { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
+                { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
+                { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
+                { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
+                { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
+                { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }
             ]
             , null, '\t'
         ))
@@ -450,7 +450,7 @@ class Forms {
                             }
                             break;
                         case false:
-                            Warp_Panel(pl);
+                            Forms.PublicTransportation(pl);
                             break;
                         default:
                             Other.CloseTell(pl);
@@ -480,7 +480,7 @@ class Forms {
             fm.addButton('返回上一页', 'textures/ui/icon_import');
             pl.sendForm(fm, (pl, id) => {
                 if (id == null) return Other.CloseTell(pl);
-                if (id == Array.length) return Main(pl);
+                if (id == Array.length) return Main(pl, MainUI);
                 callback(id);
             })
         }
@@ -528,7 +528,7 @@ class Forms {
                         pl.tell(Gm_Tell + '传送完成！');
                         break;
                     case false:
-                        Main(pl);
+                        Main(pl, MainUI);
                         break;
                     default:
                         Other.CloseTell(pl);
@@ -595,7 +595,7 @@ class Forms {
                     })(pl)
                     break;
                 case false:
-                    Main(pl);
+                    Main(pl, MainUI);
                     break;
                 default:
                     Other.CloseTell(pl);
@@ -629,7 +629,12 @@ class Forms {
 }
 
 const MAPPING_TABLE = {
-    HomeUi: HomeForms.Home_Panel
+    HomeUi: HomeForms.Home_Panel,
+    WarpUi: Forms.PublicTransportation,
+    PlayerUi: Forms.PlayerTransportation,
+    DeathUi: Forms.DeathTransportation,
+    RandomUi: Forms.RandomTransportation,
+    SetingUi: Forms.PersonalSettings
 }
 
 /**
