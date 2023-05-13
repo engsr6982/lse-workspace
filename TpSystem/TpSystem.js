@@ -7,10 +7,10 @@ const PLUGINS_VERSION = [0, 0, 1];
 const PLUGINS_ZZ = "PPOUI";
 const PLUGINS_URL = "";
 ll.registerPlugin(
-    /* name */ PLUGINS_NAME,
-    /* introduction */ PLUGINS_JS,
-    /* version */ PLUGINS_VERSION,
-    /* otherInformation */ {
+        /* name */ PLUGINS_NAME,
+        /* introduction */ PLUGINS_JS,
+        /* version */ PLUGINS_VERSION,
+        /* otherInformation */ {
         "作者": PLUGINS_ZZ,
         "发布网站": PLUGINS_URL
     }
@@ -28,6 +28,7 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
     })
 }
 
+
 const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 
 /**配置文件 */let Config = {};
@@ -37,6 +38,8 @@ const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 /**死亡信息 */let Death = {};
 /**合并请求 */let MergeRequest = [];
 /**表单UI */let MainUI = {};
+/**传送缓存 */let TpCache = [];
+//todo 缓存传送
 
 /**文件操作 */
 class FileOperation {
@@ -110,43 +113,148 @@ class FileOperation {
         this.ReadFile();
     }
 };
-
-FileOperation.ReadFile();
-
-
-/* 命令注册 */
-//todo 23/5/10 重新注册命令  命令接受/拒绝请求
-//todo 自定义顶层命令
-(() => {
-    const Cmd = mc.newCommand('tps', '传送系统GUI', PermType.Any);
-    Cmd.setEnum('Option', ['gui', 'mgr', 'reload']);
-    Cmd.optional('Selected', ParamType.Enum, 'Option', 1);
-    Cmd.overload(['Selected']);
-    Cmd.setCallback((_, ori, out, res) => {
-        logger.debug(_, ori, out, res);
-        switch (res.Selected) {
-            case 'mgr':
-                if (ori.type !== 0) return out.error('此命令仅限玩家执行');
-                if (!ori.player.isOP()) return out.error('仅限管理员使用');
-                Seting(ori.player);
-                break;
-            case 'reload':
-                if (ori.type !== 7) return out.error('此命令仅限控制台执行');
-                FileOperation.SaveFile();
-                out.success('---操作完成---')
-                break;
-            default:
-                if (ori.type !== 0) return out.error('此命令仅限玩家执行');
-                Main(ori.player, MainUI);
-                break;
+/**经济模块 */// todo 23/5/10 对接经济
+class Money_Mod {
+    /**
+     * 获取玩家经济
+     * @param {Object} pl 玩家对象
+     * @returns 
+     */
+    static getEconomy(pl) {
+        if (Config.Money.LLMoney) {
+            return money.get(pl.xuid);
+        } else {
+            return pl.getScore(Config.Money.MoneyName);
         }
-    })
-    Cmd.setup();
-})()
-
-/**
- * 家园传送表单
- */
+    }
+    /**
+     * 扣除经济
+     * @param {Object} pl 
+     * @param {Number} Money 
+     * @returns 
+     */
+    static DeductEconomy(pl, delMoney) {
+        if (delMoney == 0 || !Config.Money.Enable) {
+            return null;
+        }
+        if (Config.Money.LLMoney) {
+            // LL
+            if (money.get(pl.xuid) >= delMoney) {
+                // 经济充足
+                return money.reduce(pl.xuid, Number(delMoney));
+            } else {
+                return false;
+            }
+        } else {
+            // Socre
+            if (pl.getScore(Config.Money.MoneyName) >= delMoney) {
+                return pl.reduceScore(Number(delMoney));
+            } else {
+                return false
+            }
+        }
+    }
+}
+/**时间模块 */
+class Time_Mod {
+    /**
+     *  根据传入日期时间判断
+     * @param {String} time 日期  2023-01-01 10:30:20
+     * @returns true/1 解 | false/0 封
+     */
+    static CheckTime(time) {
+        if (new Date(time).getTime() <= new Date().getTime()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * 获取结束时间
+     * @param {number} time 时间（单位：秒或分钟）
+     * @param {string} [unit='minute'] 时间单位，可选值为 'second' 或 'minute'，默认为 'minute'
+     * @returns {string} 格式化后的结束时间字符串
+     */
+    static getEndTimes(time, unit = 'minute') {
+        const date = new Date(Date.now() + time * (unit === 'second' ? 1000 : 60000));
+        const y = date.getFullYear();
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const d = date.getDate().toString().padStart(2, '0');
+        const h = date.getHours().toString().padStart(2, '0');
+        const i = date.getMinutes().toString().padStart(2, '0');
+        const s = date.getSeconds().toString().padStart(2, '0');
+        return `${y}-${m}-${d} ${h}:${i}:${s}`;
+    }
+}
+/**其他模块 */
+class Other {
+    /**
+     * Dimid转中文维度
+     * @param {Number} dimension Dimid
+     * @returns 
+     */
+    static DimidToDimension(dimension) {
+        switch (dimension) {
+            case 0: return '主世界';
+            case 1: return '地狱';
+            case 2: return '末地';
+            default: return '未知';
+        }
+    }
+    /**
+     * 位随机ID
+     * @returns ID
+     */
+    static RandomID(num = 16) {
+        let str = '';
+        const char = 'QWERTYUIOPASDFGHJKLZXCVBNM';
+        for (let i = 0; i < num; i++) {
+            let index = Math.floor(Math.random() * char.length);
+            str += char[index];
+        }
+        return str;
+    }
+    /**
+     * 获取所有在线玩家名
+     * @returns Array[Name, ...]
+     */
+    static GetOnlinePlayers() {
+        let OnlinePlayers = [];
+        mc.getOnlinePlayers().forEach(pl => {
+            if (pl.isSimulatedPlayer()) return;
+            OnlinePlayers.push(pl.realName);
+        })
+        return OnlinePlayers;
+    }
+    /**
+     * 按钮表单
+     * @returns 
+     */
+    static SimpleForm() {
+        const fm = mc.newSimpleForm();
+        fm.setTitle(PLUGINS_JS);
+        fm.setContent(`· 选择一个操作`);
+        return fm;
+    }
+    /**
+     * 自定义表单
+     * @returns 
+     */
+    static CustomForm() {
+        const fm = mc.newCustomForm();
+        fm.setTitle(PLUGINS_JS);
+        return fm;
+    }
+    /**
+     * 放弃表单
+     * @param {Object} pl 玩家对象
+     */
+    static CloseTell(pl) {
+        pl.tell(Gm_Tell + `表单已放弃`);
+    }
+}
+/**家园传送表单 */
 class HomeForms {
     static Home_Panel(pl) {
         const fm = Other.SimpleForm();
@@ -209,7 +317,7 @@ class HomeForms {
                 HomeForms.SelectAction(pl, Home[pl.realName], id => {
                     const Pos = new IntPos(Home[pl.realName][id].x, Home[pl.realName][id].y, Home[pl.realName][id].z, Home[pl.realName][id].dimid);
                     if (PlayerSeting[pl.realName].SecondaryConfirmation) {
-                        pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`, '确认', '返回上一页', (_, res) => {
+                        pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`, '确认', '返回上一页', (_, res) => {
                             switch (res) {
                                 case true:
                                     if (pl.teleport(Pos)) {
@@ -255,7 +363,7 @@ class HomeForms {
                                 EditHomeName(pl);
                                 function EditHomeName(pl) {
                                     const fm = Other.CustomForm();
-                                    fm.addLabel(`名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`)
+                                    fm.addLabel(`名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`)
                                     fm.addInput('修改家名称', 'String', Home[pl.realName][id].name);
                                     pl.sendForm(fm, (pl, dt) => {
                                         if (dt == null) return Other.CloseTell(pl);
@@ -294,7 +402,7 @@ class HomeForms {
         if (Home.hasOwnProperty(pl.realName)) {
             if (Home[pl.realName].length !== 0) {
                 HomeForms.SelectAction(pl, Home[pl.realName], id => {
-                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}`, '确认删除', '返回上一页', (_, res) => {
+                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`, '确认删除', '返回上一页', (_, res) => {
                         switch (res) {
                             case true:
                                 Home[pl.realName].splice(id, 1);
@@ -330,7 +438,7 @@ class HomeForms {
                         if (Home.hasOwnProperty(pl.realName)) {
                             if (Home[pl.realName].length !== 0) {
                                 HomeForms.SelectAction(pl, Home[pl.realName], (id) => {
-                                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${DimidToDimension(Home[pl.realName][id].dimid)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
+                                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
                                         switch (res) {
                                             case true:
                                                 MergeRequest.push({
@@ -376,7 +484,7 @@ class HomeForms {
                             if (id == AllButtons.length) return MergeRequest_UI(pl);
                             const GUID = AllButtons[id].guid;
                             const index = MergeRequest.findIndex(i => i.guid === GUID);
-                            pl.sendModalForm(PLUGINS_JS, `时间: ${MergeRequest[index].time}\nGUID: ${MergeRequest[index].guid}\n\n名称： ${MergeRequest[index].data.name}\n坐标： ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}\n维度： ${DimidToDimension(MergeRequest[index].data.dimid)}`, '撤销此请求', '返回上一页', (_, res) => {
+                            pl.sendModalForm(PLUGINS_JS, `时间: ${MergeRequest[index].time}\nGUID: ${MergeRequest[index].guid}\n\n名称： ${MergeRequest[index].data.name}\n坐标： ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}\n维度： ${Other.DimidToDimension(MergeRequest[index].data.dimid)}`, '撤销此请求', '返回上一页', (_, res) => {
                                 switch (res) {
                                     case true:
                                         MergeRequest.splice(index, 1);
@@ -420,7 +528,7 @@ class HomeForms {
         const fm = Other.SimpleForm();
         fm.setContent('· 选择一个家');
         Array.forEach(i => {
-            fm.addButton(`${i.name}\n${DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
+            fm.addButton(`${i.name}\n${Other.DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
         });
         fm.addButton('返回上一页', 'textures/ui/icon_import');
         pl.sendForm(fm, (pl, id) => {
@@ -430,17 +538,14 @@ class HomeForms {
         })
     }
 }
-
-/**
- * 其他表单
- */
+/**其他表单 */
 class Forms {
     static PublicTransportation(pl) {
         if (Warp.length == 0) return pl.tell(Gm_Tell + '无公共传送点！无法继续执行操作！');
         SelectAction(pl, Warp, id => {
             const Pos = new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid);
             if (PlayerSeting[pl.realName].SecondaryConfirmation) {
-                pl.sendModalForm(PLUGINS_JS, `名称： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${DimidToDimension(Warp[id].dimid)}`, '确认', '返回上一页', (_, res) => {
+                pl.sendModalForm(PLUGINS_JS, `名称： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${Other.DimidToDimension(Warp[id].dimid)}`, '确认', '返回上一页', (_, res) => {
                     switch (res) {
                         case true:
                             if (pl.teleport(Pos)) {
@@ -475,7 +580,7 @@ class Forms {
             const fm = Other.SimpleForm();
             fm.setContent('· 选择一个公共传送点');
             Array.forEach(i => {
-                fm.addButton(`${i.name}\n${DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
+                fm.addButton(`${i.name}\n${Other.DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
             });
             fm.addButton('返回上一页', 'textures/ui/icon_import');
             pl.sendForm(fm, (pl, id) => {
@@ -521,7 +626,7 @@ class Forms {
     }
     static DeathTransportation(pl) {
         if (Death.hasOwnProperty(pl.realName)) {
-            pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}`, '确认前往', '返回主页', (pl, res) => {
+            pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${Other.DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}`, '确认前往', '返回主页', (pl, res) => {
                 switch (res) {
                     case true:
                         pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid));
@@ -544,55 +649,7 @@ class Forms {
         pl.sendModalForm(PLUGINS_JS, `确认执行此操作？`, '确认', '返回', (pl, res) => {
             switch (res) {
                 case true:
-                    (function (pl) {
-                        pl.tell(Gm_Tell + `准备传送...`);
-                        let Pos_Y = 500;
-                        let to_Pos = new IntPos(RandomNumber(), Pos_Y, RandomNumber(), pl.blockPos.dimid);
-                        let Block_Obj = mc.getBlock(to_Pos);
-                        const BackUpPos = pl.blockPos;
-
-                        pl.teleport(to_Pos);
-                        pl.tell(Gm_Tell + `等待区块加载...`);
-                        const ID = setInterval(() => {
-                            if (pl.blockPos.y != Pos_Y) {
-                                _run();
-                                logger.debug('Start _run')
-                                clearInterval(ID);
-                                return;
-                            }
-                            logger.debug('等待...');
-                        }, 200)
-
-                        async function _run() {
-                            Pos_Y = 301;
-                            pl.tell(Gm_Tell + `寻找安全坐标...`)
-                            for (Pos_Y = Pos_Y; Pos_Y > 0; Pos_Y--) {
-                                if (Block_Obj == null || Block_Obj.type == 'minecraft:air') {
-                                    UpdatePos_Y(Pos_Y);
-                                    Block_Obj = mc.getBlock(to_Pos);
-                                    logger.debug(Pos_Y, Block_Obj);
-                                } else {
-                                    if (Pos_Y < -60 || ["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
-                                        // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
-                                        pl.teleport(BackUpPos);
-                                        pl.tell(Gm_Tell + `查询安全坐标失败！`);
-                                        break;
-                                    } else if (Block_Obj.type != "minecraft:air") {
-                                        UpdatePos_Y(Pos_Y + 1);
-                                        pl.teleport(to_Pos);
-                                        pl.tell(Gm_Tell + `传送完成！`);
-                                        logger.debug(to_Pos);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        function UpdatePos_Y(Y) {
-                            const Back = to_Pos;
-                            to_Pos = new IntPos(Back.x, Y, Back.z, Back.dimid);
-                        }
-                    })(pl)
+                    Forms.RandomTeleportCore(pl);
                     break;
                 case false:
                     Main(pl, MainUI);
@@ -602,14 +659,6 @@ class Forms {
                     break;
             }
         })
-        /**
-         * 正负随机数生成
-         * @returns 
-         */
-        function RandomNumber() {
-            const num = Math.floor(Math.random() * (Config.RandomTransferSettings.Max - Config.RandomTransferSettings.Min + 1)) + Config.RandomTransferSettings.Min;
-            return Math.random() < 0.5 ? -num : num;
-        }
     }
     static PersonalSettings(pl) {
         const fm = Other.CustomForm();
@@ -626,7 +675,61 @@ class Forms {
             pl.tell(Gm_Tell + '操作已保存');
         })
     }
+    static async RandomTeleportCore(pl) {
+        pl.tell(Gm_Tell + `准备传送...`);
+        let Pos_Y = 500;
+        let to_Pos = new IntPos(RandomCoordinates(), Pos_Y, RandomCoordinates(), pl.blockPos.dimid);
+        let Block_Obj = mc.getBlock(to_Pos);
+        const BackUpPos = pl.blockPos;
+
+        pl.teleport(to_Pos);
+        pl.tell(Gm_Tell + `等待区块加载...`);
+        const ID = setInterval(() => {
+            if (pl.blockPos.y != Pos_Y) {
+                _run();
+                logger.debug('Start _run')
+                clearInterval(ID);
+                return;
+            }
+            logger.debug('等待...');
+        }, 200)
+
+        async function _run() {
+            Pos_Y = 301;
+            pl.tell(Gm_Tell + `寻找安全坐标...`)
+            for (Pos_Y = Pos_Y; Pos_Y > 0; Pos_Y--) {
+                if (Block_Obj == null || Block_Obj.type == 'minecraft:air') {
+                    UpdatePos_Y(Pos_Y);
+                    Block_Obj = mc.getBlock(to_Pos);
+                    logger.debug(Pos_Y, Block_Obj);
+                } else {
+                    if (Pos_Y < -60 || ["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
+                        // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
+                        pl.teleport(BackUpPos);
+                        pl.tell(Gm_Tell + `查询安全坐标失败！`);
+                        break;
+                    } else if (Block_Obj.type != "minecraft:air") {
+                        UpdatePos_Y(Pos_Y + 1);
+                        pl.teleport(to_Pos);
+                        pl.tell(Gm_Tell + `传送完成！`);
+                        logger.debug(to_Pos);
+                        break;
+                    }
+                }
+            }
+        }
+        function UpdatePos_Y(Y) {
+            const Back = to_Pos;
+            to_Pos = new IntPos(Back.x, Y, Back.z, Back.dimid);
+        }
+        function RandomCoordinates() {
+            const num = Math.floor(Math.random() * (Config.RandomTransferSettings.Max - Config.RandomTransferSettings.Min + 1)) + Config.RandomTransferSettings.Min;
+            return Math.random() < 0.5 ? -num : num;
+        }
+    }
 }
+
+FileOperation.ReadFile();
 
 const MAPPING_TABLE = {
     HomeUi: HomeForms.Home_Panel,
@@ -637,29 +740,109 @@ const MAPPING_TABLE = {
     SetingUi: Forms.PersonalSettings
 }
 
+/* 命令注册 */
+//todo 23/5/10 重新注册命令  命令接受/拒绝请求
+{
+    const Cmd = mc.newCommand(Config.Command.name, Config.Command.Describe, PermType.Any);
+    //tps mgr
+    Cmd.setEnum('mgr', ['mgr']);
+    Cmd.mandatory('action', ParamType.Enum, 'mgr', 1);
+    Cmd.overload(['mgr']);
+    //tps random
+    Cmd.setEnum('random', ['random']);
+    Cmd.mandatory('action', ParamType.Enum, 'random', 1);
+    Cmd.overload(['random']);
+    //tps reload
+    Cmd.setEnum('reload', ['reload']);
+    Cmd.mandatory('action', ParamType.Enum, 'reload', 1);
+    Cmd.overload(['reload']);
+    //tps accept
+    Cmd.setEnum('accept', ['accept']);
+    Cmd.mandatory('action', ParamType.Enum, 'accept', 1);
+    Cmd.overload(['accept']);
+    //tps deny
+    Cmd.setEnum('deny', ['deny']);
+    Cmd.mandatory('action', ParamType.Enum, 'deny', 1);
+    Cmd.overload(['deny']);
+    //tps tp <player> <player>
+    Cmd.setEnum('tp', ['tp']);
+    Cmd.mandatory('action', ParamType.Enum, 'tp', 1);
+    Cmd.mandatory('from', ParamType.Player);
+    Cmd.mandatory('to', ParamType.Player);
+    Cmd.overload(['tp', 'from', 'to']);
+    //tps refresh
+    Cmd.setEnum('refresh', ['refresh']);
+    Cmd.mandatory('action', ParamType.Enum, 'refresh', 1);
+    Cmd.overload(['refresh']);
+    // tps [gui] [home|warp|player|death|random|seting]
+    Cmd.setEnum("gui", ['gui']);
+    Cmd.optional('action', ParamType.Enum, 'gui', 1);
+    Cmd.setEnum('gui_enum', ['home', 'warp', 'player', 'death', 'random', 'seting']);
+    Cmd.optional('gui_name', ParamType.Enum, 'gui_enum', 'gui_enum', 1);
+    Cmd.overload(['gui', 'gui_enum']);
+    //回调
+    Cmd.setCallback((_, ori, out, res) => {
+        logger.debug('\n', JSON.stringify(res, null, '\t'));
+        switch (res.action) {
+            case 'mgr':
+                if (ori.type !== 0) return out.error('此命令仅限玩家执行');
+                if (!ori.player.isOP()) return out.error('仅限管理员使用');
+                Seting(ori.player);
+                break;
+            case 'reload':
+                if (ori.type !== 7) return out.error('此命令仅限控制台执行');
+                FileOperation.SaveFile();
+                out.success('---操作完成---');
+                break;
+            case 'gui':
+                break;
+            case 'accept':
+                break;
+            case "deny":
+                break;
+            case 'random':
+                if (ori.type !== 0) return out.error('此命令仅限玩家执行');
+                Forms.RandomTeleportCore(ori.player);
+                break;
+            case 'refresh':
+                if (ori.type !== 7) return out.error('此命令仅限控制台执行');
+                FileOperation.ReadFile();
+                out.success('---操作完成---');
+                break;
+            case 'tp':
+                if (ori.type !== 0) return out.error('此命令仅限玩家执行');
+                const from = res.from[0];
+                const to = res.to[0];
+                Delivery_Core(from, to);
+                break;
+            default:
+                if (ori.type !== 0) return out.error('此命令仅限玩家执行');
+                Main(ori.player, MainUI);
+                break;
+        }
+    })
+    Cmd.setup();
+}
+mc.spawnSimulatedPlayer('123', new IntPos(10, 70, 10, 1))
+
 /**
  * GUI主页
  * @param {Object} pl 玩家对象
- * @param {Array} Arry 菜单数组
+ * @param {Array} Array 菜单数组
  */
-function Main(pl, Arry = []) {
+function Main(pl, Array = []) {
     const fm = Other.SimpleForm();
     fm.setContent(`· 选择一个操作`);
-    const Bt = Arry;
-    Bt.forEach((i) => {
+    Array.forEach((i) => {
         fm.addButton(i.name, i.image);
     });
-    if (Bt.length == 0) return pl.tell(`数组为空！ 无法发送表单！`);
+    if (Array.length == 0) return pl.tell(`数组为空！ 无法发送表单！`);
     pl.sendForm(fm, (pl, id) => {
         if (id == null) return Other.CloseTell(pl);
-        const sw = Bt[id];
+        const sw = Array[id];
         switch (sw.type) {
-            case "inside":
-                MAPPING_TABLE[sw.open](pl);
-                break;
-            case "command":
-                pl.runcmd(sw.open);
-                break;
+            case "inside": return MAPPING_TABLE[sw.open](pl);
+            case "command": return pl.runcmd(sw.open);
             case "form":
                 if (!File.exists(_FilePath + `GUI\\${sw.open}.json`)) {
                     File.writeTo(_FilePath + `GUI\\${sw.open}.json`, '[]');
@@ -671,14 +854,14 @@ function Main(pl, Arry = []) {
                     Main(pl, Menu_Arry);
                 } catch (e) {
                     if (e instanceof SyntaxError) {
-                        return pl.tell(`§c§l文件<${sw.open}.json>语法错误！`, 5);
+                        pl.tell(`§c§l文件<${sw.open}.json>语法错误！`, 5);
+                        throw new SyntaxError(e);
                     }
                 };
                 break;
         }
     })
 }
-
 
 /* 设置GUI */
 function Seting(pl) {
@@ -730,7 +913,7 @@ function Seting(pl) {
                             fm.addButton('返回上一页', 'textures/ui/icon_import');
                             fm.addButton('新建家', 'textures/ui/color_plus');
                             Home[AllPlayerData[id]].forEach(i => {
-                                fm.addButton(`${i.name}\n${DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
+                                fm.addButton(`${i.name}\n${Other.DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
                             });
                             pl.sendForm(fm, (pl, id1) => {
                                 if (id1 == null) return Other.CloseTell(pl);
@@ -761,7 +944,7 @@ function Seting(pl) {
                                     id1 = id1 - 2;/* 去除前面两个按钮 */
                                     pl.sendSimpleForm(
                                         PLUGINS_JS,
-                                        `当前正在编辑：${AllPlayerData[id]}\n名称： ${Home[AllPlayerData[id]][id1].name}\n坐标： ${Home[AllPlayerData[id]][id1].x},${Home[AllPlayerData[id]][id1].y},${Home[AllPlayerData[id]][id1].z}\n维度： ${DimidToDimension(Home[AllPlayerData[id]][id1].dimid)}`,
+                                        `当前正在编辑：${AllPlayerData[id]}\n名称： ${Home[AllPlayerData[id]][id1].name}\n坐标： ${Home[AllPlayerData[id]][id1].x},${Home[AllPlayerData[id]][id1].y},${Home[AllPlayerData[id]][id1].z}\n维度： ${Other.DimidToDimension(Home[AllPlayerData[id]][id1].dimid)}`,
                                         ["前往家", "编辑家", "删除家", '返回上一页'],
                                         ["textures/ui/send_icon", "textures/ui/book_edit_default", "textures/ui/trash_default", 'textures/ui/icon_import'],
                                         (pl, id2) => {
@@ -820,7 +1003,7 @@ function Seting(pl) {
                     fm.addButton('返回上一页', 'textures/ui/icon_import');
                     fm.addButton('新建公共传送点', 'textures/ui/color_plus');
                     Warp.forEach(i => {
-                        fm.addButton(`${i.name}\n${DimidToDimension(i.dimid)} X: ${i.x} Y: ${i.y} Z: ${i.z}`);
+                        fm.addButton(`${i.name}\n${Other.DimidToDimension(i.dimid)} X: ${i.x} Y: ${i.y} Z: ${i.z}`);
                     });
                     pl.sendForm(fm, (pl, id) => {
                         if (id == null) return Other.CloseTell(pl);
@@ -851,7 +1034,7 @@ function Seting(pl) {
                             id = id - 2;/* 去除前面两个按钮 */
                             pl.sendSimpleForm(
                                 PLUGINS_JS,
-                                `当前正在编辑： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${DimidToDimension(Warp[id].dimid)}`,
+                                `当前正在编辑： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${Other.DimidToDimension(Warp[id].dimid)}`,
                                 ["前往此传送点", "编辑此传送点", "删除此传送点", '返回上一页'],
                                 ["textures/ui/send_icon", "textures/ui/book_edit_default", "textures/ui/trash_default", 'textures/ui/icon_import'],
                                 (pl, id1) => {
@@ -905,14 +1088,14 @@ function Seting(pl) {
                 function MergeRequestPanel(pl) {
                     const fm = Other.SimpleForm();
                     MergeRequest.forEach(i => {
-                        fm.addButton(`[玩家]  ${i.player}\n${i.data.name}  ${DimidToDimension(i.data.dimid)} ${i.data.x},${i.data.y},${i.data.z}`)
+                        fm.addButton(`[玩家]  ${i.player}\n${i.data.name}  ${Other.DimidToDimension(i.data.dimid)} ${i.data.x},${i.data.y},${i.data.z}`)
                     });
                     fm.addButton('返回上一页', 'textures/ui/icon_import');
                     pl.sendForm(fm, (pl, id) => {
                         if (id == null) return Other.CloseTell(pl);
                         if (id == MergeRequest.length) return Seting(pl);
                         pl.sendSimpleForm(PLUGINS_JS,
-                            `[玩家]: ${MergeRequest[id].player}\n[时间]: ${MergeRequest[id].time}\n[GUID]: ${MergeRequest[id].guid}\n[坐标]: ${MergeRequest[id].data.name}  ${DimidToDimension(MergeRequest[id].data.dimid)} ${MergeRequest[id].data.x},${MergeRequest[id].data.y},${MergeRequest[id].data.z}`,
+                            `[玩家]: ${MergeRequest[id].player}\n[时间]: ${MergeRequest[id].time}\n[GUID]: ${MergeRequest[id].guid}\n[坐标]: ${MergeRequest[id].data.name}  ${Other.DimidToDimension(MergeRequest[id].data.dimid)} ${MergeRequest[id].data.x},${MergeRequest[id].data.y},${MergeRequest[id].data.z}`,
                             ['同意并加入公共传送点', '拒绝并删除', '前往此传送点', '返回上一页'],
                             ['textures/ui/realms_green_check', 'textures/ui/realms_red_x', 'textures/ui/send_icon', 'textures/ui/icon_import'],
                             (pl, id1) => {
@@ -956,49 +1139,6 @@ function Seting(pl) {
         }
     })
 }
-
-/**
- * 扣除经济
- * @param {Object} pl 
- * @param {Number} Money 
- * @returns 
- */
-function You_Money_is_My_Money__My_Money_is_My_Money(pl, delMoney) {
-    if (delMoney == 0 || !Config.Money.Enable) {
-        return null;
-    }
-    if (Config.Money.LLMoney) {
-        // LL
-        if (pl.getMoney() > delMoney) {
-            // 经济充足
-        } else {
-            return false;
-        }
-    } else {
-        // Socre
-    }
-}
-
-/**
- * Dimid转中文维度
- * @param {Number} dimension Dimid
- * @returns 
- */
-function DimidToDimension(dimension) {
-    switch (dimension) {
-        case 0:
-            return '主世界';
-        case 1:
-            return '地狱';
-        case 2:
-            return '末地';
-        default:
-            return '未知';
-    }
-}
-
-// todo 23/5/10 对接经济
-// todo 自定义表单
 
 /**
  * 传送核心 
@@ -1074,61 +1214,7 @@ function Delivery_Core(from, to, type, pos, txt) {
     }
 }
 
-
-class Other {
-    /**
-     * 位随机ID
-     * @returns ID
-     */
-    static RandomID(num = 16) {
-        let str = '';
-        const char = 'QWERTYUIOPASDFGHJKLZXCVBNM';
-        for (let i = 0; i < num; i++) {
-            let index = Math.floor(Math.random() * char.length);
-            str += char[index];
-        }
-        return str;
-    }
-    /**
-     * 获取所有在线玩家名
-     * @returns Array[Name, ...]
-     */
-    static GetOnlinePlayers() {
-        let OnlinePlayers = [];
-        mc.getOnlinePlayers().forEach(pl => {
-            if (pl.isSimulatedPlayer()) return;
-            OnlinePlayers.push(pl.realName);
-        })
-        return OnlinePlayers;
-    }
-    /**
-     * 按钮表单
-     * @returns 
-     */
-    static SimpleForm() {
-        const fm = mc.newSimpleForm();
-        fm.setTitle(PLUGINS_JS);
-        fm.setContent(`· 选择一个操作`);
-        return fm;
-    }
-    /**
-     * 自定义表单
-     * @returns 
-     */
-    static CustomForm() {
-        const fm = mc.newCustomForm();
-        fm.setTitle(PLUGINS_JS);
-        return fm;
-    }
-    /**
-     * 放弃表单
-     * @param {Object} pl 玩家对象
-     */
-    static CloseTell(pl) {
-        pl.tell(Gm_Tell + `表单已放弃`);
-    }
-}
-
+// 注册监听器
 {
     /* 监听进服事件 */
     mc.listen('onJoin', (pl) => {
