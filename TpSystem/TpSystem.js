@@ -1264,27 +1264,33 @@ function Seting(pl) {
 }
 
 /**
- * 传送核心 
- * @param {PlayerEntity} from 发送方玩家 
- * @param {PlayerEntity} to 接收方玩家 
+ * 传送核心函数 
+ * @param {Object} from 发送方玩家 
+ * @param {Object} to 接收方玩家 
  * @param {Number} type 传送类型 0：收方接收表单  1：发方接受表单
  * @param {Object} pos 目标坐标 {x: 1, y: 1, z: 1, dimid: 0}
  * @param {String} txt 类型描述 
  */
 function Delivery_Core(from, to, type, pos, txt) {
+    // 根据传入的目标坐标构建一个IntPos对象
     let targetPos;
     if (pos && pos !== '') {
         targetPos = new IntPos(pos.x, pos.y, pos.z, pos.dimid);
     }
+    // 根据传入的类型确定是发起方还是接收方发送表单
     let requestData;
     if (type == 0) {
+        // 告诉发送方玩家发送请求
         from.tell(Gm_Tell + `已向[${to.realName}]发送请求，等待对方接受...`);
+        // 构造请求数据
         requestData = `\n      来自 ${from.realName} 的传送请求\n      类型: ${txt}\n    `;
     } else {
+        // 告诉接收方玩家发送请求
         to.tell(Gm_Tell + `已向[${from.realName}]发送请求，等待对方接受...`);
+        // 构造请求数据
         requestData = `\n      来自 ${to.realName} 的传送请求\n      类型: ${txt}\n    `;
     }
-    // 定义按钮
+    // 构建表单按钮和图片数组
     const Button = {
         options: [
             '接受请求',
@@ -1295,14 +1301,17 @@ function Delivery_Core(from, to, type, pos, txt) {
             'textures/ui/realms_red_x'
         ]
     }
+    // 定义表单回调函数
     const onReceiveRequest = (_pl, id) => {
         switch (id) {
             case 0:/* 接受请求 */
+                // 如果有目标坐标就使用目标坐标传送，否则使用接收方玩家的坐标传送
                 if (targetPos) {
                     from.teleport(targetPos);
                 } else {
                     from.teleport(to.blockPos);
                 }
+                // 根据类型告诉玩家传送已开始
                 if (type == 0) {
                     from.tell(`${Gm_Tell}${to.realName}已接受您的传送请求，开始传送...`);
                 } else {
@@ -1310,6 +1319,7 @@ function Delivery_Core(from, to, type, pos, txt) {
                 }
                 break;
             case 1:/* 拒绝请求 */
+                // 告诉玩家传送请求已被拒绝
                 if (type == 0) {
                     from.tell(`${Gm_Tell}${to.realName}已拒绝您的传送请求`);
                 } else {
@@ -1321,7 +1331,7 @@ function Delivery_Core(from, to, type, pos, txt) {
                 break;
         }
     };
-    //发送表单
+    // 根据类型发送表单给对应的玩家
     if (type == 0) {
         /* 发送给目标玩家 */
         to.sendSimpleForm(
@@ -1341,6 +1351,9 @@ function Delivery_Core(from, to, type, pos, txt) {
             onReceiveRequest
         );
     }
+    function sendError() {
+        
+    }
 }
 
 // 注册监听器
@@ -1349,7 +1362,7 @@ function Delivery_Core(from, to, type, pos, txt) {
     mc.listen('onJoin', (pl) => {
         if (pl.isSimulatedPlayer()) return;
         if (!PlayerSeting.hasOwnProperty(pl.realName)) {
-            logger.warn(`玩家${pl.realName}的配置不存在，正在新建配置...`);
+            logger.warn(`玩家${ pl.realName } 的配置不存在，正在新建配置...`);
             PlayerSeting[pl.realName] = {
                 AcceptTransmission: true,
                 SecondaryConfirmation: true
