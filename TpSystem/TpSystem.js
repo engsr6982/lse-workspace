@@ -32,46 +32,46 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
 const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 
 /**配置文件 */let Config = {
-    "Command": {
-        "name": "tps",
-        "Describe": "传送系统"
-    },
-    "Money": {
-        "Enable": true,
-        "LLMoney": true,
-        "MoneyName": "money"
-    },
-    "Home": {
-        "Enable": true,
-        "CreateHome": 0,
-        "GoHome": 0,
-        "EditHome": 0,
-        "DeleteHome": 0
-    },
-    "Warp": {
-        "Enable": true,
-        "GoWarp": 0
-    },
-    "Player": {
-        "Enable": true,
-        "Player_Player": 0,
-        "Player_Home": 0
-    },
-    "Delath": {
-        "Enable": true,
-        "GoDelath": 0
-    },
-    "TPR": {
-        "Enable": true,
-        "Min": 1000,
-        "Max": 5000,
-        "Money": 0
-    },
-    "MergeRequest": {
-        "Enable": true,
-        "sendRequest": 0,
-        "DeleteRequest": 0
-    }
+    // "Command": {
+    //     "name": "tps",
+    //     "Describe": "传送系统"
+    // },
+    // "Money": {
+    //     "Enable": true,
+    //     "LLMoney": true,
+    //     "MoneyName": "money"
+    // },
+    // "Home": {
+    //     "Enable": true,
+    //     "CreateHome": 0,
+    //     "GoHome": 0,
+    //     "EditHome": 0,
+    //     "DeleteHome": 0
+    // },
+    // "Warp": {
+    //     "Enable": true,
+    //     "GoWarp": 0
+    // },
+    // "Player": {
+    //     "Enable": true,
+    //     "Player_Player": 0,
+    //     "Player_Home": 0
+    // },
+    // "Delath": {
+    //     "Enable": true,
+    //     "GoDelath": 0
+    // },
+    // "TPR": {
+    //     "Enable": true,
+    //     "Min": 1000,
+    //     "Max": 5000,
+    //     "Money": 0
+    // },
+    // "MergeRequest": {
+    //     "Enable": true,
+    //     "sendRequest": 0,
+    //     "DeleteRequest": 0
+    // }
 };
 /**家 */let Home = {};
 /**公共传送点 */let Warp = [];
@@ -211,9 +211,6 @@ class Money_Mod {
      * @returns 
      */
     static DeductEconomy(pl, delMoney) {
-        if (delMoney == 0) {
-            return null;
-        }
         if (Config.Money.Enable) {
             // 启用经济
             if (Config.Money.LLMoney) {
@@ -385,7 +382,7 @@ class HomeForms {
             if (!Home.hasOwnProperty(pl.realName)) {
                 Home[pl.realName] = [];
             }
-            if (Money_Mod.DeductEconomy(pl, Config.Home.CreateHome) == true) {
+            if (Money_Mod.DeductEconomy(pl, Config.Home.CreateHome)) {
                 Home[pl.realName].push({
                     "name": dt[1],
                     "x": pl.blockPos.x,
@@ -1298,26 +1295,6 @@ function Delivery_Core(from, to, type, pos, txt) {
             'textures/ui/realms_red_x'
         ]
     }
-    //发送表单
-    if (type == 0) {
-        /* 发送给目标玩家 */
-        to.sendSimpleForm(
-            PLUGINS_JS,
-            requestData,
-            Button.options,
-            Button.images,
-            onReceiveRequest
-        );
-    } else {
-        /* 发送给发送方玩家 */
-        from.sendSimpleForm(
-            PLUGINS_JS,
-            requestData,
-            Button.options,
-            Button.images,
-            onReceiveRequest
-        );
-    }
     const onReceiveRequest = (_pl, id) => {
         switch (id) {
             case 0:/* 接受请求 */
@@ -1344,6 +1321,26 @@ function Delivery_Core(from, to, type, pos, txt) {
                 break;
         }
     };
+    //发送表单
+    if (type == 0) {
+        /* 发送给目标玩家 */
+        to.sendSimpleForm(
+            PLUGINS_JS,
+            requestData,
+            Button.options,
+            Button.images,
+            onReceiveRequest
+        );
+    } else {
+        /* 发送给发送方玩家 */
+        from.sendSimpleForm(
+            PLUGINS_JS,
+            requestData,
+            Button.options,
+            Button.images,
+            onReceiveRequest
+        );
+    }
 }
 
 // 注册监听器
