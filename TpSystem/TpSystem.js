@@ -31,7 +31,48 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
 
 const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 
-/**配置文件 */let Config = {};
+/**配置文件 */let Config = {
+    "Command": {
+        "name": "tps",
+        "Describe": "传送系统"
+    },
+    "Money": {
+        "Enable": true,
+        "LLMoney": true,
+        "MoneyName": "money"
+    },
+    "Home": {
+        "Enable": true,
+        "CreateHome": 0,
+        "GoHome": 0,
+        "EditHome": 0,
+        "DeleteHome": 0
+    },
+    "Warp": {
+        "Enable": true,
+        "GoWarp": 0
+    },
+    "Player": {
+        "Enable": true,
+        "Player_Player": 0,
+        "Player_Home": 0
+    },
+    "Delath": {
+        "Enable": true,
+        "GoDelath": 0
+    },
+    "TPR": {
+        "Enable": true,
+        "Min": 1000,
+        "Max": 5000,
+        "Money": 0
+    },
+    "MergeRequest": {
+        "Enable": true,
+        "sendRequest": 0,
+        "DeleteRequest": 0
+    }
+};
 /**家 */let Home = {};
 /**公共传送点 */let Warp = [];
 /**玩家配置 */let PlayerSeting = {};
@@ -70,10 +111,36 @@ class FileOperation {
                     "LLMoney": true,
                     "MoneyName": "money"
                 },
-                "RandomTransmission": true,
-                "RandomTransferSettings": {
+                "Home": {
+                    "Enable": true,
+                    "CreateHome": 0,
+                    "GoHome": 0,
+                    "EditHome": 0,
+                    "DeleteHome": 0
+                },
+                "Warp": {
+                    "Enable": true,
+                    "GoWarp": 0
+                },
+                "Player": {
+                    "Enable": true,
+                    "Player_Player": 0,
+                    "Player_Home": 0
+                },
+                "Delath": {
+                    "Enable": true,
+                    "GoDelath": 0
+                },
+                "TPR": {
+                    "Enable": true,
                     "Min": 1000,
-                    "Max": 5000
+                    "Max": 5000,
+                    "Money": 0
+                },
+                "MergeRequest": {
+                    "Enable": true,
+                    "sendRequest": 0,
+                    "DeleteRequest": 0
                 }
             }
             , null, '\t'));
@@ -115,6 +182,16 @@ class FileOperation {
 };
 /**经济模块 */// todo 23/5/10 对接经济
 class Money_Mod {
+    static getEconomyStr(pl, dmoney) {
+        let mons;
+        if (Config.Money.LLMoney) {
+            mons = money.get(pl.xuid);
+        } else {
+            mons = pl.getScore(Config.Money.MoneyName);
+        }
+        if (!Config.Money.Enable) dmoney = 0;//关闭经济，无需扣费
+        return `此次操作需消耗[${dmoney}]${Config.Money.MoneyName}, 当前${Config.Money.MoneyName}: ${mons}`;
+    }
     /**
      * 获取玩家经济
      * @param {Object} pl 玩家对象
@@ -134,24 +211,32 @@ class Money_Mod {
      * @returns 
      */
     static DeductEconomy(pl, delMoney) {
-        if (delMoney == 0 || !Config.Money.Enable) {
+        if (delMoney == 0) {
             return null;
         }
-        if (Config.Money.LLMoney) {
-            // LL
-            if (money.get(pl.xuid) >= delMoney) {
-                // 经济充足
-                return money.reduce(pl.xuid, Number(delMoney));
+        if (Config.Money.Enable) {
+            // 启用经济
+            if (Config.Money.LLMoney) {
+                // LL
+                if (money.get(pl.xuid) >= delMoney) {
+                    // 经济充足
+                    return money.reduce(pl.xuid, Number(delMoney));
+                } else {
+                    pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
+                    return false;
+                }
             } else {
-                return false;
+                // Socre
+                if (pl.getScore(Config.Money.MoneyName) >= delMoney) {
+                    return pl.reduceScore(Number(delMoney));
+                } else {
+                    pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
+                    return false
+                }
             }
         } else {
-            // Socre
-            if (pl.getScore(Config.Money.MoneyName) >= delMoney) {
-                return pl.reduceScore(Number(delMoney));
-            } else {
-                return false
-            }
+            //关闭经济
+            return true;
         }
     }
 }
@@ -292,7 +377,7 @@ class HomeForms {
     }
     static CreateHome(pl) {
         const fm = Other.CustomForm();
-        fm.addLabel('');
+        fm.addLabel(Money_Mod.getEconomyStr(pl, Config.Home.CreateHome));
         fm.addInput('输入传送点名称', 'String');
         pl.sendForm(fm, (pl, dt) => {
             if (dt == null) return Other.CloseTell(pl);
@@ -300,15 +385,17 @@ class HomeForms {
             if (!Home.hasOwnProperty(pl.realName)) {
                 Home[pl.realName] = [];
             }
-            Home[pl.realName].push({
-                "name": dt[1],
-                "x": pl.blockPos.x,
-                "y": pl.blockPos.y,
-                "z": pl.blockPos.z,
-                "dimid": pl.blockPos.dimid
-            });
-            FileOperation.SaveFile();
-            pl.tell(Gm_Tell + '家园已保存');
+            if (Money_Mod.DeductEconomy(pl, Config.Home.CreateHome) == true) {
+                Home[pl.realName].push({
+                    "name": dt[1],
+                    "x": pl.blockPos.x,
+                    "y": pl.blockPos.y,
+                    "z": pl.blockPos.z,
+                    "dimid": pl.blockPos.dimid
+                });
+                FileOperation.SaveFile();
+                pl.tell(Gm_Tell + '家园已保存');
+            }
         })
     }
     static GoHome(pl) {
@@ -317,13 +404,15 @@ class HomeForms {
                 HomeForms.SelectAction(pl, Home[pl.realName], id => {
                     const Pos = new IntPos(Home[pl.realName][id].x, Home[pl.realName][id].y, Home[pl.realName][id].z, Home[pl.realName][id].dimid);
                     if (PlayerSeting[pl.realName].SecondaryConfirmation) {
-                        pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`, '确认', '返回上一页', (_, res) => {
+                        pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.GoHome)}`, '确认', '返回上一页', (_, res) => {
                             switch (res) {
                                 case true:
-                                    if (pl.teleport(Pos)) {
-                                        pl.tell(Gm_Tell + '传送成功！');
-                                    } else {
-                                        pl.tell(Gm_Tell + '传送失败!');
+                                    if (Money_Mod.DeductEconomy(pl, Config.Home.GoHome)) {
+                                        if (pl.teleport(Pos)) {
+                                            pl.tell(Gm_Tell + '传送成功！');
+                                        } else {
+                                            pl.tell(Gm_Tell + '传送失败!');
+                                        }
                                     }
                                     break;
                                 case false:
@@ -335,10 +424,12 @@ class HomeForms {
                             }
                         });
                     } else {
-                        if (pl.teleport(Pos)) {
-                            pl.tell(Gm_Tell + '传送成功！');
-                        } else {
-                            pl.tell(Gm_Tell + '传送失败!');
+                        if (Money_Mod.DeductEconomy(pl, Config.Home.GoHome)) {
+                            if (pl.teleport(Pos)) {
+                                pl.tell(Gm_Tell + '传送成功！');
+                            } else {
+                                pl.tell(Gm_Tell + '传送失败!');
+                            }
                         }
                     }
                 })
@@ -354,13 +445,14 @@ class HomeForms {
             if (Home[pl.realName].length !== 0) {
                 HomeForms.SelectAction(pl, Home[pl.realName], (id) => {
                     const fm = Other.SimpleForm();
+                    fm.setContent(Money_Mod.getEconomyStr(pl, Config.Home.EditHome));
                     fm.addButton('修改名称', 'textures/ui/book_edit_default');
                     fm.addButton('更新坐标到当前位置', 'textures/ui/refresh');
                     fm.addButton('返回上一页', 'textures/ui/icon_import');
                     pl.sendForm(fm, (pl, id1) => {
                         switch (id1) {
                             case 0:
-                                EditHomeName(pl);
+                                if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome)) { EditHomeName(pl); }
                                 function EditHomeName(pl) {
                                     const fm = Other.CustomForm();
                                     fm.addLabel(`名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`)
@@ -375,12 +467,14 @@ class HomeForms {
                                 }
                                 break;
                             case 1:
-                                Home[pl.realName][id].x = pl.blockPos.x;
-                                Home[pl.realName][id].y = pl.blockPos.y;
-                                Home[pl.realName][id].z = pl.blockPos.z;
-                                Home[pl.realName][id].dimid = pl.blockPos.dimid;
-                                FileOperation.SaveFile();
-                                pl.tell(Gm_Tell + '更新完成！');
+                                if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome)) {
+                                    Home[pl.realName][id].x = pl.blockPos.x;
+                                    Home[pl.realName][id].y = pl.blockPos.y;
+                                    Home[pl.realName][id].z = pl.blockPos.z;
+                                    Home[pl.realName][id].dimid = pl.blockPos.dimid;
+                                    FileOperation.SaveFile();
+                                    pl.tell(Gm_Tell + '更新完成！');
+                                }
                                 break;
                             case 2:
                                 HomeForms.EditHome(pl);
@@ -402,12 +496,14 @@ class HomeForms {
         if (Home.hasOwnProperty(pl.realName)) {
             if (Home[pl.realName].length !== 0) {
                 HomeForms.SelectAction(pl, Home[pl.realName], id => {
-                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`, '确认删除', '返回上一页', (_, res) => {
+                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.DeleteHome)}`, '确认删除', '返回上一页', (_, res) => {
                         switch (res) {
                             case true:
-                                Home[pl.realName].splice(id, 1);
-                                FileOperation.SaveFile();
-                                pl.tell(Gm_Tell + '删除成功！');
+                                if (Money_Mod.DeductEconomy(pl, Config.Home.DeleteHome)) {
+                                    Home[pl.realName].splice(id, 1);
+                                    FileOperation.SaveFile();
+                                    pl.tell(Gm_Tell + '删除成功！');
+                                }
                                 break;
                             case false:
                                 HomeForms.GoHome(pl);
@@ -438,17 +534,19 @@ class HomeForms {
                         if (Home.hasOwnProperty(pl.realName)) {
                             if (Home[pl.realName].length !== 0) {
                                 HomeForms.SelectAction(pl, Home[pl.realName], (id) => {
-                                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
+                                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.MergeRequest.sendRequest)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
                                         switch (res) {
                                             case true:
-                                                MergeRequest.push({
-                                                    player: pl.realName,
-                                                    guid: Other.RandomID(),
-                                                    time: system.getTimeStr(),
-                                                    data: Home[pl.realName][id]
-                                                });
-                                                FileOperation.SaveFile();
-                                                pl.tell(Gm_Tell + '发送成功！');
+                                                if (Money_Mod.DeductEconomy(pl, Config.MergeRequest.sendRequest)) {
+                                                    MergeRequest.push({
+                                                        player: pl.realName,
+                                                        guid: Other.RandomID(),
+                                                        time: system.getTimeStr(),
+                                                        data: Home[pl.realName][id]
+                                                    });
+                                                    FileOperation.SaveFile();
+                                                    pl.tell(Gm_Tell + '发送成功！');
+                                                }
                                                 break;
                                             case false:
                                                 sendMergeRequest_UI(pl);
@@ -484,12 +582,14 @@ class HomeForms {
                             if (id == AllButtons.length) return MergeRequest_UI(pl);
                             const GUID = AllButtons[id].guid;
                             const index = MergeRequest.findIndex(i => i.guid === GUID);
-                            pl.sendModalForm(PLUGINS_JS, `时间: ${MergeRequest[index].time}\nGUID: ${MergeRequest[index].guid}\n\n名称： ${MergeRequest[index].data.name}\n坐标： ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}\n维度： ${Other.DimidToDimension(MergeRequest[index].data.dimid)}`, '撤销此请求', '返回上一页', (_, res) => {
+                            pl.sendModalForm(PLUGINS_JS, `时间: ${MergeRequest[index].time}\nGUID: ${MergeRequest[index].guid}\n\n名称： ${MergeRequest[index].data.name}\n坐标： ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}\n维度： ${Other.DimidToDimension(MergeRequest[index].data.dimid)}\n${Money_Mod.getEconomyStr(pl, Config.MergeRequest.DeleteRequest)}`, '撤销此请求', '返回上一页', (_, res) => {
                                 switch (res) {
                                     case true:
-                                        MergeRequest.splice(index, 1);
-                                        FileOperation.SaveFile();
-                                        pl.tell(Gm_Tell + '撤销成功！');
+                                        if (Money_Mod.DeductEconomy(pl, Config.MergeRequest.DeleteRequest)) {
+                                            MergeRequest.splice(index, 1);
+                                            FileOperation.SaveFile();
+                                            pl.tell(Gm_Tell + '撤销成功！');
+                                        }
                                         break;
                                     case false:
                                         WithdrawalRequest(pl);
@@ -545,13 +645,15 @@ class Forms {
         SelectAction(pl, Warp, id => {
             const Pos = new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid);
             if (PlayerSeting[pl.realName].SecondaryConfirmation) {
-                pl.sendModalForm(PLUGINS_JS, `名称： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${Other.DimidToDimension(Warp[id].dimid)}`, '确认', '返回上一页', (_, res) => {
+                pl.sendModalForm(PLUGINS_JS, `名称： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${Other.DimidToDimension(Warp[id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Warp.GoWarp)}`, '确认', '返回上一页', (_, res) => {
                     switch (res) {
                         case true:
-                            if (pl.teleport(Pos)) {
-                                pl.tell(Gm_Tell + '传送成功！');
-                            } else {
-                                pl.tell(Gm_Tell + '传送失败!');
+                            if (Money_Mod.DeductEconomy(pl, Config.Warp.GoWarp)) {
+                                if (pl.teleport(Pos)) {
+                                    pl.tell(Gm_Tell + '传送成功！');
+                                } else {
+                                    pl.tell(Gm_Tell + '传送失败!');
+                                }
                             }
                             break;
                         case false:
@@ -563,10 +665,12 @@ class Forms {
                     }
                 });
             } else {
-                if (pl.teleport(Pos)) {
-                    pl.tell(Gm_Tell + '传送成功！');
-                } else {
-                    pl.tell(Gm_Tell + '传送失败!');
+                if (Money_Mod.DeductEconomy(pl, Config.Warp.GoWarp)) {
+                    if (pl.teleport(Pos)) {
+                        pl.tell(Gm_Tell + '传送成功！');
+                    } else {
+                        pl.tell(Gm_Tell + '传送失败!');
+                    }
                 }
             }
         });
@@ -606,31 +710,37 @@ class Forms {
         fm.addDropdown('选择一个玩家', OnlinePlayers, 0);
         fm.addDropdown('选择一个家', Hone_List);
         fm.addDropdown('传送类型', DeliveryType, 0);
+        fm.addLabel(Money_Mod.getEconomyStr(pl, Config.Player.Player_Player));
         pl.sendForm(fm, (pl, dt) => {
             if (dt == null) return Other.CloseTell(pl);
             switch (dt[2]) {
                 case 0:/* ME => TA */
                     if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                    Delivery_Core(pl, mc.getPlayer(OnlinePlayers[dt[0]]), 0, '', 'TA传送至我');
-                    break;
+                    if (Money_Mod.DeductEconomy(pl, Config.Player.Player_Player)) {
+                        Delivery_Core(pl, mc.getPlayer(OnlinePlayers[dt[0]]), 0, '', 'TA传送至我');
+                    } break;
                 case 1:/* TA => ME */
                     if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                    Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 1, '', '传送至TA');
-                    break;
+                    if (Money_Mod.DeductEconomy(pl, Config.Player.Player_Player)) {
+                        Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 1, '', '传送至TA');
+                    } break;
                 case 2:/* TA => Home */
                     if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                    Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 2, { x: Home[pl.realName][dt[1]].x, y: Home[pl.realName][dt[1]].y, z: Home[pl.realName][dt[1]].z, dimid: Home[pl.realName][dt[1]].dimid }, '传送至TA家园');
-                    break;
+                    if (Money_Mod.DeductEconomy(pl, Config.Player.Player_Player)) {
+                        Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 2, { x: Home[pl.realName][dt[1]].x, y: Home[pl.realName][dt[1]].y, z: Home[pl.realName][dt[1]].z, dimid: Home[pl.realName][dt[1]].dimid }, '传送至TA家园');
+                    } break;
             }
         })
     }
     static DeathTransportation(pl) {
         if (Death.hasOwnProperty(pl.realName)) {
-            pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${Other.DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}`, '确认前往', '返回主页', (pl, res) => {
+            pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${Other.DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}\n${Money_Mod.getEconomyStr(pl, Config.Delath.GoDelath)}`, '确认前往', '返回主页', (pl, res) => {
                 switch (res) {
                     case true:
-                        pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid));
-                        pl.tell(Gm_Tell + '传送完成！');
+                        if (Money_Mod.DeductEconomy(pl, Config.Delath.GoDelath)) {
+                            pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid));
+                            pl.tell(Gm_Tell + '传送完成！');
+                        }
                         break;
                     case false:
                         Main(pl, MainUI);
@@ -645,8 +755,8 @@ class Forms {
         }
     }
     static RandomTransportation(pl) {
-        if (!Config.RandomTransmission) return pl.tell(Gm_Tell + '管理员关闭了此功能！');
-        pl.sendModalForm(PLUGINS_JS, `确认执行此操作？`, '确认', '返回', (pl, res) => {
+        if (!Config.TPR.Enable) return pl.tell(Gm_Tell + '管理员关闭了此功能！');
+        pl.sendModalForm(PLUGINS_JS, `确认执行此操作？\n${Money_Mod.getEconomyStr(pl, Config.TPR.Money)}`, '确认', '返回', (pl, res) => {
             switch (res) {
                 case true:
                     Forms.RandomTeleportCore(pl);
@@ -676,55 +786,57 @@ class Forms {
         })
     }
     static async RandomTeleportCore(pl) {
-        pl.tell(Gm_Tell + `准备传送...`);
-        let Pos_Y = 500;
-        let to_Pos = new IntPos(RandomCoordinates(), Pos_Y, RandomCoordinates(), pl.blockPos.dimid);
-        let Block_Obj = mc.getBlock(to_Pos);
-        const BackUpPos = pl.blockPos;
+        if (Money_Mod.DeductEconomy(pl, Config.TPR.Money)) {
+            pl.tell(Gm_Tell + `准备传送...`);
+            let Pos_Y = 500;
+            let to_Pos = new IntPos(RandomCoordinates(), Pos_Y, RandomCoordinates(), pl.blockPos.dimid);
+            let Block_Obj = mc.getBlock(to_Pos);
+            const BackUpPos = pl.blockPos;
 
-        pl.teleport(to_Pos);
-        pl.tell(Gm_Tell + `等待区块加载...`);
-        const ID = setInterval(() => {
-            if (pl.blockPos.y != Pos_Y) {
-                _run();
-                logger.debug('Start _run')
-                clearInterval(ID);
-                return;
-            }
-            logger.debug('等待...');
-        }, 200)
+            pl.teleport(to_Pos);
+            pl.tell(Gm_Tell + `等待区块加载...`);
+            const ID = setInterval(() => {
+                if (pl.blockPos.y != Pos_Y) {
+                    _run();
+                    logger.debug('Start _run')
+                    clearInterval(ID);
+                    return;
+                }
+                logger.debug('等待...');
+            }, 200)
 
-        async function _run() {
-            Pos_Y = 301;
-            pl.tell(Gm_Tell + `寻找安全坐标...`)
-            for (Pos_Y = Pos_Y; Pos_Y > 0; Pos_Y--) {
-                if (Block_Obj == null || Block_Obj.type == 'minecraft:air') {
-                    UpdatePos_Y(Pos_Y);
-                    Block_Obj = mc.getBlock(to_Pos);
-                    logger.debug(Pos_Y, Block_Obj);
-                } else {
-                    if (Pos_Y < -60 || ["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
-                        // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
-                        pl.teleport(BackUpPos);
-                        pl.tell(Gm_Tell + `查询安全坐标失败！`);
-                        break;
-                    } else if (Block_Obj.type != "minecraft:air") {
-                        UpdatePos_Y(Pos_Y + 1);
-                        pl.teleport(to_Pos);
-                        pl.tell(Gm_Tell + `传送完成！`);
-                        logger.debug(to_Pos);
-                        break;
+            async function _run() {
+                Pos_Y = 301;
+                pl.tell(Gm_Tell + `寻找安全坐标...`)
+                for (Pos_Y = Pos_Y; Pos_Y > 0; Pos_Y--) {
+                    if (Block_Obj == null || Block_Obj.type == 'minecraft:air') {
+                        UpdatePos_Y(Pos_Y);
+                        Block_Obj = mc.getBlock(to_Pos);
+                        logger.debug(Pos_Y, Block_Obj);
+                    } else {
+                        if (Pos_Y < -60 || ["minecraft:lava", "minecraft:flowing_lava"].indexOf(Block_Obj.type) != -1) {
+                            // 如果 Block_Obj type 属性等于 "minecraft:lava" 或 "minecraft:flowing_lava"，则执行以下代码块
+                            pl.teleport(BackUpPos);
+                            pl.tell(Gm_Tell + `查询安全坐标失败！`);
+                            break;
+                        } else if (Block_Obj.type != "minecraft:air") {
+                            UpdatePos_Y(Pos_Y + 2);
+                            pl.teleport(to_Pos);
+                            pl.tell(Gm_Tell + `传送完成！`);
+                            logger.debug(to_Pos);
+                            break;
+                        }
                     }
                 }
             }
-        }
-        function UpdatePos_Y(Y) {
-            const Back = to_Pos;
-            to_Pos = new IntPos(Back.x, Y, Back.z, Back.dimid);
-        }
-        function RandomCoordinates() {
-            const num = Math.floor(Math.random() * (Config.RandomTransferSettings.Max - Config.RandomTransferSettings.Min + 1)) + Config.RandomTransferSettings.Min;
-            return Math.random() < 0.5 ? -num : num;
+            function UpdatePos_Y(Y) {
+                const Back = to_Pos;
+                to_Pos = new IntPos(Back.x, Y, Back.z, Back.dimid);
+            }
+            function RandomCoordinates() {
+                const num = Math.floor(Math.random() * (Config.TPR.Max - Config.TPR.Min + 1)) + Config.TPR.Min;
+                return Math.random() < 0.5 ? -num : num;
+            }
         }
     }
 }
@@ -795,6 +907,20 @@ const MAPPING_TABLE = {
                 out.success('---操作完成---');
                 break;
             case 'gui':
+                if (ori.type !== 0) return out.error('此命令仅限玩家执行');
+                const Table = {
+                    home: HomeForms.Home_Panel,
+                    warp: Forms.PublicTransportation,
+                    player: Forms.PlayerTransportation,
+                    death: Forms.DeathTransportation,
+                    random: Forms.RandomTransportation,
+                    seting: Forms.PersonalSettings
+                }
+                if (res.gui_name) {
+                    Table[res.gui_name](ori.player);
+                } else {
+                    Main(ori.player, MainUI);
+                }
                 break;
             case 'accept':
                 break;
@@ -823,7 +949,7 @@ const MAPPING_TABLE = {
     })
     Cmd.setup();
 }
-mc.spawnSimulatedPlayer('123', new IntPos(10, 70, 10, 1))
+
 
 /**
  * GUI主页
@@ -876,17 +1002,17 @@ function Seting(pl) {
             case 0:/* 插件设置 */
                 ((pl) => {
                     const fm = Other.CustomForm();
-                    fm.addSwitch('启用随机传送', Config.RandomTransmission);
-                    fm.addInput('随机传送 最小值', 'Number', String(Config.RandomTransferSettings.Min));
-                    fm.addInput('随机传送 最大值', 'Number', String(Config.RandomTransferSettings.Max));
+                    fm.addSwitch('启用随机传送', Config.TPR.Enable);
+                    fm.addInput('随机传送 最小值', 'Number', String(Config.TPR.Min));
+                    fm.addInput('随机传送 最大值', 'Number', String(Config.TPR.Max));
                     pl.sendForm(fm, (pl, dt) => {
                         if (dt == null) return Other.CloseTell(pl);
                         const data = {
                             Min: Number(dt[1]),
                             Max: Number(dt[2])
                         }
-                        Config.RandomTransferSettings = data;
-                        Config.RandomTransmission = Boolean(dt[0]).valueOf();
+                        Config.TPR = data;
+                        Config.TPR.Enable = Boolean(dt[0]).valueOf();
                         FileOperation.SaveFile();
                         pl.tell(Gm_Tell + '操作完成！');
                     })
@@ -1155,18 +1281,43 @@ function Delivery_Core(from, to, type, pos, txt) {
     }
     let requestData;
     if (type == 0) {
+        from.tell(Gm_Tell + `已向[${to.realName}]发送请求，等待对方接受...`);
         requestData = `\n      来自 ${from.realName} 的传送请求\n      类型: ${txt}\n    `;
     } else {
+        to.tell(Gm_Tell + `已向[${from.realName}]发送请求，等待对方接受...`);
         requestData = `\n      来自 ${to.realName} 的传送请求\n      类型: ${txt}\n    `;
     }
-    const options = [
-        '接受请求',
-        '拒绝请求'
-    ];
-    const images = [
-        'textures/ui/realms_green_check',
-        'textures/ui/realms_red_x'
-    ]
+    // 定义按钮
+    const Button = {
+        options: [
+            '接受请求',
+            '拒绝请求'
+        ],
+        images: [
+            'textures/ui/realms_green_check',
+            'textures/ui/realms_red_x'
+        ]
+    }
+    //发送表单
+    if (type == 0) {
+        /* 发送给目标玩家 */
+        to.sendSimpleForm(
+            PLUGINS_JS,
+            requestData,
+            Button.options,
+            Button.images,
+            onReceiveRequest
+        );
+    } else {
+        /* 发送给发送方玩家 */
+        from.sendSimpleForm(
+            PLUGINS_JS,
+            requestData,
+            Button.options,
+            Button.images,
+            onReceiveRequest
+        );
+    }
     const onReceiveRequest = (_pl, id) => {
         switch (id) {
             case 0:/* 接受请求 */
@@ -1193,25 +1344,6 @@ function Delivery_Core(from, to, type, pos, txt) {
                 break;
         }
     };
-    if (type == 0) {
-        /* 发送给目标玩家 */
-        to.sendSimpleForm(
-            PLUGINS_JS,
-            requestData,
-            options,
-            images,
-            onReceiveRequest
-        );
-    } else {
-        /* 发送给发送方玩家 */
-        from.sendSimpleForm(
-            PLUGINS_JS,
-            requestData,
-            options,
-            images,
-            onReceiveRequest
-        );
-    }
 }
 
 // 注册监听器
