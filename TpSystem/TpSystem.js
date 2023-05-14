@@ -102,11 +102,11 @@ class FileOperation {
         if (!file.exists(this._PlayerSeting_FilePath)) file.writeTo(this._PlayerSeting_FilePath, '{}');
         if (!file.exists(this._Config_FilePath)) file.writeTo(this._Config_FilePath, JSON.stringify(
             {
-                "Command": {
+                "Command": {//命令配置
                     "name": "tps",//命令名称
                     "Describe": "传送系统"//命令描述
                 },
-                "Money": {
+                "Money": {//经济配置
                     "Enable": true,//开关
                     "LLMoney": true,//是否启用LLMoney
                     "MoneyName": "money"//经济名称
@@ -123,14 +123,18 @@ class FileOperation {
                     "Enable": true,
                     "GoWarp": 0//前往传送点 经济
                 },
-                "Player": {//玩家传送配置
+                "TPA": {//玩家传送配置
                     "Enable": true,
                     "Player_Player": 0,//玩家传玩家 经济
-                    "Player_Home": 0//玩家穿家 经济
+                    "Player_Home": 0,//玩家穿家 经济
+                    "CacheExpirationTime": 30,//缓存过期时间//todo
+                    "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
+                    "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
                 },
                 "Death": {//死亡传送配置
                     "Enable": true,
-                    "GoDelath": 0//前往死亡点 经济
+                    "GoDelath": 0,//前往死亡点 经济
+                    "sendBackGUI": true//发送死亡返回传送点弹窗 总开关
                 },
                 "TPR": {//随机传送配置
                     "Enable": true,
@@ -146,10 +150,11 @@ class FileOperation {
                     "sendRequest": 0,//发送请求 经济
                     "DeleteRequest": 0//删除请求 经济
                 },
-                "PlayerSeting": {//玩家配置默认//todo
+                "PlayerSeting": {//玩家配置默认
                     "AcceptTransmission": true,//接受传送请求
                     "SecondaryConfirmation": true,//传送二次确认
-                    "SendRequestPopup": true//传送请求弹窗//todo
+                    "SendRequestPopup": true,//传送请求弹窗
+                    "DeathPopup": true//死亡弹出返回死亡点 子开关
                 }
             }
             , null, '\t'));
@@ -716,23 +721,23 @@ class Forms {
         fm.addDropdown('选择一个玩家', OnlinePlayers, 0);
         fm.addDropdown('选择一个家', Hone_List);
         fm.addDropdown('传送类型', DeliveryType, 0);
-        fm.addLabel(Money_Mod.getEconomyStr(pl, Config.Player.Player_Player));
+        fm.addLabel(Money_Mod.getEconomyStr(pl, Config.TPA.Player_Player));
         pl.sendForm(fm, (pl, dt) => {
             if (dt == null) return Other.CloseTell(pl);
             switch (dt[2]) {
                 case 0:/* ME => TA */
                     if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                    if (Money_Mod.DeductEconomy(pl, Config.Player.Player_Player)) {
+                    if (Money_Mod.DeductEconomy(pl, Config.TPA.Player_Player)) {
                         Delivery_Core(pl, mc.getPlayer(OnlinePlayers[dt[0]]), 0, '', 'TA传送至我');
                     } break;
                 case 1:/* TA => ME */
                     if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                    if (Money_Mod.DeductEconomy(pl, Config.Player.Player_Player)) {
+                    if (Money_Mod.DeductEconomy(pl, Config.TPA.Player_Player)) {
                         Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 1, '', '传送至TA');
                     } break;
                 case 2:/* TA => Home */
                     if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                    if (Money_Mod.DeductEconomy(pl, Config.Player.Player_Player)) {
+                    if (Money_Mod.DeductEconomy(pl, Config.TPA.Player_Player)) {
                         Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 2, { x: Home[pl.realName][dt[1]].x, y: Home[pl.realName][dt[1]].y, z: Home[pl.realName][dt[1]].z, dimid: Home[pl.realName][dt[1]].dimid }, '传送至TA家园');
                     } break;
             }
@@ -882,12 +887,10 @@ const MAPPING_TABLE = {
     Cmd.setEnum('deny', ['deny']);
     Cmd.mandatory('action', ParamType.Enum, 'deny', 1);
     Cmd.overload(['deny']);
-    //tps tp <player> <player>
-    Cmd.setEnum('tp', ['tp']);
-    Cmd.mandatory('action', ParamType.Enum, 'tp', 1);
-    Cmd.mandatory('from', ParamType.Player);
-    Cmd.mandatory('to', ParamType.Player);
-    Cmd.overload(['tp', 'from', 'to']);
+    //tps back
+    Cmd.setEnum('back', ['back']);
+    Cmd.mandatory('action', ParamType.Enum, 'back', 1);
+    Cmd.overload(['back']);
     //tps refresh
     Cmd.setEnum('refresh', ['refresh']);
     Cmd.mandatory('action', ParamType.Enum, 'refresh', 1);
@@ -941,11 +944,9 @@ const MAPPING_TABLE = {
                 FileOperation.ReadFile();
                 out.success('---操作完成---');
                 break;
-            case 'tp':
+            case 'back':
                 if (ori.type !== 0) return out.error('此命令仅限玩家执行');
-                const from = res.from[0];
-                const to = res.to[0];
-                Delivery_Core(from, to);
+                MAPPING_TABLE['DeathUi'](ori.player);
                 break;
             default:
                 if (ori.type !== 0) return out.error('此命令仅限玩家执行');
@@ -1300,9 +1301,9 @@ function Delivery_Core(from, to, type, pos, txt) {
     fm.addButton("接受请求", "textures/ui/realms_green_check");
     fm.addButton("拒绝请求", "textures/ui/realms_red_x");
     if (type == 0) {// 根据类型发送表单给对应的玩家
-        to.sendForm(fm, onReceiveRequest);/* 发送给目标玩家 */
+        if (to.sendForm(fm, onReceiveRequest) == null || PlayerSeting[pl.realName].SendRequestPopup == false) { sendFormError(pl) }/* 发送给目标玩家 */
     } else {
-        from.sendForm(fm, onReceiveRequest);/* 发送给发送方玩家 */
+        if (from.sendForm(fm, onReceiveRequest) == null || PlayerSeting[pl.realName].SendRequestPopup == false) { sendFormError(pl) }/* 发送给发送方玩家 */
     }
     // 定义表单回调函数
     function onReceiveRequest(_pl, id) {
@@ -1334,7 +1335,17 @@ function Delivery_Core(from, to, type, pos, txt) {
                 break;
         }
     };
-    function sendError() { }
+    // 发送表单失败
+    function sendFormError(pl) {
+        const cache = {
+            from: from,
+            to: to,
+            type: type,
+            pos: pos,
+            txt: txt,
+            start: Time_Mod.getEndTimes()
+        }
+    }
 }
 
 // 注册监听器
@@ -1344,7 +1355,7 @@ function Delivery_Core(from, to, type, pos, txt) {
         if (pl.isSimulatedPlayer()) return;
         if (!PlayerSeting.hasOwnProperty(pl.realName)) {
             logger.warn(`玩家${pl.realName} 的配置不存在，正在新建配置...`);
-            PlayerSeting[pl.realName] = Config.PlayerSeting;
+            PlayerSeting[pl.realName] = Config.TPASeting;
             FileOperation.SaveFile();
         }
     })
@@ -1360,5 +1371,9 @@ function Delivery_Core(from, to, type, pos, txt) {
         }
         Death[pl.realName] = data;
         FileOperation.SaveFile();
+        // 发送返回死亡点弹窗
+        if (Config.Death.sendBackGUI == true && PlayerSeting[pl.realName].DeathPopup == true) {
+            MAPPING_TABLE["DeathUi"](pl);
+        }
     })
 }
