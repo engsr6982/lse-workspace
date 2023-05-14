@@ -32,46 +32,60 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
 const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 
 /**配置文件 */let Config = {
-    // "Command": {
-    //     "name": "tps",
-    //     "Describe": "传送系统"
-    // },
-    // "Money": {
-    //     "Enable": true,
-    //     "LLMoney": true,
-    //     "MoneyName": "money"
-    // },
-    // "Home": {
-    //     "Enable": true,
-    //     "CreateHome": 0,
-    //     "GoHome": 0,
-    //     "EditHome": 0,
-    //     "DeleteHome": 0
-    // },
-    // "Warp": {
-    //     "Enable": true,
-    //     "GoWarp": 0
-    // },
-    // "Player": {
-    //     "Enable": true,
-    //     "Player_Player": 0,
-    //     "Player_Home": 0
-    // },
-    // "Delath": {
-    //     "Enable": true,
-    //     "GoDelath": 0
-    // },
-    // "TPR": {
-    //     "Enable": true,
-    //     "Min": 1000,
-    //     "Max": 5000,
-    //     "Money": 0
-    // },
-    // "MergeRequest": {
-    //     "Enable": true,
-    //     "sendRequest": 0,
-    //     "DeleteRequest": 0
-    // }
+    "Command": {//命令配置
+        "name": "tps",//命令名称
+        "Describe": "传送系统"//命令描述
+    },
+    "Money": {//经济配置
+        "Enable": true,//开关
+        "LLMoney": true,//是否启用LLMoney
+        "MoneyName": "money"//经济名称
+    },
+    "Home": {//家园传送配置
+        "Enable": true,
+        "CreateHome": 0,//创建家 所需经济
+        "GoHome": 0,//前往家 经济
+        "EditHome": 0,//编辑家 经济
+        "DeleteHome": 0,//删除家 经济
+        "MaxHome": 10//最大家园数量//todo
+    },
+    "Warp": {//公共传送点配置
+        "Enable": true,
+        "GoWarp": 0//前往传送点 经济
+    },
+    "TPA": {//玩家传送配置
+        "Enable": true,
+        "Player_Player": 0,//玩家传玩家 经济
+        "Player_Home": 0,//玩家穿家 经济
+        "CacheExpirationTime": 30,//缓存过期时间//todo
+        "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
+        "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
+    },
+    "Death": {//死亡传送配置
+        "Enable": true,
+        "GoDelath": 0,//前往死亡点 经济
+        "sendBackGUI": true//发送死亡返回传送点弹窗 总开关
+    },
+    "TPR": {//随机传送配置
+        "Enable": true,
+        "Min": 1000,//随机坐标最小值
+        "Max": 5000,//最大值
+        "Money": 0,//所需经济
+        "MainWorld": true,//主世界//todo
+        "Infernal": true,//地狱
+        "Terminus": true//末地
+    },
+    "MergeRequest": {//并入公共传送点配置
+        "Enable": true,
+        "sendRequest": 0,//发送请求 经济
+        "DeleteRequest": 0//删除请求 经济
+    },
+    "PlayerSeting": {//玩家配置默认
+        "AcceptTransmission": true,//接受传送请求
+        "SecondaryConfirmation": true,//传送二次确认
+        "SendRequestPopup": true,//传送请求弹窗
+        "DeathPopup": true//死亡弹出返回死亡点 子开关
+    }
 };
 /**家 */let Home = {};
 /**公共传送点 */let Warp = [];
@@ -79,7 +93,7 @@ const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 /**死亡信息 */let Death = {};
 /**合并请求 */let MergeRequest = [];
 /**表单UI */let MainUI = {};
-/**传送缓存 */let TpCache = [];
+/**传送缓存 */let TPACache = [];
 //todo 缓存传送
 
 /**文件操作 */
@@ -194,7 +208,7 @@ class FileOperation {
         this.ReadFile();
     }
 };
-/**经济模块 */// todo 23/5/10 对接经济
+/**经济模块 */
 class Money_Mod {
     static getEconomyStr(pl, dmoney) {
         let mons;
@@ -851,6 +865,24 @@ class Forms {
         }
     }
 }
+class TPA_Cache {
+    static async DeleteCache(pl) {
+        for (let i = 0; i < TPACache.length; i++) {
+            if (i.from == pl.realName || i.to == pl.realName) {
+                let capl = mc.getPlayer(i.from); let name = i.to;
+                if (i.type == 1) {
+                    capl = mc.getPlayer(i.to);
+                    name = i.from;
+                }
+                if (capl) {
+                    capl.tell(Gm_Tell + `传送失败！玩家[${name}]已离线!`);
+                }
+                TPACache.splice(i, 1);
+            }
+        }
+    }
+}
+
 
 FileOperation.ReadFile();
 
@@ -1335,16 +1367,17 @@ function Delivery_Core(from, to, type, pos, txt) {
                 break;
         }
     };
-    // 发送表单失败
+    // 发送表单失败 进行缓存
     function sendFormError(pl) {
         const cache = {
-            from: from,
-            to: to,
+            from: from.realName,
+            to: to.realName,
             type: type,
             pos: pos,
             txt: txt,
-            start: Time_Mod.getEndTimes()
+            end: Time_Mod.getEndTimes(Config.TPA.CacheExpirationTime, Config.TPA.CacheExpirationTimeUnit)
         }
+        TPACache.push(cache);
     }
 }
 
@@ -1375,5 +1408,10 @@ function Delivery_Core(from, to, type, pos, txt) {
         if (Config.Death.sendBackGUI == true && PlayerSeting[pl.realName].DeathPopup == true) {
             MAPPING_TABLE["DeathUi"](pl);
         }
+    })
+    //玩家退出游戏
+    mc.listen('onLeft', (pl) => {
+        if (pl.isSimulatedPlayer()) return;
+        TPA_Cache.DeleteCache(pl);
     })
 }

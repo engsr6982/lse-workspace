@@ -10,33 +10,47 @@
 	},
 	"Home": {
 		"Enable": true,
-		"CreateHome": 1,
-		"GoHome": 1,
-		"EditHome": 1,
-		"DeleteHome": 1
+		"CreateHome": 0,
+		"GoHome": 0,
+		"EditHome": 0,
+		"DeleteHome": 0,
+		"MaxHome": 10
 	},
 	"Warp": {
 		"Enable": true,
-		"GoWarp": 1
+		"GoWarp": 0
 	},
-	"Player": {
+	"TPA": {
 		"Enable": true,
-		"Player_Player": 1,
-		"Player_Home": 1
+		"Player_Player": 0,
+		"Player_Home": 0,
+		"CacheExpirationTime": 30,
+		"CacheExpirationTimeUnit": "second",
+		"RegularlyCheckExpirationTime": 30
 	},
-	"Delath": {
+	"Death": {
 		"Enable": true,
-		"GoDelath": 1
+		"GoDelath": 0,
+		"sendBackGUI": true
 	},
 	"TPR": {
 		"Enable": true,
 		"Min": 1000,
 		"Max": 5000,
-		"Money": 1
+		"Money": 0,
+		"MainWorld": true,
+		"Infernal": true,
+		"Terminus": true
 	},
 	"MergeRequest": {
 		"Enable": true,
-		"sendRequest": 1,
-		"DeleteRequest": 1
+		"sendRequest": 0,
+		"DeleteRequest": 0
+	},
+	"PlayerSeting": {
+		"AcceptTransmission": true,
+		"SecondaryConfirmation": true,
+		"SendRequestPopup": true,
+		"DeathPopup": true
 	}
 }
