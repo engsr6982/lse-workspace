@@ -82,6 +82,113 @@ const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 /**传送缓存 */let TpCache = [];
 //todo 缓存传送
 
+/**文件操作 */
+class FileOperation {
+    static _Config_FilePath = _FilePath + 'Config.json';
+    static _Home_FilePath = _FilePath + 'Home.json';
+    static _Warp_FilePath = _FilePath + 'Warp.json';
+    static _PlayerSeting_FilePath = _FilePath + 'PlayerSeting.json';
+    static _Death_FilePath = _FilePath + 'Death.json';
+    static _MergeRequest_FilePath = _FilePath + 'MergeRequest.json';
+    static _MainUI = _FilePath + 'GUI\\MainUI.json';
+
+    /**
+     * 读取配置文件
+     */
+    static ReadFile() {
+        /* 检查文件 */
+        if (!file.exists(this._Home_FilePath)) file.writeTo(this._Home_FilePath, '{}');
+        if (!file.exists(this._Warp_FilePath)) file.writeTo(this._Warp_FilePath, '[]');
+        if (!file.exists(this._PlayerSeting_FilePath)) file.writeTo(this._PlayerSeting_FilePath, '{}');
+        if (!file.exists(this._Config_FilePath)) file.writeTo(this._Config_FilePath, JSON.stringify(
+            {
+                "Command": {
+                    "name": "tps",//命令名称
+                    "Describe": "传送系统"//命令描述
+                },
+                "Money": {
+                    "Enable": true,//开关
+                    "LLMoney": true,//是否启用LLMoney
+                    "MoneyName": "money"//经济名称
+                },
+                "Home": {//家园传送配置
+                    "Enable": true,
+                    "CreateHome": 0,//创建家 所需经济
+                    "GoHome": 0,//前往家 经济
+                    "EditHome": 0,//编辑家 经济
+                    "DeleteHome": 0,//删除家 经济
+                    "MaxHome": 10//最大家园数量//todo
+                },
+                "Warp": {//公共传送点配置
+                    "Enable": true,
+                    "GoWarp": 0//前往传送点 经济
+                },
+                "Player": {//玩家传送配置
+                    "Enable": true,
+                    "Player_Player": 0,//玩家传玩家 经济
+                    "Player_Home": 0//玩家穿家 经济
+                },
+                "Death": {//死亡传送配置
+                    "Enable": true,
+                    "GoDelath": 0//前往死亡点 经济
+                },
+                "TPR": {//随机传送配置
+                    "Enable": true,
+                    "Min": 1000,//随机坐标最小值
+                    "Max": 5000,//最大值
+                    "Money": 0,//所需经济
+                    "MainWorld": true,//主世界//todo
+                    "Infernal": true,//地狱
+                    "Terminus": true//末地
+                },
+                "MergeRequest": {//并入公共传送点配置
+                    "Enable": true,
+                    "sendRequest": 0,//发送请求 经济
+                    "DeleteRequest": 0//删除请求 经济
+                },
+                "PlayerSeting": {//玩家配置默认//todo
+                    "AcceptTransmission": true,//接受传送请求
+                    "SecondaryConfirmation": true,//传送二次确认
+                    "SendRequestPopup": true//传送请求弹窗//todo
+                }
+            }
+            , null, '\t'));
+        if (!file.exists(this._Death_FilePath)) file.writeTo(this._Death_FilePath, '{}');
+        if (!file.exists(this._MergeRequest_FilePath)) file.writeTo(this._MergeRequest_FilePath, '[]');
+        if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(
+            [
+                { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
+                { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
+                { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
+                { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
+                { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
+                { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }
+            ]
+            , null, '\t'
+        ))
+        /* 读取文件 */
+        Home = JSON.parse(file.readFrom(this._Home_FilePath));
+        Warp = JSON.parse(file.readFrom(this._Warp_FilePath));
+        PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting_FilePath));
+        Config = JSON.parse(file.readFrom(this._Config_FilePath));
+        Death = JSON.parse(file.readFrom(this._Death_FilePath));
+        MergeRequest = JSON.parse(file.readFrom(this._MergeRequest_FilePath));
+        MainUI = JSON.parse(file.readFrom(this._MainUI));
+    }
+    /**
+     * 保存并重新读取配置文件
+     */
+    static SaveFile() {
+        file.writeTo(this._Home_FilePath, JSON.stringify(Home, null, '\t'));
+        file.writeTo(this._Warp_FilePath, JSON.stringify(Warp, null, '\t'));
+        file.writeTo(this._PlayerSeting_FilePath, JSON.stringify(PlayerSeting, null, '\t'));
+        file.writeTo(this._Config_FilePath, JSON.stringify(Config, null, '\t'));
+        file.writeTo(this._Death_FilePath, JSON.stringify(Death, null, '\t'));
+        file.writeTo(this._MergeRequest_FilePath, JSON.stringify(MergeRequest, null, '\t'));
+        file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
+        this.ReadFile();
+    }
+};
 /**经济模块 */// todo 23/5/10 对接经济
 class Money_Mod {
     static getEconomyStr(pl, dmoney) {
@@ -633,10 +740,10 @@ class Forms {
     }
     static DeathTransportation(pl) {
         if (Death.hasOwnProperty(pl.realName)) {
-            pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${Other.DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}\n${Money_Mod.getEconomyStr(pl, Config.Delath.GoDelath)}`, '确认前往', '返回主页', (pl, res) => {
+            pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${Other.DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}\n${Money_Mod.getEconomyStr(pl, Config.Death.GoDelath)}`, '确认前往', '返回主页', (pl, res) => {
                 switch (res) {
                     case true:
-                        if (Money_Mod.DeductEconomy(pl, Config.Delath.GoDelath)) {
+                        if (Money_Mod.DeductEconomy(pl, Config.Death.GoDelath)) {
                             pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid));
                             pl.tell(Gm_Tell + '传送完成！');
                         }
@@ -1174,37 +1281,31 @@ function Seting(pl) {
  * @param {String} txt 类型描述 
  */
 function Delivery_Core(from, to, type, pos, txt) {
-    // 根据传入的目标坐标构建一个IntPos对象
-    let targetPos;
+    let targetPos; let requestData;
     if (pos && pos !== '') {
+        // 根据传入的目标坐标构建一个IntPos对象
         targetPos = new IntPos(pos.x, pos.y, pos.z, pos.dimid);
     }
     // 根据传入的类型确定是发起方还是接收方发送表单
-    let requestData;
     if (type == 0) {
-        // 告诉发送方玩家发送请求
         from.tell(Gm_Tell + `已向[${to.realName}]发送请求，等待对方接受...`);
-        // 构造请求数据
         requestData = `\n      来自 ${from.realName} 的传送请求\n      类型: ${txt}\n    `;
     } else {
-        // 告诉接收方玩家发送请求
         to.tell(Gm_Tell + `已向[${from.realName}]发送请求，等待对方接受...`);
-        // 构造请求数据
         requestData = `\n      来自 ${to.realName} 的传送请求\n      类型: ${txt}\n    `;
     }
-    // 构建表单按钮和图片数组
-    const Button = {
-        options: [
-            '接受请求',
-            '拒绝请求'
-        ],
-        images: [
-            'textures/ui/realms_green_check',
-            'textures/ui/realms_red_x'
-        ]
+    // 构建表单
+    const fm = Other.SimpleForm();
+    fm.setContent(requestData);
+    fm.addButton("接受请求", "textures/ui/realms_green_check");
+    fm.addButton("拒绝请求", "textures/ui/realms_red_x");
+    if (type == 0) {// 根据类型发送表单给对应的玩家
+        to.sendForm(fm, onReceiveRequest);/* 发送给目标玩家 */
+    } else {
+        from.sendForm(fm, onReceiveRequest);/* 发送给发送方玩家 */
     }
     // 定义表单回调函数
-    const onReceiveRequest = (_pl, id) => {
+    function onReceiveRequest(_pl, id) {
         switch (id) {
             case 0:/* 接受请求 */
                 // 如果有目标坐标就使用目标坐标传送，否则使用接收方玩家的坐标传送
@@ -1233,29 +1334,7 @@ function Delivery_Core(from, to, type, pos, txt) {
                 break;
         }
     };
-    // 根据类型发送表单给对应的玩家
-    if (type == 0) {
-        /* 发送给目标玩家 */
-        to.sendSimpleForm(
-            PLUGINS_JS,
-            requestData,
-            Button.options,
-            Button.images,
-            onReceiveRequest
-        );
-    } else {
-        /* 发送给发送方玩家 */
-        from.sendSimpleForm(
-            PLUGINS_JS,
-            requestData,
-            Button.options,
-            Button.images,
-            onReceiveRequest
-        );
-    }
-    function sendError() {
-        
-    }
+    function sendError() { }
 }
 
 // 注册监听器
@@ -1264,11 +1343,8 @@ function Delivery_Core(from, to, type, pos, txt) {
     mc.listen('onJoin', (pl) => {
         if (pl.isSimulatedPlayer()) return;
         if (!PlayerSeting.hasOwnProperty(pl.realName)) {
-            logger.warn(`玩家${ pl.realName } 的配置不存在，正在新建配置...`);
-            PlayerSeting[pl.realName] = {
-                AcceptTransmission: true,
-                SecondaryConfirmation: true
-            }
+            logger.warn(`玩家${pl.realName} 的配置不存在，正在新建配置...`);
+            PlayerSeting[pl.realName] = Config.PlayerSeting;
             FileOperation.SaveFile();
         }
     })
