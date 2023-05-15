@@ -47,7 +47,7 @@ const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
         "GoHome": 0,//前往家 经济
         "EditHome": 0,//编辑家 经济
         "DeleteHome": 0,//删除家 经济
-        "MaxHome": 10//最大家园数量//todo
+        "MaxHome": 10//最大家园数量
     },
     "Warp": {//公共传送点配置
         "Enable": true,
@@ -57,9 +57,9 @@ const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
         "Enable": true,
         "Player_Player": 0,//玩家传玩家 经济
         "Player_Home": 0,//玩家穿家 经济
-        "CacheExpirationTime": 30,//缓存过期时间//todo
-        "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
-        "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
+        "CacheExpirationTime": 30,//缓存过期时间
+        "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟
+        "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒
     },
     "Death": {//死亡传送配置
         "Enable": true,
@@ -71,7 +71,7 @@ const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
         "Min": 1000,//随机坐标最小值
         "Max": 5000,//最大值
         "Money": 0,//所需经济
-        "MainWorld": true,//主世界//todo
+        "MainWorld": true,//主世界
         "Infernal": true,//地狱
         "Terminus": true//末地
     },
@@ -94,7 +94,6 @@ const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 /**合并请求 */let MergeRequest = [];
 /**表单UI */let MainUI = {};
 /**传送缓存 */let TPACache = [];
-//todo 缓存传送
 
 /**文件操作 */
 class FileOperation {
@@ -109,103 +108,111 @@ class FileOperation {
     /**
      * 读取配置文件
      */
-    static ReadFile() {
+    static async ReadFile() {
         /* 检查文件 */
-        if (!file.exists(this._Home_FilePath)) file.writeTo(this._Home_FilePath, '{}');
-        if (!file.exists(this._Warp_FilePath)) file.writeTo(this._Warp_FilePath, '[]');
-        if (!file.exists(this._PlayerSeting_FilePath)) file.writeTo(this._PlayerSeting_FilePath, '{}');
-        if (!file.exists(this._Config_FilePath)) file.writeTo(this._Config_FilePath, JSON.stringify(
-            {
-                "Command": {//命令配置
-                    "name": "tps",//命令名称
-                    "Describe": "传送系统"//命令描述
-                },
-                "Money": {//经济配置
-                    "Enable": true,//开关
-                    "LLMoney": true,//是否启用LLMoney
-                    "MoneyName": "money"//经济名称
-                },
-                "Home": {//家园传送配置
-                    "Enable": true,
-                    "CreateHome": 0,//创建家 所需经济
-                    "GoHome": 0,//前往家 经济
-                    "EditHome": 0,//编辑家 经济
-                    "DeleteHome": 0,//删除家 经济
-                    "MaxHome": 10//最大家园数量//todo
-                },
-                "Warp": {//公共传送点配置
-                    "Enable": true,
-                    "GoWarp": 0//前往传送点 经济
-                },
-                "TPA": {//玩家传送配置
-                    "Enable": true,
-                    "Player_Player": 0,//玩家传玩家 经济
-                    "Player_Home": 0,//玩家穿家 经济
-                    "CacheExpirationTime": 30,//缓存过期时间//todo
-                    "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
-                    "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
-                },
-                "Death": {//死亡传送配置
-                    "Enable": true,
-                    "GoDelath": 0,//前往死亡点 经济
-                    "sendBackGUI": true//发送死亡返回传送点弹窗 总开关
-                },
-                "TPR": {//随机传送配置
-                    "Enable": true,
-                    "Min": 1000,//随机坐标最小值
-                    "Max": 5000,//最大值
-                    "Money": 0,//所需经济
-                    "MainWorld": true,//主世界//todo
-                    "Infernal": true,//地狱
-                    "Terminus": true//末地
-                },
-                "MergeRequest": {//并入公共传送点配置
-                    "Enable": true,
-                    "sendRequest": 0,//发送请求 经济
-                    "DeleteRequest": 0//删除请求 经济
-                },
-                "PlayerSeting": {//玩家配置默认
-                    "AcceptTransmission": true,//接受传送请求
-                    "SecondaryConfirmation": true,//传送二次确认
-                    "SendRequestPopup": true,//传送请求弹窗
-                    "DeathPopup": true//死亡弹出返回死亡点 子开关
+        try {
+            if (!file.exists(this._Home_FilePath)) file.writeTo(this._Home_FilePath, '{}');
+            if (!file.exists(this._Warp_FilePath)) file.writeTo(this._Warp_FilePath, '[]');
+            if (!file.exists(this._PlayerSeting_FilePath)) file.writeTo(this._PlayerSeting_FilePath, '{}');
+            if (!file.exists(this._Config_FilePath)) file.writeTo(this._Config_FilePath, JSON.stringify(
+                {
+                    "Command": {//命令配置
+                        "name": "tps",//命令名称
+                        "Describe": "传送系统"//命令描述
+                    },
+                    "Money": {//经济配置
+                        "Enable": true,//开关
+                        "LLMoney": true,//是否启用LLMoney
+                        "MoneyName": "money"//经济名称
+                    },
+                    "Home": {//家园传送配置
+                        "Enable": true,
+                        "CreateHome": 0,//创建家 所需经济
+                        "GoHome": 0,//前往家 经济
+                        "EditHome": 0,//编辑家 经济
+                        "DeleteHome": 0,//删除家 经济
+                        "MaxHome": 10//最大家园数量
+                    },
+                    "Warp": {//公共传送点配置
+                        "Enable": true,
+                        "GoWarp": 0//前往传送点 经济
+                    },
+                    "TPA": {//玩家传送配置
+                        "Enable": true,
+                        "Player_Player": 0,//玩家传玩家 经济
+                        "Player_Home": 0,//玩家穿家 经济
+                        "CacheExpirationTime": 30,//缓存过期时间//todo
+                        "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
+                        "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
+                    },
+                    "Death": {//死亡传送配置
+                        "Enable": true,
+                        "GoDelath": 0,//前往死亡点 经济
+                        "sendBackGUI": false//发送死亡返回传送点弹窗 总开关
+                    },
+                    "TPR": {//随机传送配置
+                        "Enable": true,
+                        "Min": 1000,//随机坐标最小值
+                        "Max": 5000,//最大值
+                        "Money": 0,//所需经济
+                        "MainWorld": true,//主世界
+                        "Infernal": true,//地狱
+                        "Terminus": true//末地
+                    },
+                    "MergeRequest": {//并入公共传送点配置
+                        "Enable": true,
+                        "sendRequest": 0,//发送请求 经济
+                        "DeleteRequest": 0//删除请求 经济
+                    },
+                    "PlayerSeting": {//玩家配置默认
+                        "AcceptTransmission": true,//接受传送请求
+                        "SecondaryConfirmation": true,//传送二次确认
+                        "SendRequestPopup": true,//传送请求弹窗
+                        "DeathPopup": true//死亡弹出返回死亡点 子开关
+                    }
                 }
-            }
-            , null, '\t'));
-        if (!file.exists(this._Death_FilePath)) file.writeTo(this._Death_FilePath, '{}');
-        if (!file.exists(this._MergeRequest_FilePath)) file.writeTo(this._MergeRequest_FilePath, '[]');
-        if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(
-            [
-                { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
-                { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
-                { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
-                { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
-                { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
-                { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }
-            ]
-            , null, '\t'
-        ))
-        /* 读取文件 */
-        Home = JSON.parse(file.readFrom(this._Home_FilePath));
-        Warp = JSON.parse(file.readFrom(this._Warp_FilePath));
-        PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting_FilePath));
-        Config = JSON.parse(file.readFrom(this._Config_FilePath));
-        Death = JSON.parse(file.readFrom(this._Death_FilePath));
-        MergeRequest = JSON.parse(file.readFrom(this._MergeRequest_FilePath));
-        MainUI = JSON.parse(file.readFrom(this._MainUI));
+                , null, '\t'));
+            if (!file.exists(this._Death_FilePath)) file.writeTo(this._Death_FilePath, '{}');
+            if (!file.exists(this._MergeRequest_FilePath)) file.writeTo(this._MergeRequest_FilePath, '[]');
+            if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(
+                [
+                    { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
+                    { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
+                    { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
+                    { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
+                    { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
+                    { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }
+                ]
+                , null, '\t'
+            ))
+            /* 读取文件 */
+            Home = JSON.parse(file.readFrom(this._Home_FilePath));
+            Warp = JSON.parse(file.readFrom(this._Warp_FilePath));
+            PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting_FilePath));
+            Config = JSON.parse(file.readFrom(this._Config_FilePath));
+            Death = JSON.parse(file.readFrom(this._Death_FilePath));
+            MergeRequest = JSON.parse(file.readFrom(this._MergeRequest_FilePath));
+            MainUI = JSON.parse(file.readFrom(this._MainUI));
+        } catch (e) {
+            throw new Error(e);
+        }
     }
     /**
      * 保存并重新读取配置文件
      */
-    static SaveFile() {
-        file.writeTo(this._Home_FilePath, JSON.stringify(Home, null, '\t'));
-        file.writeTo(this._Warp_FilePath, JSON.stringify(Warp, null, '\t'));
-        file.writeTo(this._PlayerSeting_FilePath, JSON.stringify(PlayerSeting, null, '\t'));
-        file.writeTo(this._Config_FilePath, JSON.stringify(Config, null, '\t'));
-        file.writeTo(this._Death_FilePath, JSON.stringify(Death, null, '\t'));
-        file.writeTo(this._MergeRequest_FilePath, JSON.stringify(MergeRequest, null, '\t'));
-        file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
-        this.ReadFile();
+    static async SaveFile() {
+        try {
+            file.writeTo(this._Home_FilePath, JSON.stringify(Home, null, '\t'));
+            file.writeTo(this._Warp_FilePath, JSON.stringify(Warp, null, '\t'));
+            file.writeTo(this._PlayerSeting_FilePath, JSON.stringify(PlayerSeting, null, '\t'));
+            file.writeTo(this._Config_FilePath, JSON.stringify(Config, null, '\t'));
+            file.writeTo(this._Death_FilePath, JSON.stringify(Death, null, '\t'));
+            file.writeTo(this._MergeRequest_FilePath, JSON.stringify(MergeRequest, null, '\t'));
+            file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
+            this.ReadFile();
+        } catch (e) {
+            throw new Error(e);
+        }
     }
 };
 /**经济模块 */
@@ -253,7 +260,7 @@ class Money_Mod {
             } else {
                 // Socre
                 if (pl.getScore(Config.Money.MoneyName) >= delMoney) {
-                    return pl.reduceScore(Number(delMoney));
+                    return pl.reduceScore(Config.Money.MoneyName, Number(delMoney));
                 } else {
                     pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
                     return false
@@ -411,15 +418,19 @@ class HomeForms {
                 Home[pl.realName] = [];
             }
             if (Money_Mod.DeductEconomy(pl, Config.Home.CreateHome)) {
-                Home[pl.realName].push({
-                    "name": dt[1],
-                    "x": pl.blockPos.x,
-                    "y": pl.blockPos.y,
-                    "z": pl.blockPos.z,
-                    "dimid": pl.blockPos.dimid
-                });
-                FileOperation.SaveFile();
-                pl.tell(Gm_Tell + '家园已保存');
+                if (Home[pl.realName].length <= Config.Home.MaxHome) {
+                    Home[pl.realName].push({
+                        "name": dt[1],
+                        "x": pl.blockPos.x,
+                        "y": pl.blockPos.y,
+                        "z": pl.blockPos.z,
+                        "dimid": pl.blockPos.dimid
+                    });
+                    FileOperation.SaveFile();
+                    pl.tell(Gm_Tell + '家园已保存');
+                } else {
+                    pl.tell(Gm_Tell + `创建家园传送点[${dt[1]}失败！\n最大家园数量：${Config.Home.MaxHome}]`);
+                }
             }
         })
     }
@@ -799,11 +810,15 @@ class Forms {
         const fm = Other.CustomForm();
         fm.addSwitch('接受传送请求', PlayerSeting[pl.realName].AcceptTransmission);
         fm.addSwitch('传送时二次确认', PlayerSeting[pl.realName].SecondaryConfirmation);
+        fm.addButton('收到传送请求时是否弹窗', PlayerSeting[pl.realName].SendRequestPopup);
+        fm.addButton('死亡后弹出返回死亡点弹窗', PlayerSeting[pl.realName].DeathPopup);
         pl.sendForm(fm, (pl, dt) => {
             if (dt == null) return Other.CloseTell(pl);
             const data = {
                 AcceptTransmission: Boolean(dt[0]).valueOf(),
-                SecondaryConfirmation: Boolean(dt[1]).valueOf()
+                SecondaryConfirmation: Boolean(dt[1]).valueOf(),
+                SendRequestPopup: Boolean(dt[2]).valueOf(),
+                DeathPopup: Boolean(dt[3]).valueOf()
             };
             PlayerSeting[pl.realName] = data;
             FileOperation.SaveFile();
@@ -812,6 +827,9 @@ class Forms {
     }
     static async RandomTeleportCore(pl) {
         if (Money_Mod.DeductEconomy(pl, Config.TPR.Money)) {
+            if (pl.blockPos.dimid == 0 && Config.TPR.MainWorld == false) return pl.tell(Gm_Tell + `随机传送在当前维度不可用！`);//主世界关闭
+            if (pl.blockPos.dimid == 1 && Config.TPR.Infernal == false) return pl.tell(Gm_Tell + `随机传送在当前维度不可用！`);//地狱关闭
+            if (pl.blockPos.dimid == 2 && Config.TPR.Terminus == false) return pl.tell(Gm_Tell + `随机传送在当前维度不可用！`);//末地关闭
             pl.tell(Gm_Tell + `准备传送...`);
             let Pos_Y = 500;
             let to_Pos = new IntPos(RandomCoordinates(), Pos_Y, RandomCoordinates(), pl.blockPos.dimid);
@@ -865,7 +883,7 @@ class Forms {
         }
     }
 }
-class TPA_Cache {
+class TPA_Cache {//todo 缓存传送
     static async DeleteCache(pl) {
         for (let i = 0; i < TPACache.length; i++) {
             if (i.from == pl.realName || i.to == pl.realName) {
@@ -881,6 +899,12 @@ class TPA_Cache {
             }
         }
     }
+    // static async getRequest(pl) {
+    //     let tmp = [];
+    //     for (let i = 0; i < TPACache.length; i++) {
+    //         if ()
+    //     }
+    // }
 }
 
 
@@ -1404,14 +1428,17 @@ function Delivery_Core(from, to, type, pos, txt) {
         }
         Death[pl.realName] = data;
         FileOperation.SaveFile();
-        // 发送返回死亡点弹窗
-        if (Config.Death.sendBackGUI == true && PlayerSeting[pl.realName].DeathPopup == true) {
-            MAPPING_TABLE["DeathUi"](pl);
-        }
     })
     //玩家退出游戏
     mc.listen('onLeft', (pl) => {
         if (pl.isSimulatedPlayer()) return;
         TPA_Cache.DeleteCache(pl);
+    })
+    //玩家重生
+    mc.listen('onRespawn', (pl) => {
+        // 发送返回死亡点弹窗
+        if (Config.Death.sendBackGUI == true && PlayerSeting[pl.realName].DeathPopup == true) {
+            MAPPING_TABLE["DeathUi"](pl);//todo 待尝试pl.isloading接口
+        }
     })
 }
