@@ -3,7 +3,7 @@
 
 const PLUGINS_NAME = "TpSystem";
 const PLUGINS_JS = `TpSystem 传送系统`;
-const PLUGINS_VERSION = [0, 0, 1];
+const PLUGINS_VERSION = [0, 0, 5, Version.Dev];
 const PLUGINS_ZZ = "PPOUI";
 const PLUGINS_URL = "";
 ll.registerPlugin(
