@@ -70,7 +70,8 @@
         "SecondaryConfirmation": true,//传送二次确认
         "SendRequestPopup": true,//传送请求弹窗
         "DeathPopup": true//死亡弹出返回死亡点 子开关
-    }
+    },
+    "AutoCompleteAttributes": true//自动补齐属性
 }
 ```
 

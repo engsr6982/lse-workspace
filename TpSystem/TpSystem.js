@@ -3,7 +3,7 @@
 
 const PLUGINS_NAME = "TpSystem";
 const PLUGINS_JS = `TpSystem 传送系统`;
-const PLUGINS_VERSION = [0, 0, 5, Version.Dev];
+const PLUGINS_VERSION = [0, 0, 6, Version.Dev];
 const PLUGINS_ZZ = "PPOUI";
 const PLUGINS_URL = "";
 ll.registerPlugin(
@@ -85,7 +85,8 @@ const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
         "SecondaryConfirmation": true,//传送二次确认
         "SendRequestPopup": true,//传送请求弹窗
         "DeathPopup": true//死亡弹出返回死亡点 子开关
-    }
+    },
+    "AutoCompleteAttributes": true//自动补齐属性
 };
 /**家 */let Home = {};
 /**公共传送点 */let Warp = [];
@@ -126,7 +127,7 @@ class FileOperation {
                         "MoneyName": "money"//经济名称
                     },
                     "Home": {//家园传送配置
-                        "Enable": true,
+                        "Enable": true,//todo
                         "CreateHome": 0,//创建家 所需经济
                         "GoHome": 0,//前往家 经济
                         "EditHome": 0,//编辑家 经济
@@ -169,7 +170,8 @@ class FileOperation {
                         "SecondaryConfirmation": true,//传送二次确认
                         "SendRequestPopup": true,//传送请求弹窗
                         "DeathPopup": true//死亡弹出返回死亡点 子开关
-                    }
+                    },
+                    "AutoCompleteAttributes": true//自动补齐属性
                 }
                 , null, '\t'));
             if (!file.exists(this._Death_FilePath)) file.writeTo(this._Death_FilePath, '{}');
@@ -810,8 +812,8 @@ class Forms {
         const fm = Other.CustomForm();
         fm.addSwitch('接受传送请求', PlayerSeting[pl.realName].AcceptTransmission);
         fm.addSwitch('传送时二次确认', PlayerSeting[pl.realName].SecondaryConfirmation);
-        fm.addButton('收到传送请求时是否弹窗', PlayerSeting[pl.realName].SendRequestPopup);
-        fm.addButton('死亡后弹出返回死亡点弹窗', PlayerSeting[pl.realName].DeathPopup);
+        fm.addSwitch('收到传送请求时是否弹窗', PlayerSeting[pl.realName].SendRequestPopup);
+        fm.addSwitch('死亡后弹出返回死亡点弹窗', PlayerSeting[pl.realName].DeathPopup);
         pl.sendForm(fm, (pl, dt) => {
             if (dt == null) return Other.CloseTell(pl);
             const data = {
@@ -1357,9 +1359,9 @@ function Delivery_Core(from, to, type, pos, txt) {
     fm.addButton("接受请求", "textures/ui/realms_green_check");
     fm.addButton("拒绝请求", "textures/ui/realms_red_x");
     if (type == 0) {// 根据类型发送表单给对应的玩家
-        if (to.sendForm(fm, onReceiveRequest) == null || PlayerSeting[pl.realName].SendRequestPopup == false) { sendFormError(pl) }/* 发送给目标玩家 */
+        if (to.sendForm(fm, onReceiveRequest) == null || PlayerSeting[to.realName].SendRequestPopup == false) { sendFormError(to) }/* 发送给目标玩家 */
     } else {
-        if (from.sendForm(fm, onReceiveRequest) == null || PlayerSeting[pl.realName].SendRequestPopup == false) { sendFormError(pl) }/* 发送给发送方玩家 */
+        if (from.sendForm(fm, onReceiveRequest) == null || PlayerSeting[from.realName].SendRequestPopup == false) { sendFormError(from) }/* 发送给发送方玩家 */
     }
     // 定义表单回调函数
     function onReceiveRequest(_pl, id) {
@@ -1413,6 +1415,15 @@ function Delivery_Core(from, to, type, pos, txt) {
         if (!PlayerSeting.hasOwnProperty(pl.realName)) {
             logger.warn(`玩家${pl.realName} 的配置不存在，正在新建配置...`);
             PlayerSeting[pl.realName] = Config.TPASeting;
+            FileOperation.SaveFile();
+        } else if (Config.AutoCompleteAttributes) {
+            // 0.0.5版本新增属性检查
+            for (let ps in Config.PlayerSeting) {
+                if (Config.PlayerSeting.hasOwnProperty(ps) && !PlayerSeting[pl.realName].hasOwnProperty(ps)) {
+                    PlayerSeting[pl.realName][ps] = Config.PlayerSeting[ps];
+                    logger.warn(`玩家[${pl.realName}] ${ps} 属性缺失，已自动补齐`);
+                }
+            }
             FileOperation.SaveFile();
         }
     })
