@@ -3,7 +3,7 @@
 
 const PLUGINS_NAME = "TpSystem";
 const PLUGINS_JS = `TpSystem 传送系统`;
-const PLUGINS_VERSION = [0, 0, 7, Version.Dev];
+const PLUGINS_VERSION = [0, 0, 8, Version.Dev];
 const PLUGINS_ZZ = "PPOUI";
 const PLUGINS_URL = "";
 ll.registerPlugin(
@@ -1414,7 +1414,7 @@ function Delivery_Core(from, to, type, pos, txt) {
         if (pl.isSimulatedPlayer()) return;
         if (!PlayerSeting.hasOwnProperty(pl.realName)) {
             logger.warn(`玩家${pl.realName} 的配置不存在，正在新建配置...`);
-            PlayerSeting[pl.realName] = Config.TPASeting;
+            PlayerSeting[pl.realName] = Config.PlayerSeting;
             FileOperation.SaveFile();
         } else if (Config.AutoCompleteAttributes) {
             // 0.0.5版本新增属性检查
