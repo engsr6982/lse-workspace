@@ -3,7 +3,7 @@
 
 const PLUGINS_NAME = "TpSystem";
 const PLUGINS_JS = `TpSystem 传送系统`;
-const PLUGINS_VERSION = [0, 0, 6, Version.Dev];
+const PLUGINS_VERSION = [0, 0, 7, Version.Dev];
 const PLUGINS_ZZ = "PPOUI";
 const PLUGINS_URL = "";
 ll.registerPlugin(
@@ -748,7 +748,7 @@ class Forms {
         fm.addDropdown('选择一个玩家', OnlinePlayers, 0);
         fm.addDropdown('选择一个家', Hone_List);
         fm.addDropdown('传送类型', DeliveryType, 0);
-        fm.addLabel(Money_Mod.getEconomyStr(pl, Config.TPA.Player_Player));
+        fm.addLabel(`当前${Config.Money.MoneyName}: ${Money_Mod.getEconomy}    玩家传玩家消耗：${Config.TPA.Player_Player}  玩家传家消耗：${Config.TPA.Player_Home}`);
         pl.sendForm(fm, (pl, dt) => {
             if (dt == null) return Other.CloseTell(pl);
             switch (dt[2]) {
@@ -764,7 +764,7 @@ class Forms {
                     } break;
                 case 2:/* TA => Home */
                     if (!PlayerSeting[OnlinePlayers[dt[0]]].AcceptTransmission) return pl.tell(Gm_Tell + '无法传送！对方开启了禁止传送！');
-                    if (Money_Mod.DeductEconomy(pl, Config.TPA.Player_Player)) {
+                    if (Money_Mod.DeductEconomy(pl, Config.TPA.Player_Home)) {
                         Delivery_Core(mc.getPlayer(OnlinePlayers[dt[0]]), pl, 2, { x: Home[pl.realName][dt[1]].x, y: Home[pl.realName][dt[1]].y, z: Home[pl.realName][dt[1]].z, dimid: Home[pl.realName][dt[1]].dimid }, '传送至TA家园');
                     } break;
             }
