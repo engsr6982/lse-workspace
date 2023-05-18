@@ -1,0 +1,12 @@
+{
+    "parserOptions": {
+      "ecmaVersion": 2020
+    },
+    "rules": {
+      "no-unused-vars": "warn",
+      "no-console": "error",
+      "no-ex-assign": "error",
+      "complexity": ["warn", 15]
+    }
+  }
+  
