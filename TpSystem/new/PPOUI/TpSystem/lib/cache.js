@@ -1,14 +1,15 @@
 
 /**插件信息 */
 export const PLUGIN_INFO = {
-    NAME: 'TpSystem',
+    Name: 'TpSystem',
     Introduce: 'TpSystem 传送系统',
     Version: [0, 1, 0, Version.Dev],
     Author: 'PPOUI',
     MineBBS: ''
 }
 
-export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.NAME}\\`;
+export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}\\`;
+export let Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§e]§r§a `;
 
 /**配置文件 */
 export let Config = {}
@@ -21,7 +22,7 @@ export let PlayerSeting = {}
 /**死亡信息 */
 export let Death = {}
 /**合并请求 */
-export let MergrRequest = []
+export let MergeRequest = []
 /**主页UI */
 export let MainUI = []
 /**TPA缓存 */

@@ -29,194 +29,194 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
 }
 
 
-const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
+// const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
 
-/**配置文件 */let Config = {
-    "Command": {//命令配置
-        "name": "tps",//命令名称
-        "Describe": "传送系统"//命令描述
-    },
-    "Money": {//经济配置
-        "Enable": true,//开关
-        "LLMoney": true,//是否启用LLMoney
-        "MoneyName": "money"//经济名称
-    },
-    "Home": {//家园传送配置
-        "Enable": true,
-        "CreateHome": 0,//创建家 所需经济
-        "GoHome": 0,//前往家 经济
-        "EditHome": 0,//编辑家 经济
-        "DeleteHome": 0,//删除家 经济
-        "MaxHome": 10//最大家园数量
-    },
-    "Warp": {//公共传送点配置
-        "Enable": true,
-        "GoWarp": 0//前往传送点 经济
-    },
-    "TPA": {//玩家传送配置
-        "Enable": true,
-        "Player_Player": 0,//玩家传玩家 经济
-        "Player_Home": 0,//玩家穿家 经济
-        "CacheExpirationTime": 30,//缓存过期时间
-        "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟
-        "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒
-    },
-    "Death": {//死亡传送配置
-        "Enable": true,
-        "GoDelath": 0,//前往死亡点 经济
-        "sendBackGUI": true//发送死亡返回传送点弹窗 总开关
-    },
-    "TPR": {//随机传送配置
-        "Enable": true,
-        "Min": 1000,//随机坐标最小值
-        "Max": 5000,//最大值
-        "Money": 0,//所需经济
-        "MainWorld": true,//主世界
-        "Infernal": true,//地狱
-        "Terminus": true//末地
-    },
-    "MergeRequest": {//并入公共传送点配置
-        "Enable": true,
-        "sendRequest": 0,//发送请求 经济
-        "DeleteRequest": 0//删除请求 经济
-    },
-    "PlayerSeting": {//玩家配置默认
-        "AcceptTransmission": true,//接受传送请求
-        "SecondaryConfirmation": true,//传送二次确认
-        "SendRequestPopup": true,//传送请求弹窗
-        "DeathPopup": true//死亡弹出返回死亡点 子开关
-    },
-    "AutoCompleteAttributes": true//自动补齐属性
-};
-/**家 */let Home = {};
-/**公共传送点 */let Warp = [];
-/**玩家配置 */let PlayerSeting = {};
-/**死亡信息 */let Death = {};
-/**合并请求 */let MergeRequest = [];
-/**表单UI */let MainUI = {};
-/**传送缓存 */let TPACache = [];
+// /**配置文件 */let Config = {
+//     "Command": {//命令配置
+//         "name": "tps",//命令名称
+//         "Describe": "传送系统"//命令描述
+//     },
+//     "Money": {//经济配置
+//         "Enable": true,//开关
+//         "LLMoney": true,//是否启用LLMoney
+//         "MoneyName": "money"//经济名称
+//     },
+//     "Home": {//家园传送配置
+//         "Enable": true,
+//         "CreateHome": 0,//创建家 所需经济
+//         "GoHome": 0,//前往家 经济
+//         "EditHome": 0,//编辑家 经济
+//         "DeleteHome": 0,//删除家 经济
+//         "MaxHome": 10//最大家园数量
+//     },
+//     "Warp": {//公共传送点配置
+//         "Enable": true,
+//         "GoWarp": 0//前往传送点 经济
+//     },
+//     "TPA": {//玩家传送配置
+//         "Enable": true,
+//         "Player_Player": 0,//玩家传玩家 经济
+//         "Player_Home": 0,//玩家穿家 经济
+//         "CacheExpirationTime": 30,//缓存过期时间
+//         "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟
+//         "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒
+//     },
+//     "Death": {//死亡传送配置
+//         "Enable": true,
+//         "GoDelath": 0,//前往死亡点 经济
+//         "sendBackGUI": true//发送死亡返回传送点弹窗 总开关
+//     },
+//     "TPR": {//随机传送配置
+//         "Enable": true,
+//         "Min": 1000,//随机坐标最小值
+//         "Max": 5000,//最大值
+//         "Money": 0,//所需经济
+//         "MainWorld": true,//主世界
+//         "Infernal": true,//地狱
+//         "Terminus": true//末地
+//     },
+//     "MergeRequest": {//并入公共传送点配置
+//         "Enable": true,
+//         "sendRequest": 0,//发送请求 经济
+//         "DeleteRequest": 0//删除请求 经济
+//     },
+//     "PlayerSeting": {//玩家配置默认
+//         "AcceptTransmission": true,//接受传送请求
+//         "SecondaryConfirmation": true,//传送二次确认
+//         "SendRequestPopup": true,//传送请求弹窗
+//         "DeathPopup": true//死亡弹出返回死亡点 子开关
+//     },
+//     "AutoCompleteAttributes": true//自动补齐属性
+// };
+// /**家 */let Home = {};
+// /**公共传送点 */let Warp = [];
+// /**玩家配置 */let PlayerSeting = {};
+// /**死亡信息 */let Death = {};
+// /**合并请求 */let MergeRequest = [];
+// /**表单UI */let MainUI = {};
+// /**传送缓存 */let TPACache = [];
 
 /**文件操作 */
-class FileOperation {
-    static _Config_FilePath = _FilePath + 'Config.json';
-    static _Home_FilePath = _FilePath + 'Home.json';
-    static _Warp_FilePath = _FilePath + 'Warp.json';
-    static _PlayerSeting_FilePath = _FilePath + 'PlayerSeting.json';
-    static _Death_FilePath = _FilePath + 'Death.json';
-    static _MergeRequest_FilePath = _FilePath + 'MergeRequest.json';
-    static _MainUI = _FilePath + 'GUI\\MainUI.json';
+// class FileOperation {
+// static _Config_FilePath = _FilePath + 'Config.json';
+// static _Home_FilePath = _FilePath + 'Home.json';
+// static _Warp_FilePath = _FilePath + 'Warp.json';
+// static _PlayerSeting_FilePath = _FilePath + 'PlayerSeting.json';
+// static _Death_FilePath = _FilePath + 'Death.json';
+// static _MergeRequest_FilePath = _FilePath + 'MergeRequest.json';
+// static _MainUI = _FilePath + 'GUI\\MainUI.json';
 
-    /**
-     * 读取配置文件
-     */
-    static async ReadFile() {
-        /* 检查文件 */
-        try {
-            if (!file.exists(this._Home_FilePath)) file.writeTo(this._Home_FilePath, '{}');
-            if (!file.exists(this._Warp_FilePath)) file.writeTo(this._Warp_FilePath, '[]');
-            if (!file.exists(this._PlayerSeting_FilePath)) file.writeTo(this._PlayerSeting_FilePath, '{}');
-            if (!file.exists(this._Config_FilePath)) file.writeTo(this._Config_FilePath, JSON.stringify(
-                {
-                    "Command": {//命令配置
-                        "name": "tps",//命令名称
-                        "Describe": "传送系统"//命令描述
-                    },
-                    "Money": {//经济配置
-                        "Enable": true,//开关
-                        "LLMoney": true,//是否启用LLMoney
-                        "MoneyName": "money"//经济名称
-                    },
-                    "Home": {//家园传送配置
-                        "Enable": true,//todo
-                        "CreateHome": 0,//创建家 所需经济
-                        "GoHome": 0,//前往家 经济
-                        "EditHome": 0,//编辑家 经济
-                        "DeleteHome": 0,//删除家 经济
-                        "MaxHome": 10//最大家园数量
-                    },
-                    "Warp": {//公共传送点配置
-                        "Enable": true,
-                        "GoWarp": 0//前往传送点 经济
-                    },
-                    "TPA": {//玩家传送配置
-                        "Enable": true,
-                        "Player_Player": 0,//玩家传玩家 经济
-                        "Player_Home": 0,//玩家穿家 经济
-                        "CacheExpirationTime": 30,//缓存过期时间//todo
-                        "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
-                        "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
-                    },
-                    "Death": {//死亡传送配置
-                        "Enable": true,
-                        "GoDelath": 0,//前往死亡点 经济
-                        "sendBackGUI": false//发送死亡返回传送点弹窗 总开关
-                    },
-                    "TPR": {//随机传送配置
-                        "Enable": true,
-                        "Min": 1000,//随机坐标最小值
-                        "Max": 5000,//最大值
-                        "Money": 0,//所需经济
-                        "MainWorld": true,//主世界
-                        "Infernal": true,//地狱
-                        "Terminus": true//末地
-                    },
-                    "MergeRequest": {//并入公共传送点配置
-                        "Enable": true,
-                        "sendRequest": 0,//发送请求 经济
-                        "DeleteRequest": 0//删除请求 经济
-                    },
-                    "PlayerSeting": {//玩家配置默认
-                        "AcceptTransmission": true,//接受传送请求
-                        "SecondaryConfirmation": true,//传送二次确认
-                        "SendRequestPopup": true,//传送请求弹窗
-                        "DeathPopup": true//死亡弹出返回死亡点 子开关
-                    },
-                    "AutoCompleteAttributes": true//自动补齐属性
-                }
-                , null, '\t'));
-            if (!file.exists(this._Death_FilePath)) file.writeTo(this._Death_FilePath, '{}');
-            if (!file.exists(this._MergeRequest_FilePath)) file.writeTo(this._MergeRequest_FilePath, '[]');
-            if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(
-                [
-                    { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
-                    { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
-                    { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
-                    { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
-                    { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
-                    { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }
-                ]
-                , null, '\t'
-            ))
-            /* 读取文件 */
-            Home = JSON.parse(file.readFrom(this._Home_FilePath));
-            Warp = JSON.parse(file.readFrom(this._Warp_FilePath));
-            PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting_FilePath));
-            Config = JSON.parse(file.readFrom(this._Config_FilePath));
-            Death = JSON.parse(file.readFrom(this._Death_FilePath));
-            MergeRequest = JSON.parse(file.readFrom(this._MergeRequest_FilePath));
-            MainUI = JSON.parse(file.readFrom(this._MainUI));
-        } catch (e) {
-            throw new Error(e);
-        }
-    }
-    /**
-     * 保存并重新读取配置文件
-     */
-    static async SaveFile() {
-        try {
-            file.writeTo(this._Home_FilePath, JSON.stringify(Home, null, '\t'));
-            file.writeTo(this._Warp_FilePath, JSON.stringify(Warp, null, '\t'));
-            file.writeTo(this._PlayerSeting_FilePath, JSON.stringify(PlayerSeting, null, '\t'));
-            file.writeTo(this._Config_FilePath, JSON.stringify(Config, null, '\t'));
-            file.writeTo(this._Death_FilePath, JSON.stringify(Death, null, '\t'));
-            file.writeTo(this._MergeRequest_FilePath, JSON.stringify(MergeRequest, null, '\t'));
-            file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
-            this.ReadFile();
-        } catch (e) {
-            throw new Error(e);
-        }
-    }
-};
+//     /**
+//      * 读取配置文件
+//      */
+//     static async ReadFile() {
+//         /* 检查文件 */
+//         try {
+//             if (!file.exists(this._Home_FilePath)) file.writeTo(this._Home_FilePath, '{}');
+//             if (!file.exists(this._Warp_FilePath)) file.writeTo(this._Warp_FilePath, '[]');
+//             if (!file.exists(this._PlayerSeting_FilePath)) file.writeTo(this._PlayerSeting_FilePath, '{}');
+//             if (!file.exists(this._Config_FilePath)) file.writeTo(this._Config_FilePath, JSON.stringify(
+//                 {
+//                     "Command": {//命令配置
+//                         "name": "tps",//命令名称
+//                         "Describe": "传送系统"//命令描述
+//                     },
+//                     "Money": {//经济配置
+//                         "Enable": true,//开关
+//                         "LLMoney": true,//是否启用LLMoney
+//                         "MoneyName": "money"//经济名称
+//                     },
+//                     "Home": {//家园传送配置
+//                         "Enable": true,//todo
+//                         "CreateHome": 0,//创建家 所需经济
+//                         "GoHome": 0,//前往家 经济
+//                         "EditHome": 0,//编辑家 经济
+//                         "DeleteHome": 0,//删除家 经济
+//                         "MaxHome": 10//最大家园数量
+//                     },
+//                     "Warp": {//公共传送点配置
+//                         "Enable": true,
+//                         "GoWarp": 0//前往传送点 经济
+//                     },
+//                     "TPA": {//玩家传送配置
+//                         "Enable": true,
+//                         "Player_Player": 0,//玩家传玩家 经济
+//                         "Player_Home": 0,//玩家穿家 经济
+//                         "CacheExpirationTime": 30,//缓存过期时间//todo
+//                         "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
+//                         "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
+//                     },
+//                     "Death": {//死亡传送配置
+//                         "Enable": true,
+//                         "GoDelath": 0,//前往死亡点 经济
+//                         "sendBackGUI": false//发送死亡返回传送点弹窗 总开关
+//                     },
+//                     "TPR": {//随机传送配置
+//                         "Enable": true,
+//                         "Min": 1000,//随机坐标最小值
+//                         "Max": 5000,//最大值
+//                         "Money": 0,//所需经济
+//                         "MainWorld": true,//主世界
+//                         "Infernal": true,//地狱
+//                         "Terminus": true//末地
+//                     },
+//                     "MergeRequest": {//并入公共传送点配置
+//                         "Enable": true,
+//                         "sendRequest": 0,//发送请求 经济
+//                         "DeleteRequest": 0//删除请求 经济
+//                     },
+//                     "PlayerSeting": {//玩家配置默认
+//                         "AcceptTransmission": true,//接受传送请求
+//                         "SecondaryConfirmation": true,//传送二次确认
+//                         "SendRequestPopup": true,//传送请求弹窗
+//                         "DeathPopup": true//死亡弹出返回死亡点 子开关
+//                     },
+//                     "AutoCompleteAttributes": true//自动补齐属性
+//                 }
+//                 , null, '\t'));
+//             if (!file.exists(this._Death_FilePath)) file.writeTo(this._Death_FilePath, '{}');
+//             if (!file.exists(this._MergeRequest_FilePath)) file.writeTo(this._MergeRequest_FilePath, '[]');
+//             if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(
+//                 [
+//                     { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
+//                     { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
+//                     { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
+//                     { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
+//                     { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
+//                     { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }
+//                 ]
+//                 , null, '\t'
+//             ))
+//             /* 读取文件 */
+//             Home = JSON.parse(file.readFrom(this._Home_FilePath));
+//             Warp = JSON.parse(file.readFrom(this._Warp_FilePath));
+//             PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting_FilePath));
+//             Config = JSON.parse(file.readFrom(this._Config_FilePath));
+//             Death = JSON.parse(file.readFrom(this._Death_FilePath));
+//             MergeRequest = JSON.parse(file.readFrom(this._MergeRequest_FilePath));
+//             MainUI = JSON.parse(file.readFrom(this._MainUI));
+//         } catch (e) {
+//             throw new Error(e);
+//         }
+//     }
+//     /**
+//      * 保存并重新读取配置文件
+//      */
+//     static async SaveFile() {
+//         try {
+//             file.writeTo(this._Home_FilePath, JSON.stringify(Home, null, '\t'));
+//             file.writeTo(this._Warp_FilePath, JSON.stringify(Warp, null, '\t'));
+//             file.writeTo(this._PlayerSeting_FilePath, JSON.stringify(PlayerSeting, null, '\t'));
+//             file.writeTo(this._Config_FilePath, JSON.stringify(Config, null, '\t'));
+//             file.writeTo(this._Death_FilePath, JSON.stringify(Death, null, '\t'));
+//             file.writeTo(this._MergeRequest_FilePath, JSON.stringify(MergeRequest, null, '\t'));
+//             file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
+//             this.ReadFile();
+//         } catch (e) {
+//             throw new Error(e);
+//         }
+//     }
+// };
 /**经济模块 */
 class Money_Mod {
     static getEconomyStr(pl, dmoney) {

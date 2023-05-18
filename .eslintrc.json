@@ -6,6 +6,10 @@
     "ecmaVersion": 2022,
     "sourceType": "module"
   },
+  "globals": {
+    "file": "readonly",
+    "Version": "readonly"
+  },
   "rules": {
     "no-unused-vars": "warn",
     "no-console": "error",
@@ -14,6 +18,6 @@
       "warn",
       15
     ],
-    "quotes": ["error", "single"]
+    "no-undef": "error"
   }
 }
