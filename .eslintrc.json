@@ -3,7 +3,8 @@
     "es6": true
   },
   "parserOptions": {
-    "ecmaVersion": 2022
+    "ecmaVersion": 2022,
+    "sourceType": "module"
   },
   "rules": {
     "no-unused-vars": "warn",
@@ -12,6 +13,7 @@
     "complexity": [
       "warn",
       15
-    ]
+    ],
+    "quotes": ["error", "single"]
   }
 }

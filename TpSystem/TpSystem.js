@@ -1,20 +1,20 @@
 //LiteLoaderScript Dev Helper
 /// <reference path="c:\Users\Administrator\Documents\aids/dts/HelperLib-master/src/index.d.ts"/> 
 
-const PLUGINS_NAME = "TpSystem";
-const PLUGINS_JS = `TpSystem 传送系统`;
-const PLUGINS_VERSION = [0, 0, 8, Version.Dev];
-const PLUGINS_ZZ = "PPOUI";
-const PLUGINS_URL = "";
-ll.registerPlugin(
-        /* name */ PLUGINS_NAME,
-        /* introduction */ PLUGINS_JS,
-        /* version */ PLUGINS_VERSION,
-        /* otherInformation */ {
-        "作者": PLUGINS_ZZ,
-        "发布网站": PLUGINS_URL
-    }
-);
+// const PLUGINS_NAME = "TpSystem";
+// const PLUGINS_JS = `TpSystem 传送系统`;
+// const PLUGINS_VERSION = [0, 0, 8, Version.Dev];
+// const PLUGINS_ZZ = "PPOUI";
+// const PLUGINS_URL = "";
+// ll.registerPlugin(
+//         /* name */ PLUGINS_NAME,
+//         /* introduction */ PLUGINS_JS,
+//         /* version */ PLUGINS_VERSION,
+//         /* otherInformation */ {
+//         "作者": PLUGINS_ZZ,
+//         "发布网站": PLUGINS_URL
+//     }
+// );
 let Gm_Tell = `§e§l[§d${PLUGINS_NAME}§e]§r§a `;
 if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
     logger.setTitle(PLUGINS_NAME + ' Debug');
