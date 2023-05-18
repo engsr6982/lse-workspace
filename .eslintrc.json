@@ -1,12 +1,17 @@
 {
-    "parserOptions": {
-      "ecmaVersion": 2020
-    },
-    "rules": {
-      "no-unused-vars": "warn",
-      "no-console": "error",
-      "no-ex-assign": "error",
-      "complexity": ["warn", 15]
-    }
+  "env": {
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-console": "error",
+    "no-ex-assign": "error",
+    "complexity": [
+      "warn",
+      15
+    ]
   }
-  
+}
