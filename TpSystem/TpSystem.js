@@ -325,9 +325,8 @@ class Other {
      * 位随机ID
      * @returns ID
      */
-    static RandomID(num = 16) {
+    static RandomID(num = 16, char = 'QWERTYUIOPASDFGHJKLZXCVBNM') {
         let str = '';
-        const char = 'QWERTYUIOPASDFGHJKLZXCVBNM';
         for (let i = 0; i < num; i++) {
             let index = Math.floor(Math.random() * char.length);
             str += char[index];
