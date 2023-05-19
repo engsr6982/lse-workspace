@@ -7,9 +7,12 @@
     "sourceType": "module"
   },
   "globals": {
+    "ll": "readonly",
     "mc": "readonly",
     "file": "readonly",
+    "File": "readonly",
     "money": "readonly",
+    "logger": "readonly",
     "Version": "readonly",
     "PermType": "readonly"
   },

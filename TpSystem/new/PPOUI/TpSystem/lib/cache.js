@@ -47,7 +47,8 @@ export const __init = {
             "Enable": true,//todo
             "CreateHome": 0,//创建家 所需经济
             "GoHome": 0,//前往家 经济
-            "EditHome": 0,//编辑家 经济
+            "EditHome_Name": 0,//编辑家（名称） 经济
+            "EditHome_Pos": 0,// 编辑家（坐标） 经济
             "DeleteHome": 0,//删除家 经济
             "MaxHome": 10//最大家园数量
         },

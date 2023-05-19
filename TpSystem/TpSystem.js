@@ -16,17 +16,17 @@
 //     }
 // );
 let Gm_Tell = `§e§l[§d${PLUGINS_NAME}§e]§r§a `;
-if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
-    logger.setTitle(PLUGINS_NAME + ' Debug');
-    logger.setLogLevel(5);
-    logger.warn('你已开启Debug模式，将会输出Debug信息');
-    Gm_Tell = `§e§l[§d${PLUGINS_NAME}§c Debug§e]§r§a `;
-    mc.listen("onUseItemOn", (pl, it, bl, si) => {
-        if (it.type == 'minecraft:stick') {
-            pl.runcmd("tps ");
-        }
-    })
-}
+// if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
+//     logger.setTitle(PLUGINS_NAME + ' Debug');
+//     logger.setLogLevel(5);
+//     logger.warn('你已开启Debug模式，将会输出Debug信息');
+//     Gm_Tell = `§e§l[§d${PLUGINS_NAME}§c Debug§e]§r§a `;
+//     mc.listen("onUseItemOn", (pl, it, bl, si) => {
+//         if (it.type == 'minecraft:stick') {
+//             pl.runcmd("tps ");
+//         }
+//     })
+// }
 
 
 // const _FilePath = `.\\Plugins\\${PLUGINS_ZZ}\\${PLUGINS_NAME}\\`;
@@ -307,71 +307,71 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
 //     }
 // }
 /**其他模块 */
-class Other {
-    /**
-     * Dimid转中文维度
-     * @param {Number} dimension Dimid
-     * @returns 
-     */
-    static DimidToDimension(dimension) {
-        switch (dimension) {
-            case 0: return '主世界';
-            case 1: return '地狱';
-            case 2: return '末地';
-            default: return '未知';
-        }
-    }
-    /**
-     * 位随机ID
-     * @returns ID
-     */
-    static RandomID(num = 16, char = 'QWERTYUIOPASDFGHJKLZXCVBNM') {
-        let str = '';
-        for (let i = 0; i < num; i++) {
-            let index = Math.floor(Math.random() * char.length);
-            str += char[index];
-        }
-        return str;
-    }
-    /**
-     * 获取所有在线玩家名
-     * @returns Array[Name, ...]
-     */
-    static GetOnlinePlayers() {
-        let OnlinePlayers = [];
-        mc.getOnlinePlayers().forEach(pl => {
-            if (pl.isSimulatedPlayer()) return;
-            OnlinePlayers.push(pl.realName);
-        })
-        return OnlinePlayers;
-    }
-    /**
-     * 按钮表单
-     * @returns 
-     */
-    static SimpleForm() {
-        const fm = mc.newSimpleForm();
-        fm.setTitle(PLUGINS_JS);
-        fm.setContent(`· 选择一个操作`);
-        return fm;
-    }
-    /**
-     * 自定义表单
-     * @returns 
-     */
-    static CustomForm() {
-        const fm = mc.newCustomForm();
-        fm.setTitle(PLUGINS_JS);
-        return fm;
-    }
-    /**
-     * 放弃表单
-     * @param {Object} pl 玩家对象
-     */
-    static CloseTell(pl) {
-        pl.tell(Gm_Tell + `表单已放弃`);
-    }
-}
+// class Other {
+//     /**
+//      * Dimid转中文维度
+//      * @param {Number} dimension Dimid
+//      * @returns 
+//      */
+//     static DimidToDimension(dimension) {
+//         switch (dimension) {
+//             case 0: return '主世界';
+//             case 1: return '地狱';
+//             case 2: return '末地';
+//             default: return '未知';
+//         }
+//     }
+//     /**
+//      * 位随机ID
+//      * @returns ID
+//      */
+//     static RandomID(num = 16, char = 'QWERTYUIOPASDFGHJKLZXCVBNM') {
+//         let str = '';
+//         for (let i = 0; i < num; i++) {
+//             let index = Math.floor(Math.random() * char.length);
+//             str += char[index];
+//         }
+//         return str;
+//     }
+//     /**
+//      * 获取所有在线玩家名
+//      * @returns Array[Name, ...]
+//      */
+//     static GetOnlinePlayers() {
+//         let OnlinePlayers = [];
+//         mc.getOnlinePlayers().forEach(pl => {
+//             if (pl.isSimulatedPlayer()) return;
+//             OnlinePlayers.push(pl.realName);
+//         })
+//         return OnlinePlayers;
+//     }
+//     /**
+//      * 按钮表单
+//      * @returns 
+//      */
+//     static SimpleForm() {
+//         const fm = mc.newSimpleForm();
+//         fm.setTitle(PLUGINS_JS);
+//         fm.setContent(`· 选择一个操作`);
+//         return fm;
+//     }
+//     /**
+//      * 自定义表单
+//      * @returns 
+//      */
+//     static CustomForm() {
+//         const fm = mc.newCustomForm();
+//         fm.setTitle(PLUGINS_JS);
+//         return fm;
+//     }
+//     /**
+//      * 放弃表单
+//      * @param {Object} pl 玩家对象
+//      */
+//     static CloseTell(pl) {
+//         pl.tell(Gm_Tell + `表单已放弃`);
+//     }
+// }
 /**家园传送表单 */
 class HomeForms {
     static Home_Panel(pl) {
@@ -415,24 +415,24 @@ class HomeForms {
         pl.sendForm(fm, (pl, dt) => {
             if (dt == null) return Other.CloseTell(pl);
             if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！');
-            if (!Home.hasOwnProperty(pl.realName)) {
-                Home[pl.realName] = [];
-            }
-            if (Money_Mod.DeductEconomy(pl, Config.Home.CreateHome)) {
-                if (Home[pl.realName].length <= Config.Home.MaxHome) {
-                    Home[pl.realName].push({
-                        "name": dt[1],
-                        "x": pl.blockPos.x,
-                        "y": pl.blockPos.y,
-                        "z": pl.blockPos.z,
-                        "dimid": pl.blockPos.dimid
-                    });
-                    FileOperation.SaveFile();
-                    pl.tell(Gm_Tell + '家园已保存');
-                } else {
-                    pl.tell(Gm_Tell + `创建家园传送点[${dt[1]}失败！\n最大家园数量：${Config.Home.MaxHome}]`);
-                }
-            }
+            // if (!Home.hasOwnProperty(pl.realName)) {
+            //     Home[pl.realName] = [];
+            // }
+            // if (Money_Mod.DeductEconomy(pl, Config.Home.CreateHome)) {
+            //     if (Home[pl.realName].length <= Config.Home.MaxHome) {
+            //         Home[pl.realName].push({
+            //             "name": dt[1],
+            //             "x": pl.blockPos.x,
+            //             "y": pl.blockPos.y,
+            //             "z": pl.blockPos.z,
+            //             "dimid": pl.blockPos.dimid
+            //         });
+            //         FileOperation.SaveFile();
+            //         pl.tell(Gm_Tell + '家园已保存');
+            //     } else {
+            //         pl.tell(Gm_Tell + `创建家园传送点[${dt[1]}失败！\n最大家园数量：${Config.Home.MaxHome}]`);
+            //     }
+            // }
         })
     }
     static GoHome(pl) {
@@ -444,13 +444,13 @@ class HomeForms {
                         pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.GoHome)}`, '确认', '返回上一页', (_, res) => {
                             switch (res) {
                                 case true:
-                                    if (Money_Mod.DeductEconomy(pl, Config.Home.GoHome)) {
-                                        if (pl.teleport(Pos)) {
-                                            pl.tell(Gm_Tell + '传送成功！');
-                                        } else {
-                                            pl.tell(Gm_Tell + '传送失败!');
-                                        }
-                                    }
+                                    // if (Money_Mod.DeductEconomy(pl, Config.Home.GoHome)) {
+                                    //     if (pl.teleport(Pos)) {
+                                    //         pl.tell(Gm_Tell + '传送成功！');
+                                    //     } else {
+                                    //         pl.tell(Gm_Tell + '传送失败!');
+                                    //     }
+                                    // }
                                     break;
                                 case false:
                                     HomeForms.GoHome(pl);
@@ -497,21 +497,21 @@ class HomeForms {
                                     pl.sendForm(fm, (pl, dt) => {
                                         if (dt == null) return Other.CloseTell(pl);
                                         if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！')
-                                        Home[pl.realName][id].name = dt[1];
-                                        FileOperation.SaveFile();
-                                        pl.tell(Gm_Tell + '操作已保存');
+                                        // Home[pl.realName][id].name = dt[1];
+                                        // FileOperation.SaveFile();
+                                        // pl.tell(Gm_Tell + '操作已保存');
                                     })
                                 }
                                 break;
                             case 1:
-                                if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome)) {
-                                    Home[pl.realName][id].x = pl.blockPos.x;
-                                    Home[pl.realName][id].y = pl.blockPos.y;
-                                    Home[pl.realName][id].z = pl.blockPos.z;
-                                    Home[pl.realName][id].dimid = pl.blockPos.dimid;
-                                    FileOperation.SaveFile();
-                                    pl.tell(Gm_Tell + '更新完成！');
-                                }
+                                // if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome)) {
+                                //     Home[pl.realName][id].x = pl.blockPos.x;
+                                //     Home[pl.realName][id].y = pl.blockPos.y;
+                                //     Home[pl.realName][id].z = pl.blockPos.z;
+                                //     Home[pl.realName][id].dimid = pl.blockPos.dimid;
+                                //     FileOperation.SaveFile();
+                                //     pl.tell(Gm_Tell + '更新完成！');
+                                // }
                                 break;
                             case 2:
                                 HomeForms.EditHome(pl);
@@ -536,11 +536,11 @@ class HomeForms {
                     pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.DeleteHome)}`, '确认删除', '返回上一页', (_, res) => {
                         switch (res) {
                             case true:
-                                if (Money_Mod.DeductEconomy(pl, Config.Home.DeleteHome)) {
-                                    Home[pl.realName].splice(id, 1);
-                                    FileOperation.SaveFile();
-                                    pl.tell(Gm_Tell + '删除成功！');
-                                }
+                                // if (Money_Mod.DeductEconomy(pl, Config.Home.DeleteHome)) {
+                                //     Home[pl.realName].splice(id, 1);
+                                //     FileOperation.SaveFile();
+                                //     pl.tell(Gm_Tell + '删除成功！');
+                                // }
                                 break;
                             case false:
                                 HomeForms.GoHome(pl);
@@ -909,7 +909,7 @@ class TPA_Cache {//todo 缓存传送
 }
 
 
-FileOperation.ReadFile();
+// FileOperation.ReadFile();
 
 const MAPPING_TABLE = {
     HomeUi: HomeForms.Home_Panel,

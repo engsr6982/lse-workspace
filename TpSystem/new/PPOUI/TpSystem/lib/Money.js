@@ -1,6 +1,29 @@
 import { Config, Gm_Tell } from "../lib/cache.js";
 
 export class Money_Mod {
+    /**
+     * 添加经济
+     * @param {Object} pl 玩家对象
+     * @param {Number} amoney 要添加的经济
+     * @returns 
+     */
+    static addMoney(pl, amoney) {
+        if (Config.Money.Enable) {
+            if (Config.Money.LLMoney) {
+                // LL
+                return money.add(pl.xuid, amoney);
+            } else {
+                //score
+                return pl.addScore(Config.Money.MoneyName,amoney);
+            }
+        }
+    }
+    /**
+     * 获取经济字符串
+     * @param {Object} pl 玩家对象
+     * @param {Number} dmoney 消耗经济
+     * @returns Boolean
+     */
     static getEconomyStr(pl, dmoney) {
         let mons;
         if (Config.Money.LLMoney) {
@@ -14,7 +37,7 @@ export class Money_Mod {
     /**
      * 获取玩家经济
      * @param {Object} pl 玩家对象
-     * @returns 
+     * @returns Number
      */
     static getEconomy(pl) {
         if (Config.Money.LLMoney) {
@@ -27,7 +50,7 @@ export class Money_Mod {
      * 扣除经济
      * @param {Object} pl 
      * @param {Number} Money 
-     * @returns 
+     * @returns Boolean
      */
     static DeductEconomy(pl, delMoney) {
         if (Config.Money.Enable) {
