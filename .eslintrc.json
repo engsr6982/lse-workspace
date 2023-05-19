@@ -7,8 +7,11 @@
     "sourceType": "module"
   },
   "globals": {
+    "mc": "readonly",
     "file": "readonly",
-    "Version": "readonly"
+    "money": "readonly",
+    "Version": "readonly",
+    "PermType": "readonly"
   },
   "rules": {
     "no-unused-vars": "warn",

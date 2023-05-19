@@ -218,94 +218,94 @@ if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
 //     }
 // };
 /**经济模块 */
-class Money_Mod {
-    static getEconomyStr(pl, dmoney) {
-        let mons;
-        if (Config.Money.LLMoney) {
-            mons = money.get(pl.xuid);
-        } else {
-            mons = pl.getScore(Config.Money.MoneyName);
-        }
-        if (!Config.Money.Enable) dmoney = 0;//关闭经济，无需扣费
-        return `此次操作需消耗[${dmoney}]${Config.Money.MoneyName}, 当前${Config.Money.MoneyName}: ${mons}`;
-    }
-    /**
-     * 获取玩家经济
-     * @param {Object} pl 玩家对象
-     * @returns 
-     */
-    static getEconomy(pl) {
-        if (Config.Money.LLMoney) {
-            return money.get(pl.xuid);
-        } else {
-            return pl.getScore(Config.Money.MoneyName);
-        }
-    }
-    /**
-     * 扣除经济
-     * @param {Object} pl 
-     * @param {Number} Money 
-     * @returns 
-     */
-    static DeductEconomy(pl, delMoney) {
-        if (Config.Money.Enable) {
-            // 启用经济
-            if (Config.Money.LLMoney) {
-                // LL
-                if (money.get(pl.xuid) >= delMoney) {
-                    // 经济充足
-                    return money.reduce(pl.xuid, Number(delMoney));
-                } else {
-                    pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
-                    return false;
-                }
-            } else {
-                // Socre
-                if (pl.getScore(Config.Money.MoneyName) >= delMoney) {
-                    return pl.reduceScore(Config.Money.MoneyName, Number(delMoney));
-                } else {
-                    pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
-                    return false
-                }
-            }
-        } else {
-            //关闭经济
-            return true;
-        }
-    }
-}
+// class Money_Mod {
+//     static getEconomyStr(pl, dmoney) {
+//         let mons;
+//         if (Config.Money.LLMoney) {
+//             mons = money.get(pl.xuid);
+//         } else {
+//             mons = pl.getScore(Config.Money.MoneyName);
+//         }
+//         if (!Config.Money.Enable) dmoney = 0;//关闭经济，无需扣费
+//         return `此次操作需消耗[${dmoney}]${Config.Money.MoneyName}, 当前${Config.Money.MoneyName}: ${mons}`;
+//     }
+//     /**
+//      * 获取玩家经济
+//      * @param {Object} pl 玩家对象
+//      * @returns 
+//      */
+//     static getEconomy(pl) {
+//         if (Config.Money.LLMoney) {
+//             return money.get(pl.xuid);
+//         } else {
+//             return pl.getScore(Config.Money.MoneyName);
+//         }
+//     }
+//     /**
+//      * 扣除经济
+//      * @param {Object} pl 
+//      * @param {Number} Money 
+//      * @returns 
+//      */
+//     static DeductEconomy(pl, delMoney) {
+//         if (Config.Money.Enable) {
+//             // 启用经济
+//             if (Config.Money.LLMoney) {
+//                 // LL
+//                 if (money.get(pl.xuid) >= delMoney) {
+//                     // 经济充足
+//                     return money.reduce(pl.xuid, Number(delMoney));
+//                 } else {
+//                     pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
+//                     return false;
+//                 }
+//             } else {
+//                 // Socre
+//                 if (pl.getScore(Config.Money.MoneyName) >= delMoney) {
+//                     return pl.reduceScore(Config.Money.MoneyName, Number(delMoney));
+//                 } else {
+//                     pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
+//                     return false
+//                 }
+//             }
+//         } else {
+//             //关闭经济
+//             return true;
+//         }
+//     }
+// }
 /**时间模块 */
-class Time_Mod {
-    /**
-     *  根据传入日期时间判断
-     * @param {String} time 日期  2023-01-01 10:30:20
-     * @returns true/1 解 | false/0 封
-     */
-    static CheckTime(time) {
-        if (new Date(time).getTime() <= new Date().getTime()) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    /**
-     * 获取结束时间
-     * @param {number} time 时间（单位：秒或分钟）
-     * @param {string} [unit='minute'] 时间单位，可选值为 'second' 或 'minute'，默认为 'minute'
-     * @returns {string} 格式化后的结束时间字符串
-     */
-    static getEndTimes(time, unit = 'minute') {
-        const date = new Date(Date.now() + time * (unit === 'second' ? 1000 : 60000));
-        const y = date.getFullYear();
-        const m = (date.getMonth() + 1).toString().padStart(2, '0');
-        const d = date.getDate().toString().padStart(2, '0');
-        const h = date.getHours().toString().padStart(2, '0');
-        const i = date.getMinutes().toString().padStart(2, '0');
-        const s = date.getSeconds().toString().padStart(2, '0');
-        return `${y}-${m}-${d} ${h}:${i}:${s}`;
-    }
-}
+// class Time_Mod {
+//     /**
+//      *  根据传入日期时间判断
+//      * @param {String} time 日期  2023-01-01 10:30:20
+//      * @returns true/1 解 | false/0 封
+//      */
+//     static CheckTime(time) {
+//         if (new Date(time).getTime() <= new Date().getTime()) {
+//             return true;
+//         }
+//         else {
+//             return false;
+//         }
+//     }
+//     /**
+//      * 获取结束时间
+//      * @param {number} time 时间（单位：秒或分钟）
+//      * @param {string} [unit='minute'] 时间单位，可选值为 'second' 或 'minute'，默认为 'minute'
+//      * @returns {string} 格式化后的结束时间字符串
+//      */
+//     static getEndTimes(time, unit = 'minute') {
+//         const date = new Date(Date.now() + time * (unit === 'second' ? 1000 : 60000));
+//         const y = date.getFullYear();
+//         const m = (date.getMonth() + 1).toString().padStart(2, '0');
+//         const d = date.getDate().toString().padStart(2, '0');
+//         const h = date.getHours().toString().padStart(2, '0');
+//         const i = date.getMinutes().toString().padStart(2, '0');
+//         const s = date.getSeconds().toString().padStart(2, '0');
+//         return `${y}-${m}-${d} ${h}:${i}:${s}`;
+//     }
+// }
 /**其他模块 */
 class Other {
     /**
