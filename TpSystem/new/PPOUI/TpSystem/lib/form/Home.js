@@ -34,8 +34,8 @@ export class HomeForm {
         fm.addLabel(Money_Mod.getEconomyStr(pl, Config.Home.CreateHome));
         fm.addInput("输入家园名称", "String");
         pl.sendForm(fm, (pl, dt) => {
-            if (dt == null) return Other.CloseTell();
-            if (dt[1] == null) return pl.tell(Gm_Tell + "输入框为空！");
+            if (dt == null) return Other.CloseTell(pl);
+            if (dt[1] == '') return pl.tell(Gm_Tell + "输入框为空！");
             HomeCore.CreateHome(pl, dt[1]);
         })
     }
@@ -48,7 +48,7 @@ export class HomeForm {
                 if (PlayerSeting[pl.realName].SecondaryConfirmation) {
                     pl.sendModalForm(PLUGIN_INFO.Introduce, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.GoHome)}`, '确认', '返回上一页', (_, res) => {
                         switch (res) {
-                            case true: HomeCore.GoHome(pl); break;
+                            case true: HomeCore.GoHome(pl, pl.blockPos); break;
                             case false: HomeForm.GoHome(pl); break;
                             default: Other.CloseTell(pl); break;
                         }

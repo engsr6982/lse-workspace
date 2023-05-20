@@ -1,1 +1,8 @@
-{}
+{
+	"PPOUI6982": {
+		"AcceptTransmission": true,
+		"SecondaryConfirmation": true,
+		"SendRequestPopup": true,
+		"DeathPopup": true
+	}
+}

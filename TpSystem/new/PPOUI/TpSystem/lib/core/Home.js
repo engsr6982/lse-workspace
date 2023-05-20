@@ -21,7 +21,7 @@ export class HomeCore {
                     "z": pl.blockPos.z,
                     "dimid": pl.blockPos.dimid
                 });
-                FileOperation.SaveFile();
+                FileOperation.saveFile();
                 pl.tell(Gm_Tell + '家园已保存');
             }
         } else {
@@ -52,7 +52,7 @@ export class HomeCore {
     static UpdateName(pl, id, newname) {
         if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome_Name)) {
             Home[pl.realName][id].name = newname;
-            FileOperation.SaveFile();
+            FileOperation.saveFile();
             pl.tell(Gm_Tell + '操作已保存');
         }
     }
@@ -68,7 +68,7 @@ export class HomeCore {
             Home[pl.realName][id].y = pos.y;
             Home[pl.realName][id].z = pos.z;
             Home[pl.realName][id].dimid = pos.dimid;
-            FileOperation.SaveFile();
+            FileOperation.saveFile();
             pl.tell(Gm_Tell + '更新完成！');
         }
     }
@@ -80,7 +80,7 @@ export class HomeCore {
     static DeleteHome(pl, id) {
         if (Money_Mod.DeductEconomy(pl, Config.Home.DeleteHome)) {
             Home[pl.realName].splice(id, 1);
-            FileOperation.SaveFile();
+            FileOperation.saveFile();
             pl.tell(Gm_Tell + '删除成功！');
         }
     }

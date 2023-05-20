@@ -2,6 +2,8 @@ import { RegCommand } from "./plugins/PPOUI/TpSystem/lib/command/RegCommand.js";
 
 import { FileOperation, PLUGIN_INFO, Gm_Tell, Config } from "./plugins/PPOUI/TpSystem/lib/cache.js";
 
+import { RegEvent } from "./plugins/PPOUI/TpSystem/lib/event.js";
+
 function init() {
     // 注册插件
     ll.registerPlugin(
@@ -28,12 +30,13 @@ function init() {
 
     // 读取文件
     FileOperation.readFile();
+    // 注册监听器
+    RegEvent();
     // 注册命令
     mc.listen('onServerStarted', () => {
         logger.debug(Config)
         RegCommand();
     })
 }
-
 
 init();

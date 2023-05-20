@@ -1,4 +1,4 @@
-import { Other } from "../Other";
+import { Other } from "../Other.js";
 
 
 export function SelectAction(pl, Array, Warp = false, callback) {

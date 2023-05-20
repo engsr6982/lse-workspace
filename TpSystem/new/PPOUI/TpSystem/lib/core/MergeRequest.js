@@ -11,14 +11,14 @@ export class MergeRequest_Core {
                 time: system.getTimeStr(),
                 data: Home[pl.realName][id]
             });
-            FileOperation.SaveFile();
+            FileOperation.saveFile();
             pl.tell(Gm_Tell + '发送成功！');
         }
     }
     static RevokeRequest(pl, id) {
         if (Money_Mod.DeductEconomy(pl, Config.MergeRequest.DeleteRequest)) {
             MergeRequest.splice(id, 1);
-            FileOperation.SaveFile();
+            FileOperation.saveFile();
             pl.tell(Gm_Tell + '撤销成功！');
         }
     }
