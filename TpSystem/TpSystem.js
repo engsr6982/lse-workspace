@@ -1187,93 +1187,93 @@ function Seting(pl) {
             //         })
             //     }
             //     break;
-            case 2:/* 公共传送点管理 */
-                WarpManagementPanel(pl);
-                function WarpManagementPanel(pl) {
-                    const fm = Other.SimpleForm();
-                    fm.addButton('返回上一页', 'textures/ui/icon_import');
-                    fm.addButton('新建公共传送点', 'textures/ui/color_plus');
-                    Warp.forEach(i => {
-                        fm.addButton(`${i.name}\n${Other.DimidToDimension(i.dimid)} X: ${i.x} Y: ${i.y} Z: ${i.z}`);
-                    });
-                    pl.sendForm(fm, (pl, id) => {
-                        if (id == null) return Other.CloseTell(pl);
-                        if (id == 0) return Seting(pl);
-                        if (id == 1) {
-                            // ((pl) => {
-                            //     const fm = Other.CustomForm();
-                            //     fm.addInput('输入名称', 'String');
-                            //     fm.addInput('输入坐标 [使用英文逗号分隔坐标轴]', "String IntPos X,Y,Z", `${pl.blockPos.x},${pl.blockPos.y},${pl.blockPos.z}`);
-                            //     fm.addDropdown('选择维度', ['主世界', '地狱', '末地'], pl.blockPos.dimid);
-                            //     pl.sendForm(fm, (pl, dt) => {
-                            //         if (dt == null) return Other.CloseTell(pl);
-                            //         if (dt[0] == '') return pl.tell(Gm_Tell + '输入框为空！');
-                            //         const input = dt[1].split(',');
-                            //         const input_pos = new IntPos(Number(input[0]), Number(input[1]), Number(input[2]), parseInt(dt[2]));
-                            //         Warp.push({
-                            //             "name": dt[0],
-                            //             "x": input_pos.x,
-                            //             "y": input_pos.y,
-                            //             "z": input_pos.z,
-                            //             "dimid": input_pos.dimid
-                            //         });
-                            //         FileOperation.SaveFile();
-                            //         pl.tell(Gm_Tell + '添加完成！');
-                            //     })
-                            // })(pl);
-                        } else {
-                            id = id - 2;/* 去除前面两个按钮 */
-                            pl.sendSimpleForm(
-                                PLUGINS_JS,
-                                `当前正在编辑： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${Other.DimidToDimension(Warp[id].dimid)}`,
-                                ["前往此传送点", "编辑此传送点", "删除此传送点", '返回上一页'],
-                                ["textures/ui/send_icon", "textures/ui/book_edit_default", "textures/ui/trash_default", 'textures/ui/icon_import'],
-                                (pl, id1) => {
-                                    switch (id1) {
-                                        case 0:
-                                            pl.teleport(new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid));
-                                            pl.tell(Gm_Tell + '传送成功！');
-                                            break;
-                                        case 1:
-                                            ((pl) => {
-                                                const fm = Other.CustomForm();
-                                                fm.addInput('输入名称', 'String', Warp[id].name);
-                                                fm.addInput('输入坐标 [使用英文逗号分隔坐标轴]', "String IntPos X,Y,Z", `${Warp[id].x},${Warp[id].y},${Warp[id].z}`);
-                                                fm.addDropdown('选择维度', ['主世界', '地狱', '末地'], Warp[id].dimid);
-                                                pl.sendForm(fm, (pl, dt) => {
-                                                    if (dt == null) return Other.CloseTell(pl);
-                                                    if (dt[0] == '') return pl.tell(Gm_Tell + '输入框为空！');
-                                                    const input = dt[1].split(',');
-                                                    const input_pos = new IntPos(Number(input[0]), Number(input[1]), Number(input[2]), parseInt(dt[2]));
-                                                    Warp[id] = {
-                                                        "name": dt[0],
-                                                        "x": input_pos.x,
-                                                        "y": input_pos.y,
-                                                        "z": input_pos.z,
-                                                        "dimid": input_pos.dimid
-                                                    };
-                                                    FileOperation.SaveFile();
-                                                    pl.tell(Gm_Tell + '更新成功！');
-                                                })
-                                            })(pl)
-                                            break;
-                                        case 2:
-                                            Warp.splice(id, 1);
-                                            FileOperation.SaveFile();
-                                            pl.tell(Gm_Tell + '删除成功！');
-                                            break;
-                                        case 3:
-                                            WarpManagementPanel(pl);
-                                            break;
-                                        default:
-                                            Other.CloseTell(pl);
-                                            break;
-                                    }
-                                });
-                        }
-                    })
-                }
-                break;
+            // case 2:/* 公共传送点管理 */
+            //     WarpManagementPanel(pl);
+            //     function WarpManagementPanel(pl) {
+            //         const fm = Other.SimpleForm();
+            //         fm.addButton('返回上一页', 'textures/ui/icon_import');
+            //         fm.addButton('新建公共传送点', 'textures/ui/color_plus');
+            //         Warp.forEach(i => {
+            //             fm.addButton(`${i.name}\n${Other.DimidToDimension(i.dimid)} X: ${i.x} Y: ${i.y} Z: ${i.z}`);
+            //         });
+            //         pl.sendForm(fm, (pl, id) => {
+            //             if (id == null) return Other.CloseTell(pl);
+            //             if (id == 0) return Seting(pl);
+            //             if (id == 1) {
+            //                 // ((pl) => {
+            //                 //     const fm = Other.CustomForm();
+            //                 //     fm.addInput('输入名称', 'String');
+            //                 //     fm.addInput('输入坐标 [使用英文逗号分隔坐标轴]', "String IntPos X,Y,Z", `${pl.blockPos.x},${pl.blockPos.y},${pl.blockPos.z}`);
+            //                 //     fm.addDropdown('选择维度', ['主世界', '地狱', '末地'], pl.blockPos.dimid);
+            //                 //     pl.sendForm(fm, (pl, dt) => {
+            //                 //         if (dt == null) return Other.CloseTell(pl);
+            //                 //         if (dt[0] == '') return pl.tell(Gm_Tell + '输入框为空！');
+            //                 //         const input = dt[1].split(',');
+            //                 //         const input_pos = new IntPos(Number(input[0]), Number(input[1]), Number(input[2]), parseInt(dt[2]));
+            //                 //         Warp.push({
+            //                 //             "name": dt[0],
+            //                 //             "x": input_pos.x,
+            //                 //             "y": input_pos.y,
+            //                 //             "z": input_pos.z,
+            //                 //             "dimid": input_pos.dimid
+            //                 //         });
+            //                 //         FileOperation.SaveFile();
+            //                 //         pl.tell(Gm_Tell + '添加完成！');
+            //                 //     })
+            //                 // })(pl);
+            //             } else {
+            //                 id = id - 2;/* 去除前面两个按钮 */
+            //                 pl.sendSimpleForm(
+            //                     PLUGINS_JS,
+            //                     `当前正在编辑： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${Other.DimidToDimension(Warp[id].dimid)}`,
+            //                     ["前往此传送点", "编辑此传送点", "删除此传送点", '返回上一页'],
+            //                     ["textures/ui/send_icon", "textures/ui/book_edit_default", "textures/ui/trash_default", 'textures/ui/icon_import'],
+            //                     (pl, id1) => {
+            //                         switch (id1) {
+            //                             case 0:
+            //                                 pl.teleport(new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid));
+            //                                 pl.tell(Gm_Tell + '传送成功！');
+            //                                 break;
+            //                             case 1:
+            //                                 ((pl) => {
+            //                                     const fm = Other.CustomForm();
+            //                                     fm.addInput('输入名称', 'String', Warp[id].name);
+            //                                     fm.addInput('输入坐标 [使用英文逗号分隔坐标轴]', "String IntPos X,Y,Z", `${Warp[id].x},${Warp[id].y},${Warp[id].z}`);
+            //                                     fm.addDropdown('选择维度', ['主世界', '地狱', '末地'], Warp[id].dimid);
+            //                                     pl.sendForm(fm, (pl, dt) => {
+            //                                         if (dt == null) return Other.CloseTell(pl);
+            //                                         if (dt[0] == '') return pl.tell(Gm_Tell + '输入框为空！');
+            //                                         const input = dt[1].split(',');
+            //                                         const input_pos = new IntPos(Number(input[0]), Number(input[1]), Number(input[2]), parseInt(dt[2]));
+            //                                         Warp[id] = {
+            //                                             "name": dt[0],
+            //                                             "x": input_pos.x,
+            //                                             "y": input_pos.y,
+            //                                             "z": input_pos.z,
+            //                                             "dimid": input_pos.dimid
+            //                                         };
+            //                                         FileOperation.SaveFile();
+            //                                         pl.tell(Gm_Tell + '更新成功！');
+            //                                     })
+            //                                 })(pl)
+            //                                 break;
+            //                             case 2:
+            //                                 Warp.splice(id, 1);
+            //                                 FileOperation.SaveFile();
+            //                                 pl.tell(Gm_Tell + '删除成功！');
+            //                                 break;
+            //                             case 3:
+            //                                 WarpManagementPanel(pl);
+            //                                 break;
+            //                             default:
+            //                                 Other.CloseTell(pl);
+            //                                 break;
+            //                         }
+            //                     });
+            //             }
+            //         })
+            //     }
+            //     break;
             case 3:/* 合并请求管理 */
                 MergeRequestPanel(pl);
                 function MergeRequestPanel(pl) {
@@ -1317,16 +1317,16 @@ function Seting(pl) {
                     })
                 }
                 break;
-            case 4:/* 重载配置文件 */
-                ((pl) => {
-                    FileOperation.SaveFile();
-                    FileOperation.ReadFile();
-                    pl.tell(Gm_Tell + '操作完成！');
-                })(pl)
-                break;
-            default:
-                Other.CloseTell(pl);
-                break;
+            // case 4:/* 重载配置文件 */
+            //     ((pl) => {
+            //         FileOperation.SaveFile();
+            //         FileOperation.ReadFile();
+            //         pl.tell(Gm_Tell + '操作完成！');
+            //     })(pl)
+            //     break;
+            // default:
+            //     Other.CloseTell(pl);
+            //     break;
         }
     })
 }

@@ -1,5 +1,5 @@
 import { Other } from "../Other.js";
-import { FileOperation, Gm_Tell, Home, Warp } from "../cache.js";
+import { FileOperation, Gm_Tell, Home, MergeRequest, Warp } from "../cache.js";
 
 
 export function SetingForm(pl) {
@@ -13,7 +13,7 @@ export function SetingForm(pl) {
         switch (id) {
             case 0: HomePanel_Mgr.HomePanel(pl); break;
             case 1: WarpPanel_Mgr.WarpPanel(pl); break;
-            case 2: break;
+            case 2: MergeRequest_Mgr.MergeRequest_Panel(pl); break;
             case 3: FileOperation.saveFile(); pl.tell(Gm_Tell + '操作完成！'); break;
             // case 4: break;
             default: Other.CloseTell(pl); break;
@@ -253,5 +253,46 @@ class WarpPanel_Mgr {
 }
 
 class MergeRequest_Mgr {
+    static MergeRequest_Panel(pl) {
+        const fm = Other.SimpleForm();
+        MergeRequest.forEach(i => {
+            fm.addButton(`[玩家]  ${i.player}\n${i.data.name}  ${Other.DimidToDimension(i.data.dimid)} ${i.data.x},${i.data.y},${i.data.z}`)
+        });
+        fm.addButton('返回上一页', 'textures/ui/icon_import');
+        pl.sendForm(fm, (pl, id) => {
+            if (id == null) return Other.CloseTell(pl);
+            if (id == MergeRequest.length) return SetingForm(pl);
+            MergeRequest_Mgr.Level_1(pl, id);
+        })
+    }
 
+    static Level_1(pl, index) {
+        const fm = Other.SimpleForm();
+        fm.setContent(`[玩家]: ${MergeRequest[index].player}\n[时间]: ${MergeRequest[index].time}\n[GUID]: ${MergeRequest[index].guid}\n[坐标]: ${MergeRequest[index].data.name}  ${Other.DimidToDimension(MergeRequest[index].data.dimid)} ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}`,);
+        fm.addButton("同意并加入公共传送点", 'textures/ui/realms_green_check');
+        fm.addButton('拒绝并删除', 'textures/ui/realms_red_x');
+        fm.addButton('前往此传送点', 'textures/ui/send_icon');
+        fm.addButton('返回上一页', 'textures/ui/icon_import');
+        pl.sendForm(fm, (pl, id) => {
+            switch (id) {
+                case 0:
+                    Warp.push(MergeRequest[index].data);
+                    MergeRequest.splice(index, 1);
+                    FileOperation.saveFile();
+                    pl.tell(Gm_Tell + '并入完成！');
+                    break;
+                case 1:
+                    MergeRequest.splice(index, 1);
+                    FileOperation.saveFile();
+                    pl.tell(Gm_Tell + '已拒绝并删除！');
+                    break;
+                case 2:
+                    pl.teleport(new IntPos(MergeRequest[index].data.x, MergeRequest[index].data.y, MergeRequest[index].data.z, MergeRequest[index].data.dimid));
+                    pl.tell(Gm_Tell + '传送成功！');
+                    break;
+                case 3: MergeRequest_Mgr.MergeRequest_Panel(pl); break;
+                default: Other.CloseTell(pl); break;
+            }
+        })
+    }
 }
