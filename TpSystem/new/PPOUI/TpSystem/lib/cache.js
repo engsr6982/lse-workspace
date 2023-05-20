@@ -12,7 +12,7 @@ export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}
 export let Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§e]§r§a `;
 
 /**配置文件 */
-export let Config = {}
+export let Config = /* {} */__init.Config
 /**家园 */
 export let Home = {}
 /**公共传送点 */

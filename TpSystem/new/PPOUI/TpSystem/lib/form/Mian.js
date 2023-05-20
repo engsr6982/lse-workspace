@@ -1,11 +1,10 @@
 import { Other } from "../Other.js";
 import { _filePath } from "../cache.js";
+import { HomeForm } from "./Home.js";
 
-//导入表单
-import { Home } from "../form/Home.js";
 
 export const MAPPING_TABLE = {
-    HomeUi: Home.Panel
+    HomeUi: HomeForm.Panel
     // WarpUi: Forms.PublicTransportation,
     // PlayerUi: Forms.PlayerTransportation,
     // DeathUi: Forms.DeathTransportation,

@@ -408,156 +408,157 @@ class HomeForms {
             }
         })
     }
-    static CreateHome(pl) {
-        const fm = Other.CustomForm();
-        fm.addLabel(Money_Mod.getEconomyStr(pl, Config.Home.CreateHome));
-        fm.addInput('输入传送点名称', 'String');
-        pl.sendForm(fm, (pl, dt) => {
-            if (dt == null) return Other.CloseTell(pl);
-            if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！');
-            // if (!Home.hasOwnProperty(pl.realName)) {
-            //     Home[pl.realName] = [];
-            // }
-            // if (Money_Mod.DeductEconomy(pl, Config.Home.CreateHome)) {
-            //     if (Home[pl.realName].length <= Config.Home.MaxHome) {
-            //         Home[pl.realName].push({
-            //             "name": dt[1],
-            //             "x": pl.blockPos.x,
-            //             "y": pl.blockPos.y,
-            //             "z": pl.blockPos.z,
-            //             "dimid": pl.blockPos.dimid
-            //         });
-            //         FileOperation.SaveFile();
-            //         pl.tell(Gm_Tell + '家园已保存');
-            //     } else {
-            //         pl.tell(Gm_Tell + `创建家园传送点[${dt[1]}失败！\n最大家园数量：${Config.Home.MaxHome}]`);
-            //     }
-            // }
-        })
-    }
-    static GoHome(pl) {
-        if (Home.hasOwnProperty(pl.realName)) {
-            if (Home[pl.realName].length !== 0) {
-                HomeForms.SelectAction(pl, Home[pl.realName], id => {
-                    const Pos = new IntPos(Home[pl.realName][id].x, Home[pl.realName][id].y, Home[pl.realName][id].z, Home[pl.realName][id].dimid);
-                    if (PlayerSeting[pl.realName].SecondaryConfirmation) {
-                        pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.GoHome)}`, '确认', '返回上一页', (_, res) => {
-                            switch (res) {
-                                case true:
-                                    // if (Money_Mod.DeductEconomy(pl, Config.Home.GoHome)) {
-                                    //     if (pl.teleport(Pos)) {
-                                    //         pl.tell(Gm_Tell + '传送成功！');
-                                    //     } else {
-                                    //         pl.tell(Gm_Tell + '传送失败!');
-                                    //     }
-                                    // }
-                                    break;
-                                case false:
-                                    HomeForms.GoHome(pl);
-                                    break;
-                                default:
-                                    Other.CloseTell(pl);
-                                    break;
-                            }
-                        });
-                    } else {
-                        if (Money_Mod.DeductEconomy(pl, Config.Home.GoHome)) {
-                            if (pl.teleport(Pos)) {
-                                pl.tell(Gm_Tell + '传送成功！');
-                            } else {
-                                pl.tell(Gm_Tell + '传送失败!');
-                            }
-                        }
-                    }
-                })
-            } else {
-                HomeForms.NoHome(pl)
-            }
-        } else {
-            HomeForms.NoHome(pl)
-        }
-    }
-    static EditHome(pl) {
-        if (Home.hasOwnProperty(pl.realName)) {
-            if (Home[pl.realName].length !== 0) {
-                HomeForms.SelectAction(pl, Home[pl.realName], (id) => {
-                    const fm = Other.SimpleForm();
-                    fm.setContent(Money_Mod.getEconomyStr(pl, Config.Home.EditHome));
-                    fm.addButton('修改名称', 'textures/ui/book_edit_default');
-                    fm.addButton('更新坐标到当前位置', 'textures/ui/refresh');
-                    fm.addButton('返回上一页', 'textures/ui/icon_import');
-                    pl.sendForm(fm, (pl, id1) => {
-                        switch (id1) {
-                            case 0:
-                                if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome)) { EditHomeName(pl); }
-                                function EditHomeName(pl) {
-                                    const fm = Other.CustomForm();
-                                    fm.addLabel(`名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`)
-                                    fm.addInput('修改家名称', 'String', Home[pl.realName][id].name);
-                                    pl.sendForm(fm, (pl, dt) => {
-                                        if (dt == null) return Other.CloseTell(pl);
-                                        if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！')
-                                        // Home[pl.realName][id].name = dt[1];
-                                        // FileOperation.SaveFile();
-                                        // pl.tell(Gm_Tell + '操作已保存');
-                                    })
-                                }
-                                break;
-                            case 1:
-                                // if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome)) {
-                                //     Home[pl.realName][id].x = pl.blockPos.x;
-                                //     Home[pl.realName][id].y = pl.blockPos.y;
-                                //     Home[pl.realName][id].z = pl.blockPos.z;
-                                //     Home[pl.realName][id].dimid = pl.blockPos.dimid;
-                                //     FileOperation.SaveFile();
-                                //     pl.tell(Gm_Tell + '更新完成！');
-                                // }
-                                break;
-                            case 2:
-                                HomeForms.EditHome(pl);
-                                break;
-                            default:
-                                Other.CloseTell(pl);
-                                break;
-                        }
-                    })
-                })
-            } else {
-                HomeForms.NoHome(pl)
-            }
-        } else {
-            HomeForms.NoHome(pl)
-        }
-    }
-    static DeleteHome(pl) {
-        if (Home.hasOwnProperty(pl.realName)) {
-            if (Home[pl.realName].length !== 0) {
-                HomeForms.SelectAction(pl, Home[pl.realName], id => {
-                    pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.DeleteHome)}`, '确认删除', '返回上一页', (_, res) => {
-                        switch (res) {
-                            case true:
-                                // if (Money_Mod.DeductEconomy(pl, Config.Home.DeleteHome)) {
-                                //     Home[pl.realName].splice(id, 1);
-                                //     FileOperation.SaveFile();
-                                //     pl.tell(Gm_Tell + '删除成功！');
-                                // }
-                                break;
-                            case false:
-                                HomeForms.GoHome(pl);
-                                break;
-                            default:
-                                Other.CloseTell(pl);
-                                break;
-                        }
-                    });
-                });
-            } else {
-                HomeForms.NoHome(pl)
-            }
-        } else {
-            HomeForms.NoHome(pl)
-        }
-    }
+    // static CreateHome(pl) {
+    //     const fm = Other.CustomForm();
+    //     fm.addLabel(Money_Mod.getEconomyStr(pl, Config.Home.CreateHome));
+    //     fm.addInput('输入传送点名称', 'String');
+    //     pl.sendForm(fm, (pl, dt) => {
+    //         if (dt == null) return Other.CloseTell(pl);
+    //         if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！');
+    //         // if (!Home.hasOwnProperty(pl.realName)) {
+    //         //     Home[pl.realName] = [];
+    //         // }
+    //         // if (Money_Mod.DeductEconomy(pl, Config.Home.CreateHome)) {
+    //         //     if (Home[pl.realName].length <= Config.Home.MaxHome) {
+    //         //         Home[pl.realName].push({
+    //         //             "name": dt[1],
+    //         //             "x": pl.blockPos.x,
+    //         //             "y": pl.blockPos.y,
+    //         //             "z": pl.blockPos.z,
+    //         //             "dimid": pl.blockPos.dimid
+    //         //         });
+    //         //         FileOperation.SaveFile();
+    //         //         pl.tell(Gm_Tell + '家园已保存');
+    //         //     } else {
+    //         //         pl.tell(Gm_Tell + `创建家园传送点[${dt[1]}失败！\n最大家园数量：${Config.Home.MaxHome}]`);
+    //         //     }
+    //         // }
+    //     })
+    // }
+    // static GoHome(pl) {
+    //     if (Home.hasOwnProperty(pl.realName)) {
+    //         if (Home[pl.realName].length !== 0) {
+    //             HomeForms.SelectAction(pl, Home[pl.realName], id => {
+
+    //                 const Pos = new IntPos(Home[pl.realName][id].x, Home[pl.realName][id].y, Home[pl.realName][id].z, Home[pl.realName][id].dimid);
+    //                 if (PlayerSeting[pl.realName].SecondaryConfirmation) {
+    //                     pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.GoHome)}`, '确认', '返回上一页', (_, res) => {
+    //                         switch (res) {
+    //                             case true:
+    //                                 // if (Money_Mod.DeductEconomy(pl, Config.Home.GoHome)) {
+    //                                 //     if (pl.teleport(Pos)) {
+    //                                 //         pl.tell(Gm_Tell + '传送成功！');
+    //                                 //     } else {
+    //                                 //         pl.tell(Gm_Tell + '传送失败!');
+    //                                 //     }
+    //                                 // }
+    //                                 break;
+    //                             case false:
+    //                                 HomeForms.GoHome(pl);
+    //                                 break;
+    //                             default:
+    //                                 Other.CloseTell(pl);
+    //                                 break;
+    //                         }
+    //                     });
+    //                 } else {
+    //                     if (Money_Mod.DeductEconomy(pl, Config.Home.GoHome)) {
+    //                         if (pl.teleport(Pos)) {
+    //                             pl.tell(Gm_Tell + '传送成功！');
+    //                         } else {
+    //                             pl.tell(Gm_Tell + '传送失败!');
+    //                         }
+    //                     }
+    //                 }
+    //             })
+    //         } else {
+    //             HomeForms.NoHome(pl)
+    //         }
+    //     } else {
+    //         HomeForms.NoHome(pl)
+    //     }
+    // }
+    // static EditHome(pl) {
+    //     if (Home.hasOwnProperty(pl.realName)) {
+    //         if (Home[pl.realName].length !== 0) {
+    //             HomeForms.SelectAction(pl, Home[pl.realName], (id) => {
+    //                 const fm = Other.SimpleForm();
+    //                 fm.setContent(Money_Mod.getEconomyStr(pl, Config.Home.EditHome));
+    //                 fm.addButton('修改名称', 'textures/ui/book_edit_default');
+    //                 fm.addButton('更新坐标到当前位置', 'textures/ui/refresh');
+    //                 fm.addButton('返回上一页', 'textures/ui/icon_import');
+    //                 pl.sendForm(fm, (pl, id1) => {
+    //                     switch (id1) {
+    //                         case 0:
+    //                             if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome)) { EditHomeName(pl); }
+    //                             function EditHomeName(pl) {
+    //                                 const fm = Other.CustomForm();
+    //                                 fm.addLabel(`名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`)
+    //                                 fm.addInput('修改家名称', 'String', Home[pl.realName][id].name);
+    //                                 pl.sendForm(fm, (pl, dt) => {
+    //                                     if (dt == null) return Other.CloseTell(pl);
+    //                                     if (dt[1] == '') return pl.tell(Gm_Tell + '输入框为空！')
+    //                                     // Home[pl.realName][id].name = dt[1];
+    //                                     // FileOperation.SaveFile();
+    //                                     // pl.tell(Gm_Tell + '操作已保存');
+    //                                 })
+    //                             }
+    //                             break;
+    //                         case 1:
+    //                             // if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome)) {
+    //                             //     Home[pl.realName][id].x = pl.blockPos.x;
+    //                             //     Home[pl.realName][id].y = pl.blockPos.y;
+    //                             //     Home[pl.realName][id].z = pl.blockPos.z;
+    //                             //     Home[pl.realName][id].dimid = pl.blockPos.dimid;
+    //                             //     FileOperation.SaveFile();
+    //                             //     pl.tell(Gm_Tell + '更新完成！');
+    //                             // }
+    //                             break;
+    //                         case 2:
+    //                             HomeForms.EditHome(pl);
+    //                             break;
+    //                         default:
+    //                             Other.CloseTell(pl);
+    //                             break;
+    //                     }
+    //                 })
+    //             })
+    //         } else {
+    //             HomeForms.NoHome(pl)
+    //         }
+    //     } else {
+    //         HomeForms.NoHome(pl)
+    //     }
+    // }
+    // static DeleteHome(pl) {
+    //     if (Home.hasOwnProperty(pl.realName)) {
+    //         if (Home[pl.realName].length !== 0) {
+    //             HomeForms.SelectAction(pl, Home[pl.realName], id => {
+    //                 pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.DeleteHome)}`, '确认删除', '返回上一页', (_, res) => {
+    //                     switch (res) {
+    //                         case true:
+    //                             // if (Money_Mod.DeductEconomy(pl, Config.Home.DeleteHome)) {
+    //                             //     Home[pl.realName].splice(id, 1);
+    //                             //     FileOperation.SaveFile();
+    //                             //     pl.tell(Gm_Tell + '删除成功！');
+    //                             // }
+    //                             break;
+    //                         case false:
+    //                             HomeForms.GoHome(pl);
+    //                             break;
+    //                         default:
+    //                             Other.CloseTell(pl);
+    //                             break;
+    //                     }
+    //                 });
+    //             });
+    //         } else {
+    //             HomeForms.NoHome(pl)
+    //         }
+    //     } else {
+    //         HomeForms.NoHome(pl)
+    //     }
+    // }
     static MergeRequest_UI(pl) {
         const fm = Other.SimpleForm();
         fm.addButton('发送请求', 'textures/ui/backup_replace');

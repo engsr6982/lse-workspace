@@ -1,8 +1,8 @@
-import { FileOperation,Gm_Tell, Home, Config } from "../cache.js";
+import { FileOperation, Gm_Tell, Home, Config, MergeRequest } from "../cache.js";
 import { Money_Mod } from "../Money.js";
 import { Other } from "../Other.js";
 
-class MergeRequest {
+export class MergeRequest_Core {
     static CerateRequest(pl, id) {
         if (Money_Mod.DeductEconomy(pl, Config.MergeRequest.sendRequest)) {
             MergeRequest.push({
