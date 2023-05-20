@@ -3,6 +3,10 @@ import { Config } from "../cache.js";
 
 export function RegCommand() {
     const cmd = mc.newCommand(Config.Command.name, Config.Command.Describe, PermType.Any);
+    //tps mgr
+    cmd.setEnum('mgr', ['mgr']);
+    cmd.mandatory('action', ParamType.Enum, 'mgr', 1);
+    cmd.overload(['mgr']);
 
     // tps [gui] [home|warp|player|death|random|seting]
     cmd.setEnum("gui", ['gui']);

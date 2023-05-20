@@ -1,6 +1,6 @@
 import { RegCommand } from "./plugins/PPOUI/TpSystem/lib/command/RegCommand.js";
 
-import { FileOperation, PLUGIN_INFO, Gm_Tell, Config } from "./plugins/PPOUI/TpSystem/lib/cache.js";
+import { FileOperation, PLUGIN_INFO, Config } from "./plugins/PPOUI/TpSystem/lib/cache.js";
 
 import { RegEvent } from "./plugins/PPOUI/TpSystem/lib/event.js";
 
