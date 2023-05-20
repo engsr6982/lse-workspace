@@ -22,7 +22,7 @@ function init() {
         logger.setLogLevel(5);
         logger.warn('你已开启Debug模式，将会输出Debug信息');
         Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§c Debug§e]§r§a `;
-        mc.listen("onUseItemOn", (pl, it, bl, si) => {
+        mc.listen("onUseItemOn", (pl, it/* , bl, si */) => {
             if (it.type == 'minecraft:stick') {
                 pl.runcmd("tps ");
             }

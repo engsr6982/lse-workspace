@@ -1,6 +1,7 @@
 {
   "env": {
-    "es6": true
+    "es6": true,
+    "node": true
   },
   "parserOptions": {
     "ecmaVersion": 2022,
@@ -13,6 +14,7 @@
     "File": "readonly",
     "money": "readonly",
     "logger": "readonly",
+    "IntPos": "readonly",
     "Version": "readonly",
     "PermType": "readonly"
   },
