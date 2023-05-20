@@ -2,7 +2,7 @@
 import { Money_Mod } from "../Money.js";
 import { Gm_Tell, Config } from "../cache.js";
 
-class WarpCore {
+export class WarpCore {
     static GoWarp(pl, pos) {
         if (Money_Mod.DeductEconomy(pl, Config.Warp.GoWarp)) {
             if (pl.teleport(pos)) {

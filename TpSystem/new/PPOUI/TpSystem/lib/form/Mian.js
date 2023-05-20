@@ -1,15 +1,19 @@
 import { Other } from "../Other.js";
 import { _filePath } from "../cache.js";
+import { DeathForm } from "./Death.js";
 import { HomeForm } from "./Home.js";
+import { PlayerSetingForm } from "./PlayerSeting.js";
+import { TPRForm } from "./TPR.js";
+import { WarpForm } from "./Warp.js";
 
 
 export const MAPPING_TABLE = {
-    HomeUi: HomeForm.Panel
-    // WarpUi: Forms.PublicTransportation,
+    HomeUi: HomeForm.Panel,
+    WarpUi: WarpForm,
     // PlayerUi: Forms.PlayerTransportation,
-    // DeathUi: Forms.DeathTransportation,
-    // RandomUi: Forms.RandomTransportation,
-    // SetingUi: Forms.PersonalSettings
+    DeathUi: DeathForm,
+    RandomUi: TPRForm,
+    SetingUi: PlayerSetingForm
 }
 
 /**

@@ -15,7 +15,7 @@
 //         "发布网站": PLUGINS_URL
 //     }
 // );
-let Gm_Tell = `§e§l[§d${PLUGINS_NAME}§e]§r§a `;
+// let Gm_Tell = `§e§l[§d${PLUGINS_NAME}§e]§r§a `;
 // if (File.exists(`.\\plugins\\${PLUGINS_ZZ}\\debug`)) {
 //     logger.setTitle(PLUGINS_NAME + ' Debug');
 //     logger.setLogLevel(5);
@@ -678,61 +678,61 @@ let Gm_Tell = `§e§l[§d${PLUGINS_NAME}§e]§r§a `;
 // }
 /**其他表单 */
 class Forms {
-    static PublicTransportation(pl) {
-        if (Warp.length == 0) return pl.tell(Gm_Tell + '无公共传送点！无法继续执行操作！');
-        SelectAction(pl, Warp, id => {
-            const Pos = new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid);
-            if (PlayerSeting[pl.realName].SecondaryConfirmation) {
-                pl.sendModalForm(PLUGINS_JS, `名称： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${Other.DimidToDimension(Warp[id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Warp.GoWarp)}`, '确认', '返回上一页', (_, res) => {
-                    switch (res) {
-                        case true:
-                            // if (Money_Mod.DeductEconomy(pl, Config.Warp.GoWarp)) {
-                            //     if (pl.teleport(Pos)) {
-                            //         pl.tell(Gm_Tell + '传送成功！');
-                            //     } else {
-                            //         pl.tell(Gm_Tell + '传送失败!');
-                            //     }
-                            // }
-                            break;
-                        case false:
-                            Forms.PublicTransportation(pl);
-                            break;
-                        default:
-                            Other.CloseTell(pl);
-                            break;
-                    }
-                });
-            } else {
-                if (Money_Mod.DeductEconomy(pl, Config.Warp.GoWarp)) {
-                    if (pl.teleport(Pos)) {
-                        pl.tell(Gm_Tell + '传送成功！');
-                    } else {
-                        pl.tell(Gm_Tell + '传送失败!');
-                    }
-                }
-            }
-        });
-        /**
-         * 选择传送点
-         * @param {Object} pl 玩家
-         * @param {Array} Array 按钮数组
-         * @param {Number} callback 数组索引ID
-         */
-        function SelectAction(pl, Array, callback) {
-            const fm = Other.SimpleForm();
-            fm.setContent('· 选择一个公共传送点');
-            Array.forEach(i => {
-                fm.addButton(`${i.name}\n${Other.DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
-            });
-            fm.addButton('返回上一页', 'textures/ui/icon_import');
-            pl.sendForm(fm, (pl, id) => {
-                if (id == null) return Other.CloseTell(pl);
-                if (id == Array.length) return Main(pl, MainUI);
-                callback(id);
-            })
-        }
-    }
-    static PlayerTransportation(pl) {
+    // static PublicTransportation(pl) {
+    //     if (Warp.length == 0) return pl.tell(Gm_Tell + '无公共传送点！无法继续执行操作！');
+    //     SelectAction(pl, Warp, id => {
+    //         const Pos = new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid);
+    //         if (PlayerSeting[pl.realName].SecondaryConfirmation) {
+    //             pl.sendModalForm(PLUGINS_JS, `名称： ${Warp[id].name}\n坐标： ${Warp[id].x},${Warp[id].y},${Warp[id].z}\n维度： ${Other.DimidToDimension(Warp[id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Warp.GoWarp)}`, '确认', '返回上一页', (_, res) => {
+    //                 switch (res) {
+    //                     case true:
+    //                         // if (Money_Mod.DeductEconomy(pl, Config.Warp.GoWarp)) {
+    //                         //     if (pl.teleport(Pos)) {
+    //                         //         pl.tell(Gm_Tell + '传送成功！');
+    //                         //     } else {
+    //                         //         pl.tell(Gm_Tell + '传送失败!');
+    //                         //     }
+    //                         // }
+    //                         break;
+    //                     case false:
+    //                         Forms.PublicTransportation(pl);
+    //                         break;
+    //                     default:
+    //                         Other.CloseTell(pl);
+    //                         break;
+    //                 }
+    //             });
+    //         } else {
+    //             if (Money_Mod.DeductEconomy(pl, Config.Warp.GoWarp)) {
+    //                 if (pl.teleport(Pos)) {
+    //                     pl.tell(Gm_Tell + '传送成功！');
+    //                 } else {
+    //                     pl.tell(Gm_Tell + '传送失败!');
+    //                 }
+    //             }
+    //         }
+    //     });
+    //     /**
+    //      * 选择传送点
+    //      * @param {Object} pl 玩家
+    //      * @param {Array} Array 按钮数组
+    //      * @param {Number} callback 数组索引ID
+    //      */
+    //     function SelectAction(pl, Array, callback) {
+    //         const fm = Other.SimpleForm();
+    //         fm.setContent('· 选择一个公共传送点');
+    //         Array.forEach(i => {
+    //             fm.addButton(`${i.name}\n${Other.DimidToDimension(i.dimid)}  X: ${i.x} Y: ${i.y} Z: ${i.z}`);
+    //         });
+    //         fm.addButton('返回上一页', 'textures/ui/icon_import');
+    //         pl.sendForm(fm, (pl, id) => {
+    //             if (id == null) return Other.CloseTell(pl);
+    //             if (id == Array.length) return Main(pl, MainUI);
+    //             callback(id);
+    //         })
+    //     }
+    // }
+    static PlayerTransportation(pl) {//todo
         const OnlinePlayers = Other.GetOnlinePlayers();
         let DeliveryType = Array.of('传送至TA', 'TA传送至我');
         let Hone_List = [];
@@ -770,63 +770,63 @@ class Forms {
             }
         })
     }
-    static DeathTransportation(pl) {
-        if (Death.hasOwnProperty(pl.realName)) {
-            pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${Other.DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}\n${Money_Mod.getEconomyStr(pl, Config.Death.GoDelath)}`, '确认前往', '返回主页', (pl, res) => {
-                switch (res) {
-                    case true:
-                        if (Money_Mod.DeductEconomy(pl, Config.Death.GoDelath)) {
-                            pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid));
-                            pl.tell(Gm_Tell + '传送完成！');
-                        }
-                        break;
-                    case false:
-                        Main(pl, MainUI);
-                        break;
-                    default:
-                        Other.CloseTell(pl);
-                        break;
-                }
-            })
-        } else {
-            pl.tell(Gm_Tell + '你还没有死亡信息！');
-        }
-    }
-    static RandomTransportation(pl) {
-        if (!Config.TPR.Enable) return pl.tell(Gm_Tell + '管理员关闭了此功能！');
-        pl.sendModalForm(PLUGINS_JS, `确认执行此操作？\n${Money_Mod.getEconomyStr(pl, Config.TPR.Money)}`, '确认', '返回', (pl, res) => {
-            switch (res) {
-                case true:
-                    // Forms.RandomTeleportCore(pl);
-                    break;
-                case false:
-                    Main(pl, MainUI);
-                    break;
-                default:
-                    Other.CloseTell(pl);
-                    break;
-            }
-        })
-    }
-    static PersonalSettings(pl) {
-        const fm = Other.CustomForm();
-        fm.addSwitch('接受传送请求', PlayerSeting[pl.realName].AcceptTransmission);
-        fm.addSwitch('传送时二次确认', PlayerSeting[pl.realName].SecondaryConfirmation);
-        fm.addSwitch('收到传送请求时是否弹窗', PlayerSeting[pl.realName].SendRequestPopup);
-        fm.addSwitch('死亡后弹出返回死亡点弹窗', PlayerSeting[pl.realName].DeathPopup);
-        pl.sendForm(fm, (pl, dt) => {
-            if (dt == null) return Other.CloseTell(pl);
-            const data = {
-                AcceptTransmission: Boolean(dt[0]).valueOf(),
-                SecondaryConfirmation: Boolean(dt[1]).valueOf(),
-                SendRequestPopup: Boolean(dt[2]).valueOf(),
-                DeathPopup: Boolean(dt[3]).valueOf()
-            };
-            PlayerSeting[pl.realName] = data;
-            FileOperation.SaveFile();
-            pl.tell(Gm_Tell + '操作已保存');
-        })
-    }
+    // static DeathTransportation(pl) {
+    //     if (Death.hasOwnProperty(pl.realName)) {
+    //         pl.sendModalForm(PLUGINS_JS, `时间： ${Death[pl.realName].time}\n维度： ${Other.DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}\n${Money_Mod.getEconomyStr(pl, Config.Death.GoDelath)}`, '确认前往', '返回主页', (pl, res) => {
+    //             switch (res) {
+    //                 case true:
+    //                     if (Money_Mod.DeductEconomy(pl, Config.Death.GoDelath)) {
+    //                         pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid));
+    //                         pl.tell(Gm_Tell + '传送完成！');
+    //                     }
+    //                     break;
+    //                 case false:
+    //                     Main(pl, MainUI);
+    //                     break;
+    //                 default:
+    //                     Other.CloseTell(pl);
+    //                     break;
+    //             }
+    //         })
+    //     } else {
+    //         pl.tell(Gm_Tell + '你还没有死亡信息！');
+    //     }
+    // }
+    // static RandomTransportation(pl) {
+    //     if (!Config.TPR.Enable) return pl.tell(Gm_Tell + '管理员关闭了此功能！');
+    //     pl.sendModalForm(PLUGINS_JS, `确认执行此操作？\n${Money_Mod.getEconomyStr(pl, Config.TPR.Money)}`, '确认', '返回', (pl, res) => {
+    //         switch (res) {
+    //             case true:
+    //                 // Forms.RandomTeleportCore(pl);
+    //                 break;
+    //             case false:
+    //                 Main(pl, MainUI);
+    //                 break;
+    //             default:
+    //                 Other.CloseTell(pl);
+    //                 break;
+    //         }
+    //     })
+    // }
+    // static PersonalSettings(pl) {
+    //     const fm = Other.CustomForm();
+    //     fm.addSwitch('接受传送请求', PlayerSeting[pl.realName].AcceptTransmission);
+    //     fm.addSwitch('传送时二次确认', PlayerSeting[pl.realName].SecondaryConfirmation);
+    //     fm.addSwitch('收到传送请求时是否弹窗', PlayerSeting[pl.realName].SendRequestPopup);
+    //     fm.addSwitch('死亡后弹出返回死亡点弹窗', PlayerSeting[pl.realName].DeathPopup);
+    //     pl.sendForm(fm, (pl, dt) => {
+    //         if (dt == null) return Other.CloseTell(pl);
+    //         const data = {
+    //             AcceptTransmission: Boolean(dt[0]).valueOf(),
+    //             SecondaryConfirmation: Boolean(dt[1]).valueOf(),
+    //             SendRequestPopup: Boolean(dt[2]).valueOf(),
+    //             DeathPopup: Boolean(dt[3]).valueOf()
+    //         };
+    //         PlayerSeting[pl.realName] = data;
+    //         FileOperation.SaveFile();
+    //         pl.tell(Gm_Tell + '操作已保存');
+    //     })
+    // }
     // static async RandomTeleportCore(pl) {
     //     if (Money_Mod.DeductEconomy(pl, Config.TPR.Money)) {
     //         if (pl.blockPos.dimid == 0 && Config.TPR.MainWorld == false) return pl.tell(Gm_Tell + `随机传送在当前维度不可用！`);//主世界关闭
@@ -912,14 +912,14 @@ class TPA_Cache {//todo 缓存传送
 
 // FileOperation.ReadFile();
 
-const MAPPING_TABLE = {
-    HomeUi: HomeForms.Home_Panel,
-    WarpUi: Forms.PublicTransportation,
-    PlayerUi: Forms.PlayerTransportation,
-    DeathUi: Forms.DeathTransportation,
-    RandomUi: Forms.RandomTransportation,
-    SetingUi: Forms.PersonalSettings
-}
+// const MAPPING_TABLE = {
+//     HomeUi: HomeForms.Home_Panel,
+//     WarpUi: Forms.PublicTransportation,
+//     PlayerUi: Forms.PlayerTransportation,
+//     DeathUi: Forms.DeathTransportation,
+//     RandomUi: Forms.RandomTransportation,
+//     SetingUi: Forms.PersonalSettings
+// }
 
 /* 命令注册 */
 //todo 23/5/10 重新注册命令  命令接受/拒绝请求
@@ -1408,48 +1408,48 @@ function Delivery_Core(from, to, type, pos, txt) {
 }
 
 // 注册监听器
-{
-    /* 监听进服事件 */
-    mc.listen('onJoin', (pl) => {
-        if (pl.isSimulatedPlayer()) return;
-        if (!PlayerSeting.hasOwnProperty(pl.realName)) {
-            logger.warn(`玩家${pl.realName} 的配置不存在，正在新建配置...`);
-            PlayerSeting[pl.realName] = Config.PlayerSeting;
-            FileOperation.SaveFile();
-        } else if (Config.AutoCompleteAttributes) {
-            // 0.0.5版本新增属性检查
-            for (let ps in Config.PlayerSeting) {
-                if (Config.PlayerSeting.hasOwnProperty(ps) && !PlayerSeting[pl.realName].hasOwnProperty(ps)) {
-                    PlayerSeting[pl.realName][ps] = Config.PlayerSeting[ps];
-                    logger.warn(`玩家[${pl.realName}] ${ps} 属性缺失，已自动补齐`);
-                }
-            }
-            FileOperation.SaveFile();
-        }
-    })
-    /* 监听死亡事件 */
-    mc.listen('onPlayerDie', (pl, sou) => {
-        if (pl.isSimulatedPlayer()) return;
-        const data = {
-            time: system.getTimeStr(),
-            x: pl.blockPos.x,
-            y: pl.blockPos.y,
-            z: pl.blockPos.z,
-            dimid: pl.blockPos.dimid
-        }
-        Death[pl.realName] = data;
-        FileOperation.SaveFile();
-    })
-    //玩家退出游戏
-    mc.listen('onLeft', (pl) => {
-        if (pl.isSimulatedPlayer()) return;
-        TPA_Cache.DeleteCache(pl);
-    })
-    //玩家重生
-    mc.listen('onRespawn', (pl) => {
-        // 发送返回死亡点弹窗
-        if (Config.Death.sendBackGUI == true && PlayerSeting[pl.realName].DeathPopup == true) {
-            MAPPING_TABLE["DeathUi"](pl);//todo 待尝试pl.isloading接口
-        }
-    })
-}
+// {
+//     /* 监听进服事件 */
+//     mc.listen('onJoin', (pl) => {
+//         if (pl.isSimulatedPlayer()) return;
+//         if (!PlayerSeting.hasOwnProperty(pl.realName)) {
+//             logger.warn(`玩家${pl.realName} 的配置不存在，正在新建配置...`);
+//             PlayerSeting[pl.realName] = Config.PlayerSeting;
+//             FileOperation.SaveFile();
+//         } else if (Config.AutoCompleteAttributes) {
+//             // 0.0.5版本新增属性检查
+//             for (let ps in Config.PlayerSeting) {
+//                 if (Config.PlayerSeting.hasOwnProperty(ps) && !PlayerSeting[pl.realName].hasOwnProperty(ps)) {
+//                     PlayerSeting[pl.realName][ps] = Config.PlayerSeting[ps];
+//                     logger.warn(`玩家[${pl.realName}] ${ps} 属性缺失，已自动补齐`);
+//                 }
+//             }
+//             FileOperation.SaveFile();
+//         }
+//     })
+//     /* 监听死亡事件 */
+//     mc.listen('onPlayerDie', (pl, sou) => {
+//         if (pl.isSimulatedPlayer()) return;
+//         const data = {
+//             time: system.getTimeStr(),
+//             x: pl.blockPos.x,
+//             y: pl.blockPos.y,
+//             z: pl.blockPos.z,
+//             dimid: pl.blockPos.dimid
+//         }
+//         Death[pl.realName] = data;
+//         FileOperation.SaveFile();
+//     })
+//     //玩家退出游戏
+//     mc.listen('onLeft', (pl) => {
+//         if (pl.isSimulatedPlayer()) return;
+//         TPA_Cache.DeleteCache(pl);
+//     })
+//     //玩家重生
+//     mc.listen('onRespawn', (pl) => {
+//         // 发送返回死亡点弹窗
+//         if (Config.Death.sendBackGUI == true && PlayerSeting[pl.realName].DeathPopup == true) {
+//             MAPPING_TABLE["DeathUi"](pl);//todo 待尝试pl.isloading接口
+//         }
+//     })
+// }
