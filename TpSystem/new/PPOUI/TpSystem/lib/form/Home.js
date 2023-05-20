@@ -7,7 +7,7 @@ import { HomeCore } from "../core/Home.js";
 import { SelectAction } from "./SelectAction.js";
 import { MergeRequest_Core } from "../core/MergeRequest.js";
 
-/* export  */class HomeForm {
+export class HomeForm {
     static Panel(pl) {
         const fm = Other.SimpleForm();
         fm.addButton('新建家', 'textures/ui/color_plus');
