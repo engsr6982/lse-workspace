@@ -5,11 +5,11 @@ export const PLUGIN_INFO = {
     Introduce: 'TpSystem 传送系统',
     Version: [0, 1, 0, Version.Dev],
     Author: 'PPOUI',
-    MineBBS: ''
+    MineBBS: 'https://www.minebbs.com/resources/tpsystem-gui-gui.5755/'
 }
 
 export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}\\`;
-export let Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§e]§r§a `;
+export const Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§e]§r§a `;
 
 /**配置文件 */
 export let Config = {}/* __init.Config */
@@ -32,7 +32,7 @@ const filePath = _filePath + 'data\\';
 
 export class FileOperation {
     // 配置文路径
-    static _Config = filePath + 'Config.json';
+    static _Config = _filePath + 'Config.json';
     static _Home = filePath + 'Home.json';
     static _Warp = filePath + 'Warp.json';
     static _Death = filePath + 'Death.json';
@@ -98,7 +98,7 @@ export const __init = {
             "MoneyName": "money"//经济名称
         },
         "Home": {//家园传送配置
-            "Enable": true,//todo
+            "Enable": true,
             "CreateHome": 0,//创建家 所需经济
             "GoHome": 0,//前往家 经济
             "EditHome_Name": 0,//编辑家（名称） 经济
@@ -110,7 +110,7 @@ export const __init = {
             "Enable": true,
             "GoWarp": 0//前往传送点 经济
         },
-        "TPA": {//玩家传送配置
+        "TPA": {//玩家传送配置//todo
             "Enable": true,
             "Player_Player": 0,//玩家传玩家 经济
             "Player_Home": 0,//玩家穿家 经济
@@ -149,7 +149,7 @@ export const __init = {
     MainUI: [
         { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
         { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
-        { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
+        // { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
         { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
         { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
         { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }

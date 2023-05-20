@@ -12,7 +12,7 @@ function init() {
             /* version */ PLUGIN_INFO.Version,
             /* otherInformation */ {
             "作者": PLUGIN_INFO.Author,
-            "发布网站": PLUGIN_INFO.MineBBS
+            "MineBBS": PLUGIN_INFO.MineBBS
         }
     );
     // 设置日志等级
@@ -20,7 +20,6 @@ function init() {
         logger.setTitle(PLUGIN_INFO.Name + ' Debug');
         logger.setLogLevel(5);
         logger.warn('你已开启Debug模式，将会输出Debug信息');
-        // Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§c Debug§e]§r§a `;
         mc.listen("onUseItemOn", (pl, it/* , bl, si */) => {
             if (it.type == 'minecraft:stick') {
                 pl.runcmd("tps ");
@@ -34,9 +33,13 @@ function init() {
     RegEvent();
     // 注册命令
     mc.listen('onServerStarted', () => {
-        logger.debug(Config)
+        logger.debug(Config);
         RegCommand();
     })
+
+    logger.info(`版本: ${PLUGIN_INFO.Version.join('.').replace(/,/g, '.')}`);
+    logger.info(`作者: ${PLUGIN_INFO.Author}`);
+    logger.info(`MineBBS: ${PLUGIN_INFO.MineBBS}`);
 }
 
 init();

@@ -5,6 +5,7 @@ import { WarpCore } from "../core/Warp.js";
 import { SelectAction } from "./SelectAction.js";
 
 export function WarpForm(pl) {
+    if (!Config.Warp.Enable) return pl.tell(Gm_Tell + `此功能已被管理员关闭！`);
     if (Warp.length == 0) return pl.tell(Gm_Tell + '无公共传送点！无法继续执行操作！');
     SelectAction(pl, Warp, true, id => {
         const Pos = new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid);

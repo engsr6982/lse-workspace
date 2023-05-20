@@ -6,6 +6,7 @@ import { Main } from "./Mian.js";
 
 
 export function DeathForm(pl) {
+    if (!Config.Death.Enable) return pl.tell(Gm_Tell + `此功能已被管理员关闭！`);
     if (Death.hasOwnProperty(pl.realName)) {
         pl.sendModalForm(PLUGIN_INFO.Introduce, `时间： ${Death[pl.realName].time}\n维度： ${Other.DimidToDimension(Death[pl.realName].dimid)} \nX: ${Death[pl.realName].x}\nY: ${Death[pl.realName].y}\nZ: ${Death[pl.realName].z}\n${Money_Mod.getEconomyStr(pl, Config.Death.GoDelath)}`, '确认前往', '返回主页', (pl, res) => {
             switch (res) {

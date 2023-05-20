@@ -9,6 +9,7 @@ import { MergeRequest_Core } from "../core/MergeRequest.js";
 
 export class HomeForm {
     static Panel(pl) {
+        if (!Config.Home.Enable) return pl.tell(Gm_Tell + `此功能已被管理员关闭！`);
         const fm = Other.SimpleForm();
         fm.addButton('新建家', 'textures/ui/color_plus');
         fm.addButton('前往家', 'textures/ui/send_icon');
@@ -112,6 +113,7 @@ export class HomeForm {
     }
 
     static MergeRequest_Panel(pl) {
+        if (!Config.MergeRequest.Enable) return pl.tell(Gm_Tell + `此功能已被管理员关闭！`);
         const fm = Other.SimpleForm();
         fm.addButton('发送请求', 'textures/ui/backup_replace');
         fm.addButton('撤销请求', 'textures/ui/redX1');
