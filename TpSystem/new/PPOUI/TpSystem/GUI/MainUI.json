@@ -1,0 +1,38 @@
+[
+	{
+		"name": "家园传送",
+		"image": "textures/ui/village_hero_effect",
+		"type": "inside",
+		"open": "HomeUi"
+	},
+	{
+		"name": "公共传送",
+		"image": "textures/ui/icon_best3",
+		"type": "inside",
+		"open": "WarpUi"
+	},
+	{
+		"name": "玩家传送",
+		"image": "textures/ui/icon_multiplayer",
+		"type": "inside",
+		"open": "PlayerUi"
+	},
+	{
+		"name": "死亡传送",
+		"image": "textures/ui/friend_glyph_desaturated",
+		"type": "inside",
+		"open": "DeathUi"
+	},
+	{
+		"name": "随机传送",
+		"image": "textures/ui/mashup_world",
+		"type": "inside",
+		"open": "RandomUi"
+	},
+	{
+		"name": "个人设置",
+		"image": "textures/ui/icon_setting",
+		"type": "inside",
+		"open": "SetingUi"
+	}
+]

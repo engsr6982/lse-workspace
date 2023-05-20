@@ -1,0 +1,58 @@
+{
+	"Command": {
+		"name": "tps",
+		"Describe": "传送系统"
+	},
+	"Money": {
+		"Enable": true,
+		"LLMoney": true,
+		"MoneyName": "money"
+	},
+	"Home": {
+		"Enable": true,
+		"CreateHome": 0,
+		"GoHome": 0,
+		"EditHome_Name": 0,
+		"EditHome_Pos": 0,
+		"DeleteHome": 0,
+		"MaxHome": 10
+	},
+	"Warp": {
+		"Enable": true,
+		"GoWarp": 0
+	},
+	"TPA": {
+		"Enable": true,
+		"Player_Player": 0,
+		"Player_Home": 0,
+		"CacheExpirationTime": 30,
+		"CacheExpirationTimeUnit": "second",
+		"RegularlyCheckExpirationTime": 30
+	},
+	"Death": {
+		"Enable": true,
+		"GoDelath": 0,
+		"sendBackGUI": false
+	},
+	"TPR": {
+		"Enable": true,
+		"Min": 1000,
+		"Max": 5000,
+		"Money": 0,
+		"MainWorld": true,
+		"Infernal": true,
+		"Terminus": true
+	},
+	"MergeRequest": {
+		"Enable": true,
+		"sendRequest": 0,
+		"DeleteRequest": 0
+	},
+	"PlayerSeting": {
+		"AcceptTransmission": true,
+		"SecondaryConfirmation": true,
+		"SendRequestPopup": true,
+		"DeathPopup": true
+	},
+	"AutoCompleteAttributes": true
+}

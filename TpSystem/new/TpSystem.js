@@ -1,9 +1,6 @@
+import { RegCommand } from "./plugins/PPOUI/TpSystem/lib/command/RegCommand.js";
 
-import { FileOperation } from "./PPOUI/TpSystem/lib/FileOPeration.js";
-
-import { RegCommand } from "./PPOUI/TpSystem/lib/command/RegCommand.js";
-
-import { PLUGIN_INFO, Gm_Tell } from "./PPOUI/TpSystem/lib/cache.js";
+import { FileOperation, PLUGIN_INFO, Gm_Tell, Config } from "./plugins/PPOUI/TpSystem/lib/cache.js";
 
 function init() {
     // 注册插件
@@ -21,7 +18,7 @@ function init() {
         logger.setTitle(PLUGIN_INFO.Name + ' Debug');
         logger.setLogLevel(5);
         logger.warn('你已开启Debug模式，将会输出Debug信息');
-        Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§c Debug§e]§r§a `;
+        // Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§c Debug§e]§r§a `;
         mc.listen("onUseItemOn", (pl, it/* , bl, si */) => {
             if (it.type == 'minecraft:stick') {
                 pl.runcmd("tps ");
@@ -32,10 +29,11 @@ function init() {
     // 读取文件
     FileOperation.readFile();
     // 注册命令
-    RegCommand();
+    mc.listen('onServerStarted', () => {
+        logger.debug(Config)
+        RegCommand();
+    })
 }
 
 
-mc.listen('onServerStarted', () => {
-    init();
-})
+init();

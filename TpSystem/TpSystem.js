@@ -574,16 +574,16 @@ class HomeForms {
                                     pl.sendModalForm(PLUGINS_JS, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.MergeRequest.sendRequest)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
                                         switch (res) {
                                             case true:
-                                                if (Money_Mod.DeductEconomy(pl, Config.MergeRequest.sendRequest)) {
-                                                    MergeRequest.push({
-                                                        player: pl.realName,
-                                                        guid: Other.RandomID(),
-                                                        time: system.getTimeStr(),
-                                                        data: Home[pl.realName][id]
-                                                    });
-                                                    FileOperation.SaveFile();
-                                                    pl.tell(Gm_Tell + '发送成功！');
-                                                }
+                                                // if (Money_Mod.DeductEconomy(pl, Config.MergeRequest.sendRequest)) {
+                                                //     MergeRequest.push({
+                                                //         player: pl.realName,
+                                                //         guid: Other.RandomID(),
+                                                //         time: system.getTimeStr(),
+                                                //         data: Home[pl.realName][id]
+                                                //     });
+                                                //     FileOperation.SaveFile();
+                                                //     pl.tell(Gm_Tell + '发送成功！');
+                                                // }
                                                 break;
                                             case false:
                                                 sendMergeRequest_UI(pl);
@@ -622,11 +622,11 @@ class HomeForms {
                             pl.sendModalForm(PLUGINS_JS, `时间: ${MergeRequest[index].time}\nGUID: ${MergeRequest[index].guid}\n\n名称： ${MergeRequest[index].data.name}\n坐标： ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}\n维度： ${Other.DimidToDimension(MergeRequest[index].data.dimid)}\n${Money_Mod.getEconomyStr(pl, Config.MergeRequest.DeleteRequest)}`, '撤销此请求', '返回上一页', (_, res) => {
                                 switch (res) {
                                     case true:
-                                        if (Money_Mod.DeductEconomy(pl, Config.MergeRequest.DeleteRequest)) {
-                                            MergeRequest.splice(index, 1);
-                                            FileOperation.SaveFile();
-                                            pl.tell(Gm_Tell + '撤销成功！');
-                                        }
+                                        // if (Money_Mod.DeductEconomy(pl, Config.MergeRequest.DeleteRequest)) {
+                                        //     MergeRequest.splice(index, 1);
+                                        //     FileOperation.SaveFile();
+                                        //     pl.tell(Gm_Tell + '撤销成功！');
+                                        // }
                                         break;
                                     case false:
                                         WithdrawalRequest(pl);
@@ -653,7 +653,7 @@ class HomeForms {
      * @param {Object} pl 玩家
      */
     static NoHome(pl) {
-        pl.tell(Gm_Tell + '你还没有家园传送点,无法继续执行操作！');
+        // pl.tell(Gm_Tell + '你还没有家园传送点,无法继续执行操作！');
     }
     /**
      * 选择传送点
@@ -796,7 +796,7 @@ class Forms {
         pl.sendModalForm(PLUGINS_JS, `确认执行此操作？\n${Money_Mod.getEconomyStr(pl, Config.TPR.Money)}`, '确认', '返回', (pl, res) => {
             switch (res) {
                 case true:
-                    Forms.RandomTeleportCore(pl);
+                    // Forms.RandomTeleportCore(pl);
                     break;
                 case false:
                     Main(pl, MainUI);
@@ -1015,43 +1015,43 @@ const MAPPING_TABLE = {
 }
 
 
-/**
- * GUI主页
- * @param {Object} pl 玩家对象
- * @param {Array} Array 菜单数组
- */
-function Main(pl, Array = []) {
-    const fm = Other.SimpleForm();
-    fm.setContent(`· 选择一个操作`);
-    Array.forEach((i) => {
-        fm.addButton(i.name, i.image);
-    });
-    if (Array.length == 0) return pl.tell(`数组为空！ 无法发送表单！`);
-    pl.sendForm(fm, (pl, id) => {
-        if (id == null) return Other.CloseTell(pl);
-        const sw = Array[id];
-        switch (sw.type) {
-            case "inside": return MAPPING_TABLE[sw.open](pl);
-            case "command": return pl.runcmd(sw.open);
-            case "form":
-                if (!File.exists(_FilePath + `GUI\\${sw.open}.json`)) {
-                    File.writeTo(_FilePath + `GUI\\${sw.open}.json`, '[]');
-                    return pl.tell(`§c§l文件<${sw.open}.json>不存在！`, 5);
-                };
-                try {
-                    let Menu_Arry = JSON.parse(File.readFrom(_FilePath + `GUI\\${sw.open}.json`));
-                    logger.debug(Menu_Arry);
-                    Main(pl, Menu_Arry);
-                } catch (e) {
-                    if (e instanceof SyntaxError) {
-                        pl.tell(`§c§l文件<${sw.open}.json>语法错误！`, 5);
-                        throw new SyntaxError(e);
-                    }
-                };
-                break;
-        }
-    })
-}
+// /**
+//  * GUI主页
+//  * @param {Object} pl 玩家对象
+//  * @param {Array} Array 菜单数组
+//  */
+// function Main(pl, Array = []) {
+//     const fm = Other.SimpleForm();
+//     fm.setContent(`· 选择一个操作`);
+//     Array.forEach((i) => {
+//         fm.addButton(i.name, i.image);
+//     });
+//     if (Array.length == 0) return pl.tell(`数组为空！ 无法发送表单！`);
+//     pl.sendForm(fm, (pl, id) => {
+//         if (id == null) return Other.CloseTell(pl);
+//         const sw = Array[id];
+//         switch (sw.type) {
+//             case "inside": return MAPPING_TABLE[sw.open](pl);
+//             case "command": return pl.runcmd(sw.open);
+//             case "form":
+//                 if (!File.exists(_FilePath + `GUI\\${sw.open}.json`)) {
+//                     File.writeTo(_FilePath + `GUI\\${sw.open}.json`, '[]');
+//                     return pl.tell(`§c§l文件<${sw.open}.json>不存在！`, 5);
+//                 };
+//                 try {
+//                     let Menu_Arry = JSON.parse(File.readFrom(_FilePath + `GUI\\${sw.open}.json`));
+//                     logger.debug(Menu_Arry);
+//                     Main(pl, Menu_Arry);
+//                 } catch (e) {
+//                     if (e instanceof SyntaxError) {
+//                         pl.tell(`§c§l文件<${sw.open}.json>语法错误！`, 5);
+//                         throw new SyntaxError(e);
+//                     }
+//                 };
+//                 break;
+//         }
+//     })
+// }
 
 /* 设置GUI */
 function Seting(pl) {

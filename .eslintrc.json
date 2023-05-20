@@ -15,8 +15,10 @@
     "money": "readonly",
     "logger": "readonly",
     "IntPos": "readonly",
+    "system": "readonly",
     "Version": "readonly",
-    "PermType": "readonly"
+    "PermType": "readonly",
+    "ParamType": "readonly"
   },
   "rules": {
     "no-unused-vars": "warn",
