@@ -3,9 +3,17 @@
 ## 1. 安装
 > 请确保你的服务器已安装并运行Liteloader   
 
-    1. 下载**TPSystem.js**  
-    2. 扔到万能的**Plugins**文件夹  
-    3. 启动或重启服务端，待Liteloader 输出JS插件TPSystem已加载，则代表安装成功    
+1. 下载TPSystem.zip
+2. 解压TpSystem.zip, 解压后会有以下文件  
+
+```file
+📁 PPOUI
+📄 TpSystem.js
+📄 README.md
+```
+
+3. 把上述文件复制到的Plugins文件夹(README.md文件不用复制)  
+4. 启动或重启服务端，待Liteloader 输出JS插件TPSystem已加载，则代表安装成功    
 
 ## 2. 配置插件   
 
@@ -30,33 +38,35 @@
         "Enable": true,
         "CreateHome": 0,//创建家 所需经济
         "GoHome": 0,//前往家 经济
-        "EditHome": 0,//编辑家 经济
+        "EditHome_Name": 0,//编辑家（名称） 经济
+        "EditHome_Pos": 0,// 编辑家（坐标） 经济
         "DeleteHome": 0,//删除家 经济
-        "MaxHome": 10//最大家园数量//todo
+        "MaxHome": 10//最大家园数量
     },
     "Warp": {//公共传送点配置
         "Enable": true,
         "GoWarp": 0//前往传送点 经济
     },
-    "TPA": {//玩家传送配置
+    "TPA": {//玩家传送配置//todo 未完成
         "Enable": true,
         "Player_Player": 0,//玩家传玩家 经济
         "Player_Home": 0,//玩家穿家 经济
-        "CacheExpirationTime": 30,//缓存过期时间//todo
-        "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
-        "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
+        "CacheExpirationTime": 30,//缓存过期时间
+        "CacheExpirationTimeUnit": "second"//缓存过期时间单位 "second"秒 "minute"分钟
     },
     "Death": {//死亡传送配置
         "Enable": true,
         "GoDelath": 0,//前往死亡点 经济
-        "sendBackGUI": true//发送死亡返回传送点弹窗 总开关
+        "sendBackGUI": true,//发送死亡返回传送点弹窗 总开关
+        "InvincibleTime": 30,//无敌时间 
+        "InvincibleTimeUnit": "second"//无敌时间单位 "second"秒 "minute"分钟
     },
     "TPR": {//随机传送配置
         "Enable": true,
         "Min": 1000,//随机坐标最小值
         "Max": 5000,//最大值
         "Money": 0,//所需经济
-        "MainWorld": true,//主世界//todo
+        "MainWorld": true,//主世界
         "Infernal": true,//地狱
         "Terminus": true//末地
     },
@@ -82,13 +92,12 @@
 
 TPSystem内部函数参考
 ```js
-const MAPPING_TABLE = {
-    HomeUi: HomeForms.Home_Panel,
-    WarpUi: Forms.PublicTransportation,
-    PlayerUi: Forms.PlayerTransportation,
-    DeathUi: Forms.DeathTransportation,
-    RandomUi: Forms.RandomTransportation,
-    SetingUi: Forms.PersonalSettings
+export const MAPPING_TABLE = {
+    HomeUi: HomeForm.Panel,
+    WarpUi: WarpForm,
+    DeathUi: DeathForm,
+    RandomUi: TPRForm,
+    SetingUi: PlayerSetingForm
 }
 ```
 
@@ -113,4 +122,4 @@ const MAPPING_TABLE = {
 /tps deny       --拒绝传送请求
 
 更多内容待补充   
-本页最后更新于2023年5月15日22:14:03    
+本页最后更新于2023年5月21日14:14:32
