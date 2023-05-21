@@ -3,6 +3,7 @@ import { RegCommand } from "./plugins/PPOUI/TpSystem/lib/command/RegCommand.js";
 import { FileOperation, PLUGIN_INFO, Config } from "./plugins/PPOUI/TpSystem/lib/cache.js";
 
 import { RegEvent } from "./plugins/PPOUI/TpSystem/lib/event.js";
+import { RegInterval } from "./plugins/PPOUI/TpSystem/lib/Interval.js";
 
 function init() {
     // 注册插件
@@ -31,13 +32,15 @@ function init() {
     FileOperation.readFile();
     // 注册监听器
     RegEvent();
+    // 注册循环检查器
+    RegInterval();
     // 注册命令
     mc.listen('onServerStarted', () => {
         logger.debug(Config);
         RegCommand();
     })
 
-    logger.info(`版本: ${PLUGIN_INFO.Version.join('.').replace(/,/g, '.')}`);
+    logger.info(`版本: ${PLUGIN_INFO.Version.join().replace(/,0$/, '').replace(/,/g, '.')}`);
     logger.info(`作者: ${PLUGIN_INFO.Author}`);
     logger.info(`MineBBS: ${PLUGIN_INFO.MineBBS}`);
 }

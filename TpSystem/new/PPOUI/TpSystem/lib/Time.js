@@ -4,9 +4,10 @@ export class Time_Mod {
     /**
      *  根据传入日期时间判断
      * @param {String} time 日期  2023-01-01 10:30:20
-     * @returns true/1 解 | false/0 封
+     * @returns Boolean true到期 false未到期
      */
     static CheckTime(time) {
+        logger.debug(new Date(time).getTime() <= new Date().getTime());
         if (new Date(time).getTime() <= new Date().getTime()) {
             return true;
         }

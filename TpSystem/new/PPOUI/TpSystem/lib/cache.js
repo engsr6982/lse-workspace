@@ -27,6 +27,8 @@ export let MergeRequest = []
 export let MainUI = []
 /**TPA缓存 */
 export let TPACache = []
+/**返回死亡点无敌 */
+export let DeathInvincible = [];
 
 const filePath = _filePath + 'data\\';
 
@@ -115,13 +117,14 @@ export const __init = {
             "Player_Player": 0,//玩家传玩家 经济
             "Player_Home": 0,//玩家穿家 经济
             "CacheExpirationTime": 30,//缓存过期时间//todo
-            "CacheExpirationTimeUnit": "second",//缓存过期时间单位 "second"秒 "minute"分钟//todo
-            "RegularlyCheckExpirationTime": 30//定期检查过期时间 单位： 毫秒//todo
+            "CacheExpirationTimeUnit": "second"//缓存过期时间单位 "second"秒 "minute"分钟//todo
         },
         "Death": {//死亡传送配置
             "Enable": true,
             "GoDelath": 0,//前往死亡点 经济
-            "sendBackGUI": false//发送死亡返回传送点弹窗 总开关
+            "sendBackGUI": true,//发送死亡返回传送点弹窗 总开关
+            "InvincibleTime": 30,//无敌时间 
+            "InvincibleTimeUnit": "second"//无敌时间单位 "second"秒 "minute"分钟
         },
         "TPR": {//随机传送配置
             "Enable": true,
