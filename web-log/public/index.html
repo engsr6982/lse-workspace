@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>WEB LOG 网页日志</title>
+    <!-- 导入 Bootstrap 样式 -->
+    <link href="./static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 导入 grid.js 样式 -->
+    <link href="./static/css/mermaid.min.css" rel="stylesheet" />
+    <!-- 导入 jQuery 库 -->
+    <script src="./static/js/jquery.min.js"></script>
+    <!-- 导入 Bootstrap JS 库 -->
+    <script src="./static/js/bootstrap.min.js"></script>
+    <!-- 导入 grid.js 库 -->
+    <script src="./static/js/gridjs.umd.js"></script>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" id="navbars">
+        <a class="navbar-brand" href="#">WEB LOG 网页日志</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="true" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://www.minebbs.com/resources/authors/ppoui.33900/">MineBBS</a>
+                </li>
+                <!-- <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        更多
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">下拉链接 1</a>
+                        <a class="dropdown-item" href="#">下拉链接 2</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">下拉链接 3</a>
+                    </div>
+                </li> -->
+            </ul>
+        </div>
+    </nav>
+</head>
+
+<body>
+    <div style="position: relative;">
+        <div style="position: absolute; top: 0; right: 20px; z-index: 1;">
+            <form class="form-inline">
+                <label for="select-box" style="margin-right: 10px;">选择文件:</label>
+                <select class="form-control mr-2" id="select-box"></select>
+                <button type="button" class="btn btn-primary mr-2" id="load-btn">加载</button>
+                <button type="button" class="btn btn-secondary" id="download-btn" style="margin-right: 5px;">下载</button>
+            </form>
+        </div>
+        <div style="position: relative; z-index: 0;">
+            <div id="table-wrapper"></div>
+        </div>
+    </div>
+    <!-- 加载动画 -->
+    <div class="modal" id="loading-modal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">加载中...</span>
+                    </div>
+                    <span id="loading-text">加载中...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalTitle">title</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeBtn">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    message
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var protocol = window.location.protocol; // 获取协议
+        var hostname = window.location.hostname; // 获取主机名
+        var port = window.location.port; // 获取端口号
+        // 判断端口号是否存在，并进行拼接URL
+        let API_URL = protocol + "//" + hostname;
+        if (port) {
+            API_URL += ":" + port;
+        }
+        // 输出完整的URL
+        console.log(API_URL);
+    </script>
+    <script src="./static/js/modal.js"></script>
+    <script src="./static/js/node.js"></script>
+    <script src="./static/js/table.js"></script>
+</body>
+
+</html>
