@@ -1,8 +1,8 @@
-const TPARequest=require("./TpaRequest.js");
+import {TPARequest} from "./TPARequest.js";
 /**
  * 全局请求池
  */
-class TPARequestPool {
+export class TPARequestPool {
     static requests={};
     constructor(){
         
@@ -48,4 +48,3 @@ class TPARequestPool {
         TPARequestPool.requests[reciever][sender]=null;
     }
 }
-module.exports=TPARequestPool;

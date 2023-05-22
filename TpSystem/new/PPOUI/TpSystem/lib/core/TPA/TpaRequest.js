@@ -1,11 +1,10 @@
-const { Money_Mod } = require("../../Money");
-const TPARequestPool = require("./TPARequestPool");
-const SimpleFormCallback=require("../../form/SimpleFormCallback.js");
+import {TPARequestPool} from "./TPARequestPool.js"
+import {SimpleFormCallback} from "../../form/SimpleFormCallback.js";
 
 /**
  * 请求类
  */
-class TpaRequest{
+export class TPARequest{
     /**
      *  
      * @param {Player} sender 请求发送者
@@ -72,4 +71,3 @@ class TpaRequest{
 
     }
 }
-module.exports=TpaRequest;

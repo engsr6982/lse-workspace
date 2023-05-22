@@ -1,12 +1,12 @@
-const OnlinePlayers=require("../OnlinePlayers.js")
-const SimpleFormCallback=require("./SimpleFormCallback.js")
-const TPARequest=require("../core/TPA/TpaRequest.js")
+import {OnlinePlayers} from "../OnlinePlayers.js"
+import {SimpleFormCallback} from "./SimpleFormCallback.js"
+import {TPARequest} from "../core/TPA/TPARequest.js"
 import {Config} from "../cache.js";
 
 /**
  * TPA表单，只发起tpa，不负责tpa过程
  */
-class TPAForm{
+export class TPAForm{
     /**
      * 
      * @param {Player} player 操作表单的玩家
@@ -32,4 +32,3 @@ class TPAForm{
         this.fm.send(this.player);
     }
 }
-module.exports=TPAForm;

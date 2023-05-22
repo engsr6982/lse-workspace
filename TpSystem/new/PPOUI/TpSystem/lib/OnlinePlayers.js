@@ -1,4 +1,4 @@
-class OnlinePlayers{
+export class OnlinePlayers{
     constructor(){
         this.all=mc.getOnlinePlayers();
         this.real=[];
@@ -13,4 +13,3 @@ class OnlinePlayers{
         })
     }
 }
-module.exports=OnlinePlayers;

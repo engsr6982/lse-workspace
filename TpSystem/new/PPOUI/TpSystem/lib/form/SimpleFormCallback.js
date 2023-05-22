@@ -1,7 +1,7 @@
 /**
  * 将回调与按钮绑定的表单类
  */
-class SimpleFormCallback{
+export class SimpleFormCallback{
     constructor(title="",content=""){
         this.fm=mc.newSimpleForm();
         this.fm.setTitle(title);
@@ -56,4 +56,3 @@ class Button{
         this.callback=callback;
     }
 }
-module.exports=SimpleFormCallback;
