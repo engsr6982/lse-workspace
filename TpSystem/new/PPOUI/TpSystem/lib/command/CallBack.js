@@ -5,6 +5,7 @@ import { RandomTeleportCore } from "../core/TPR.js";
 import { HomeForm } from "../form/Home.js";
 import { WarpForm } from "../form/Warp.js";
 import { TPRForm } from "../form/TPR.js";
+import { TPAEntrance } from "../form/TPAEntrance.js";
 
 export function CallBack(_, ori, out, res) {
     switch (res.action) {
@@ -39,6 +40,7 @@ export function CallBack(_, ori, out, res) {
                 // player: Forms.PlayerTransportation,
                 death: TPRForm,
                 tpr: TPRForm,
+                tpa: TPAEntrance,
                 seting: PlayerSeting
             }
             if (res.gui_name) {
