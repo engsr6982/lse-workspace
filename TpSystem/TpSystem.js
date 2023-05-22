@@ -732,6 +732,11 @@ class Forms {
     //         })
     //     }
     // }
+
+    /**
+     * 玩家发起传送
+     * @param {Player} pl 发起者
+     */
     static PlayerTransportation(pl) {//todo
         const OnlinePlayers = Other.GetOnlinePlayers();
         let DeliveryType = Array.of('传送至TA', 'TA传送至我');
