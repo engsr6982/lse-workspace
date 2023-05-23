@@ -1,8 +1,9 @@
 import { Other } from "../Other.js";
-import { FileOperation, Gm_Tell, PlayerSeting } from "../cache.js";
+import { Gm_Tell, db } from "../cache.js";
 
 
 export function PlayerSetingForm(pl) {
+    let PlayerSeting = db.get('PlayerSeting');
     const fm = Other.CustomForm();
     fm.addSwitch('接受传送请求', PlayerSeting[pl.realName].AcceptTransmission);
     fm.addSwitch('传送时二次确认', PlayerSeting[pl.realName].SecondaryConfirmation);
@@ -17,7 +18,8 @@ export function PlayerSetingForm(pl) {
             DeathPopup: Boolean(dt[3]).valueOf()
         };
         PlayerSeting[pl.realName] = data;
-        FileOperation.saveFile();
+        // FileOperation.saveFile();
+        db.set('PlayerSeting', PlayerSeting);
         pl.tell(Gm_Tell + '操作已保存');
     })
 }

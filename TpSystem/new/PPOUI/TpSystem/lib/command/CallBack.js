@@ -1,10 +1,11 @@
 import { MAPPING_TABLE, Main } from "../form/Mian.js";
-import { FileOperation, MainUI, PlayerSeting } from "../cache.js";
+import { FileOperation, MainUI } from "../cache.js";
 import { SetingForm } from "../form/Seting_Mgr.js";
 import { RandomTeleportCore } from "../core/TPR.js";
 import { HomeForm } from "../form/Home.js";
 import { WarpForm } from "../form/Warp.js";
 import { TPRForm } from "../form/TPR.js";
+import { PlayerSetingForm } from "../form/PlayerSeting.js";
 
 export function CallBack(_, ori, out, res) {
     switch (res.action) {
@@ -39,7 +40,7 @@ export function CallBack(_, ori, out, res) {
                 // player: Forms.PlayerTransportation,
                 death: TPRForm,
                 tpr: TPRForm,
-                seting: PlayerSeting
+                seting: PlayerSetingForm
             }
             if (res.gui_name) {
                 Table[res.gui_name](ori.player);

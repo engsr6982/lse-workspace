@@ -1,14 +1,15 @@
-import { FileOperation, Config, PlayerSeting, Death, DeathInvincible } from "./cache.js";
+import { Config, DeathInvincible, db } from "./cache.js";
 import { MAPPING_TABLE } from "./form/Mian.js";
 
 export function RegEvent() {
     /* 监听进服事件 */
     mc.listen('onJoin', (pl) => {
         if (pl.isSimulatedPlayer()) return;
+        let PlayerSeting = db.get('PlayerSeting');
         if (!PlayerSeting.hasOwnProperty(pl.realName)) {
             logger.warn(`玩家${pl.realName} 的配置不存在，正在新建配置...`);
             PlayerSeting[pl.realName] = Config.PlayerSeting;
-            FileOperation.saveFile();
+            db.set('PlayerSeting', PlayerSeting);
         } else if (Config.AutoCompleteAttributes) {
             // 0.0.5版本新增属性检查
             for (let ps in Config.PlayerSeting) {
@@ -17,13 +18,14 @@ export function RegEvent() {
                     logger.warn(`玩家[${pl.realName}] ${ps} 属性缺失，已自动补齐`);
                 }
             }
-            FileOperation.saveFile();
+            db.set('PlayerSeting', PlayerSeting);
         }
     })
     /* 监听死亡事件 */
     if (Config.Death.Enable) {
         mc.listen('onPlayerDie', (pl) => {
             if (pl.isSimulatedPlayer()) return;
+            let Death = db.get('Death');
             const data = {
                 time: system.getTimeStr(),
                 x: pl.blockPos.x,
@@ -32,7 +34,8 @@ export function RegEvent() {
                 dimid: pl.blockPos.dimid
             }
             Death[pl.realName] = data;
-            FileOperation.saveFile();
+            // FileOperation.saveFile();
+            db.set('Death', Death);
         })
     }
     //玩家退出游戏
@@ -67,6 +70,7 @@ export function RegEvent() {
         }
 
         function send(pl) {
+            let PlayerSeting = db.get('PlayerSeting');
             if (Config.Death.sendBackGUI == true && PlayerSeting[pl.realName].DeathPopup == true) {
                 MAPPING_TABLE["DeathUi"](pl);// 发送返回死亡点弹窗
             }
@@ -74,7 +78,7 @@ export function RegEvent() {
     })
 
     // 受伤事件
-    mc.listen("onMobHurt", function (mob, source, damage, cause) {
+    mc.listen("onMobHurt", function (mob/* , source, damage, cause */) {
         if (mob.isPlayer()) {
             // 是玩家 获取玩家对象
             const pl = mc.getPlayer(mob.uniqueId);

@@ -17,45 +17,45 @@ export const db = new KVDatabase(_filePath + 'db');
 /**配置文件 */
 export let Config = {}/* __init.Config */
 
-/**家园 */
-export let Home = {}
-/**公共传送点 */
-export let Warp = []
-/**玩家设置 */
-export let PlayerSeting = {}
-/**死亡信息 */
-export let Death = {}
-/**合并请求 */
-export let MergeRequest = []
-/**主页UI */
-export let MainUI = []
+// /**家园 */
+// export let Home = {}
+// /**公共传送点 */
+// export let Warp = []
+// /**玩家设置 */
+// export let PlayerSeting = {}
+// /**死亡信息 */
+// export let Death = {}
+// /**合并请求 */
+// export let MergeRequest = []
 
 // 缓存
+/**主页UI */
+export let MainUI = []
 /**TPA缓存 */
 export let TPACache = []
 /**返回死亡点无敌 */
 export let DeathInvincible = [];
 
-const filePath = _filePath + 'data\\';
+// const filePath = _filePath + 'data\\';
 
 export class FileOperation {
     // 配置文路径
     static _Config = _filePath + 'Config.json';
-    static _Home = filePath + 'Home.json';
-    static _Warp = filePath + 'Warp.json';
-    static _Death = filePath + 'Death.json';
-    static _PlayerSeting = filePath + 'PlayerSeting.json';
-    static _MergeRequest = filePath + 'MergeRequest.json';
+    // static _Home = filePath + 'Home.json';
+    // static _Warp = filePath + 'Warp.json';
+    // static _Death = filePath + 'Death.json';
+    // static _PlayerSeting = filePath + 'PlayerSeting.json';
+    // static _MergeRequest = filePath + 'MergeRequest.json';
     static _MainUI = _filePath + 'GUI\\MainUI.json';
 
     /**检查文件 */
     static async auditFile() {
         if (!file.exists(this._Config)) file.writeTo(this._Config, JSON.stringify(__init.Config, null, '\t'));
-        if (!file.exists(this._Home)) file.writeTo(this._Home, '{}');
-        if (!file.exists(this._Warp)) file.writeTo(this._Warp, '[]');
-        if (!file.exists(this._Death)) file.writeTo(this._Death, '{}');
-        if (!file.exists(this._PlayerSeting)) file.writeTo(this._PlayerSeting, '{}');
-        if (!file.exists(this._MergeRequest)) file.writeTo(this._MergeRequest, '[]');
+        // if (!file.exists(this._Home)) file.writeTo(this._Home, '{}');
+        // if (!file.exists(this._Warp)) file.writeTo(this._Warp, '[]');
+        // if (!file.exists(this._Death)) file.writeTo(this._Death, '{}');
+        // if (!file.exists(this._PlayerSeting)) file.writeTo(this._PlayerSeting, '{}');
+        // if (!file.exists(this._MergeRequest)) file.writeTo(this._MergeRequest, '[]');
         if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(__init.MainUI, null, '\t'));
     }
 
@@ -64,11 +64,11 @@ export class FileOperation {
         try {
             this.auditFile();
             Config = JSON.parse(file.readFrom(this._Config));
-            Home = JSON.parse(file.readFrom(this._Home));
-            Warp = JSON.parse(file.readFrom(this._Warp));
-            Death = JSON.parse(file.readFrom(this._Death));
-            PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting));
-            MergeRequest = JSON.parse(file.readFrom(this._MergeRequest));
+            // Home = JSON.parse(file.readFrom(this._Home));
+            // Warp = JSON.parse(file.readFrom(this._Warp));
+            // Death = JSON.parse(file.readFrom(this._Death));
+            // PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting));
+            // MergeRequest = JSON.parse(file.readFrom(this._MergeRequest));
             MainUI = JSON.parse(file.readFrom(this._MainUI));
         } catch (e) {
             throw new Error(e);
@@ -79,11 +79,11 @@ export class FileOperation {
     static async saveFile() {
         try {
             file.writeTo(this._Config, JSON.stringify(Config, null, '\t'));
-            file.writeTo(this._Home, JSON.stringify(Home, null, '\t'));
-            file.writeTo(this._Warp, JSON.stringify(Warp, null, '\t'));
-            file.writeTo(this._Death, JSON.stringify(Death, null, '\t'));
-            file.writeTo(this._PlayerSeting, JSON.stringify(PlayerSeting, null, '\t'));
-            file.writeTo(this._MergeRequest, JSON.stringify(MergeRequest, null, '\t'));
+            // file.writeTo(this._Home, JSON.stringify(Home, null, '\t'));
+            // file.writeTo(this._Warp, JSON.stringify(Warp, null, '\t'));
+            // file.writeTo(this._Death, JSON.stringify(Death, null, '\t'));
+            // file.writeTo(this._PlayerSeting, JSON.stringify(PlayerSeting, null, '\t'));
+            // file.writeTo(this._MergeRequest, JSON.stringify(MergeRequest, null, '\t'));
             file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
             this.readFile();
         } catch (e) {

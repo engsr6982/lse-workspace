@@ -1,9 +1,10 @@
 import { Money_Mod } from "../Money.js";
 import { Time_Mod } from "../Time.js";
-import { Config, Death, DeathInvincible, Gm_Tell } from "../cache.js";
+import { Config, DeathInvincible, Gm_Tell, db } from "../cache.js";
 
 export class DeathCore {
     static GoDeath(pl) {
+        let Death = db.get('Death');
         if (Money_Mod.DeductEconomy(pl, Config.Death.GoDelath)) {
             if (pl.teleport(new IntPos(Death[pl.realName].x, Death[pl.realName].y, Death[pl.realName].z, Death[pl.realName].dimid))) {
                 pl.tell(Gm_Tell + '传送完成！');
