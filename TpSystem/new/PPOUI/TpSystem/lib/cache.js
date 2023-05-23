@@ -118,10 +118,10 @@ export const __init = {
             "Enable": true,
             "GoWarp": 0//前往传送点 经济
         },
-        "TPA": {//玩家传送配置//todo
-            "Enable": true,
-            "Player_Player": 0,//玩家传玩家 经济
-            "Player_Home": 0,//玩家穿家 经济
+        "TPA": {//玩家传送配置//todo  无实际功能（未开发）
+            "Enable": true,//todo
+            "Player_Player": 0,//玩家传玩家 经济//todo
+            // "Player_Home": 0,//玩家穿家 经济//todo 需砍掉
             "CacheExpirationTime": 30,//缓存过期时间//todo
             "CacheExpirationTimeUnit": "second"//缓存过期时间单位 "second"秒 "minute"分钟//todo
         },
@@ -158,7 +158,7 @@ export const __init = {
     MainUI: [
         { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
         { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
-        // { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
+        // { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },//todo
         { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
         { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
         { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }

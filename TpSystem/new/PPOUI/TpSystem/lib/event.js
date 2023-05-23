@@ -1,5 +1,5 @@
 import { Config, DeathInvincible, db } from "./cache.js";
-import { MAPPING_TABLE } from "./form/Mian.js";
+import { MAPPING_TABLE } from "./form/Main.js";
 
 export function RegEvent() {
     /* 监听进服事件 */

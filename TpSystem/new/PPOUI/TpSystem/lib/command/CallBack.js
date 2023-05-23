@@ -1,4 +1,4 @@
-import { MAPPING_TABLE, Main } from "../form/Mian.js";
+import { MAPPING_TABLE, Main } from "../form/Main.js";
 import { FileOperation, MainUI } from "../cache.js";
 import { SetingForm } from "../form/Seting_Mgr.js";
 import { RandomTeleportCore } from "../core/TPR.js";
@@ -37,7 +37,7 @@ export function CallBack(_, ori, out, res) {
             const Table = {
                 home: HomeForm.Panel,
                 warp: WarpForm,
-                // player: Forms.PlayerTransportation,
+                // player: Forms.PlayerTransportation,//todo tpa的表单函数
                 death: TPRForm,
                 tpr: TPRForm,
                 seting: PlayerSetingForm

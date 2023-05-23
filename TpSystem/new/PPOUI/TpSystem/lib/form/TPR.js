@@ -2,7 +2,7 @@ import { Money_Mod } from "../Money.js";
 import { Other } from "../Other.js";
 import { Config, Gm_Tell, MainUI, PLUGIN_INFO } from "../cache.js";
 import { RandomTeleportCore } from "../core/TPR.js";
-import { Main } from "./Mian.js";
+import { Main } from "./Main.js";
 
 
 export function TPRForm(pl) {

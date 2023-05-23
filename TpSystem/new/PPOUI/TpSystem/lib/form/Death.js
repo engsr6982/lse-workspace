@@ -2,7 +2,7 @@ import { Money_Mod } from "../Money.js";
 import { Other } from "../Other.js";
 import { Config, Gm_Tell, MainUI, PLUGIN_INFO, db } from "../cache.js";
 import { DeathCore } from "../core/Death.js";
-import { Main } from "./Mian.js";
+import { Main } from "./Main.js";
 
 
 export function DeathForm(pl) {

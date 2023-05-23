@@ -1,7 +1,7 @@
 import { Config, Gm_Tell, MainUI, PLUGIN_INFO, db } from "../cache.js";
 import { Other } from "../Other.js";
 
-import { Main } from "../form/Mian.js";
+import { Main } from "../form/Main.js";
 import { Money_Mod } from "../Money.js";
 import { HomeCore } from "../core/Home.js";
 import { SelectAction } from "./SelectAction.js";
