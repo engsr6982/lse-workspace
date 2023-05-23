@@ -77,7 +77,7 @@ export class HomeForm {
                     switch (id1) {
                         case 0: HomeForm.Edit_Name(pl, id); break;
                         case 1: HomeCore.UpdatePos(pl, id, pl.blockPos); break;
-                        case 2: HomeForm.Panel(pl); break;
+                        case 2: HomeForm.Edit_Panel(pl); break;
                         default: Other.CloseTell(pl); break;
                     }
                 })
