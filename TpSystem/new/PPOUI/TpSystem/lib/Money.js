@@ -8,10 +8,10 @@ export class Money_Mod {
      * @returns 
      */
     static addMoney(pl, amoney) {
-        if (Config.Money.Enable) {
+        if (Config.Money.Enable) { // 判断经济类型
             if (Config.Money.LLMoney) {
                 // LL
-                return money.add(pl.xuid, amoney);
+                return money.add(pl.xuid, amoney); 
             } else {
                 //score
                 return pl.addScore(Config.Money.MoneyName,amoney);

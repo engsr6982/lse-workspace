@@ -18,6 +18,7 @@
     "system": "readonly",
     "Version": "readonly",
     "PermType": "readonly",
+    "KVDatabase": "readonly",
     "ParamType": "readonly"
   },
   "rules": {

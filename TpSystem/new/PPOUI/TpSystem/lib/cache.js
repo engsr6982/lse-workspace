@@ -11,8 +11,12 @@ export const PLUGIN_INFO = {
 export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}\\`;
 export const Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§e]§r§a `;
 
+// KVDB数据库
+export const db = new KVDatabase(_filePath + 'db');
+
 /**配置文件 */
 export let Config = {}/* __init.Config */
+
 /**家园 */
 export let Home = {}
 /**公共传送点 */
@@ -25,6 +29,8 @@ export let Death = {}
 export let MergeRequest = []
 /**主页UI */
 export let MainUI = []
+
+// 缓存
 /**TPA缓存 */
 export let TPACache = []
 /**返回死亡点无敌 */
