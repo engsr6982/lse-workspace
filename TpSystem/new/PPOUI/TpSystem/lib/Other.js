@@ -43,7 +43,7 @@ export class Other {
      * @returns 
      */
     static SimpleForm() {
-        const fm = mc.newSimpleForm(); //懒得构建表达时加标题
+        const fm = mc.newSimpleForm(); //懒得构建表单时加标题
         fm.setTitle(PLUGIN_INFO.Introduce);
         fm.setContent(`· 选择一个操作`);
         return fm;
