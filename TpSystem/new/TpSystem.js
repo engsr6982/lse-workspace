@@ -36,7 +36,6 @@ function init() {
     RegInterval();
     // 注册命令
     mc.listen('onServerStarted', () => {
-        logger.debug(Config);
         RegCommand();
 
         // 初始化键值数据库（防止初次使用null导致报错）

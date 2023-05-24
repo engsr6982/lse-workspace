@@ -7,9 +7,15 @@
 2. 解压TpSystem.zip, 解压后会有以下文件  
 
 ```file
-📁 PPOUI
-📄 TpSystem.js
-📄 README.md
+📁 TpSystem.zip
+├── 📁 PPOUI 
+│   └── 📁 TpSystem
+│       ├── 📁 db   //插件数据库 （此文件夹十分重要！请不要删除此文件夹下的文件！否则数据丢失）
+│       ├── 📁 GUI  //主页表单
+│       ├── 📁 json //数据库操作输出的json目录
+│       └── 📁 lib  //依赖库
+├── 📄 TpSystem.js  //入口文件
+└── 📄 README.md
 ```
 
 3. 把上述文件复制到的Plugins文件夹(README.md文件不用复制)  
@@ -47,7 +53,7 @@
         "Enable": true,
         "GoWarp": 0//前往传送点 经济
     },
-    "TPA": {//玩家传送配置//todo 未完成
+    "TPA": {//玩家传送配置//todo 未完成此配置项无功能
         "Enable": true,
         "Player_Player": 0,//玩家传玩家 经济
         "Player_Home": 0,//玩家穿家 经济
@@ -104,16 +110,14 @@ export const MAPPING_TABLE = {
 ## 3. 关于命令
 > 注意： 默认的顶层命令为/**tps** 如有修改，请使用修改后的顶层命令   
 > []为可选参数  <>为必选参数   输入命令时不要带上[]和<>   
-
+#### 基础命令：
 /tps mgr        --打开管理面板GUI
 
-/tps random     --随机传送（无GUI）
+/tps tpr     --随机传送（无GUI）
 
-/tps reload     --保存并重新读取文件
+/tps reload     --重载配置文件
 
 /tps back       --打开返回死亡点GUI
-
-/tps refresh    --强制刷新缓存并重新读取文件（不建议在生产环境使用此命令，可能导致玩家数据丢失
 
 / tps [gui] [home|warp|player|death|random|seting]      --打开对应功能GUI
 
@@ -121,5 +125,19 @@ export const MAPPING_TABLE = {
 
 /tps deny       --拒绝传送请求
 
+#### 数据库操作命令：
+
+/tps db listkey    --列出数据库所有键
+
+/tps db todb       --json转入数据库
+
+/tps db tojson     --数据库数据转为json
+
+/tps db list <key: string> [key1: string]       --列出某个键的值
+
+/tps db delete <key: string> [key1: string]     --删除某个键的数据   成功显示1  失败0
+
+
+
 更多内容待补充   
-本页最后更新于2023年5月21日14:14:32
+本页最后更新于2023年5月24日23:10:20
