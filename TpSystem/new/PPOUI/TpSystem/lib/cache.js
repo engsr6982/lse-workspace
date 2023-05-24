@@ -89,7 +89,7 @@ export const __init = {
             "Enable": true,//todo
             "Player_Player": 0,//玩家传玩家 经济//todo
             // "Player_Home": 0,//玩家穿家 经济//todo 需砍掉
-            "CacheExpirationTime": 30,//缓存过期时间//todo
+            "CacheExpirationTime": 30,//缓存过期时间，以毫秒为单位//todo
             "CacheExpirationTimeUnit": "second"//缓存过期时间单位 "second"秒 "minute"分钟//todo
         },
         "Death": {//死亡传送配置
