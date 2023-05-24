@@ -55,7 +55,7 @@ function init() {
         })
     })
 
-    logger.info(`版本: ${PLUGIN_INFO.Version.join().replace(/,0$/, '').replace(/,/g, '.')}`);
+    logger.info(`版本: ${PLUGIN_INFO.Version.join().replace(/\,\d$/, '').replace(/,/g, '.')}`);
     logger.info(`作者: ${PLUGIN_INFO.Author}`);
     logger.info(`MineBBS: ${PLUGIN_INFO.MineBBS}`);
 }
