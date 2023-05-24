@@ -3,7 +3,7 @@
 export const PLUGIN_INFO = {
     Name: 'TpSystem',
     Introduce: 'TpSystem 传送系统',
-    Version: [0, 1, 0, Version.Dev],
+    Version: [0, 1, 2, Version.Beta],
     Author: 'PPOUI',
     MineBBS: 'https://www.minebbs.com/resources/tpsystem-gui-gui.5755/'
 }
@@ -11,18 +11,13 @@ export const PLUGIN_INFO = {
 export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}\\`;
 export const Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§e]§r§a `;
 
+// KVDB数据库
+export const db = new KVDatabase(_filePath + 'db');
+
 /**配置文件 */
 export let Config = {}/* __init.Config */
-/**家园 */
-export let Home = {}
-/**公共传送点 */
-export let Warp = []
-/**玩家设置 */
-export let PlayerSeting = {}
-/**死亡信息 */
-export let Death = {}
-/**合并请求 */
-export let MergeRequest = []
+
+// 缓存
 /**主页UI */
 export let MainUI = []
 /**TPA缓存 */
@@ -30,26 +25,14 @@ export let TPACache = []
 /**返回死亡点无敌 */
 export let DeathInvincible = [];
 
-const filePath = _filePath + 'data\\';
-
 export class FileOperation {
     // 配置文路径
     static _Config = _filePath + 'Config.json';
-    static _Home = filePath + 'Home.json';
-    static _Warp = filePath + 'Warp.json';
-    static _Death = filePath + 'Death.json';
-    static _PlayerSeting = filePath + 'PlayerSeting.json';
-    static _MergeRequest = filePath + 'MergeRequest.json';
     static _MainUI = _filePath + 'GUI\\MainUI.json';
 
     /**检查文件 */
     static async auditFile() {
         if (!file.exists(this._Config)) file.writeTo(this._Config, JSON.stringify(__init.Config, null, '\t'));
-        if (!file.exists(this._Home)) file.writeTo(this._Home, '{}');
-        if (!file.exists(this._Warp)) file.writeTo(this._Warp, '[]');
-        if (!file.exists(this._Death)) file.writeTo(this._Death, '{}');
-        if (!file.exists(this._PlayerSeting)) file.writeTo(this._PlayerSeting, '{}');
-        if (!file.exists(this._MergeRequest)) file.writeTo(this._MergeRequest, '[]');
         if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(__init.MainUI, null, '\t'));
     }
 
@@ -58,11 +41,6 @@ export class FileOperation {
         try {
             this.auditFile();
             Config = JSON.parse(file.readFrom(this._Config));
-            Home = JSON.parse(file.readFrom(this._Home));
-            Warp = JSON.parse(file.readFrom(this._Warp));
-            Death = JSON.parse(file.readFrom(this._Death));
-            PlayerSeting = JSON.parse(file.readFrom(this._PlayerSeting));
-            MergeRequest = JSON.parse(file.readFrom(this._MergeRequest));
             MainUI = JSON.parse(file.readFrom(this._MainUI));
         } catch (e) {
             throw new Error(e);
@@ -73,11 +51,6 @@ export class FileOperation {
     static async saveFile() {
         try {
             file.writeTo(this._Config, JSON.stringify(Config, null, '\t'));
-            file.writeTo(this._Home, JSON.stringify(Home, null, '\t'));
-            file.writeTo(this._Warp, JSON.stringify(Warp, null, '\t'));
-            file.writeTo(this._Death, JSON.stringify(Death, null, '\t'));
-            file.writeTo(this._PlayerSeting, JSON.stringify(PlayerSeting, null, '\t'));
-            file.writeTo(this._MergeRequest, JSON.stringify(MergeRequest, null, '\t'));
             file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
             this.readFile();
         } catch (e) {
@@ -112,12 +85,12 @@ export const __init = {
             "Enable": true,
             "GoWarp": 0//前往传送点 经济
         },
-        "TPA": {//玩家传送配置//todo
-            "Enable": true,
-            "Player_Player": 0,//玩家传玩家 经济
-            "Player_Home": 0,//玩家穿家 经济
+        "TPA": {//玩家传送配置//todo  无实际功能（未开发）
+            "Enable": true,//todo
+            "Player_Player": 0,//玩家传玩家 经济//todo
+            // "Player_Home": 0,//玩家穿家 经济//todo 需砍掉
             "CacheExpirationTime": 30,//缓存过期时间，以毫秒为单位//todo
-            //"CacheExpirationTimeUnit": "second"//缓存过期时间单位 "second"秒 "minute"分钟//todo
+            "CacheExpirationTimeUnit": "second"//缓存过期时间单位 "second"秒 "minute"分钟//todo
         },
         "Death": {//死亡传送配置
             "Enable": true,
@@ -152,7 +125,7 @@ export const __init = {
     MainUI: [
         { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
         { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
-        // { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },
+        // { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },//todo
         { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
         { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
         { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }

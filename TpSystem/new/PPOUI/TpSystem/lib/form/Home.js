@@ -1,7 +1,7 @@
-import { Config, Gm_Tell, MainUI, Home, PlayerSeting, PLUGIN_INFO, MergeRequest } from "../cache.js";
+import { Config, Gm_Tell, MainUI, PLUGIN_INFO, db } from "../cache.js";
 import { Other } from "../Other.js";
 
-import { Main } from "../form/Mian.js";
+import { Main } from "../form/Main.js";
 import { Money_Mod } from "../Money.js";
 import { HomeCore } from "../core/Home.js";
 import { SelectAction } from "./SelectAction.js";
@@ -42,6 +42,8 @@ export class HomeForm {
     }
 
     static GoHome(pl) {
+        let Home = db.get('Home');
+        let PlayerSeting = db.get('PlayerSeting');
         if (Home.hasOwnProperty(pl.realName) && Home[pl.realName].length !== 0) {
             SelectAction(pl, Home[pl.realName], false, id => {
                 // 创建坐标对象
@@ -64,6 +66,7 @@ export class HomeForm {
     }
 
     static Edit_Panel(pl) {
+        let Home = db.get('Home');
         if (Home.hasOwnProperty(pl.realName) && Home[pl.realName].length !== 0) {
             SelectAction(pl, Home[pl.realName], false, id => {
                 const fm = Other.SimpleForm();
@@ -74,7 +77,7 @@ export class HomeForm {
                     switch (id1) {
                         case 0: HomeForm.Edit_Name(pl, id); break;
                         case 1: HomeCore.UpdatePos(pl, id, pl.blockPos); break;
-                        case 2: HomeForm.Panel(pl); break;
+                        case 2: HomeForm.Edit_Panel(pl); break;
                         default: Other.CloseTell(pl); break;
                     }
                 })
@@ -85,6 +88,7 @@ export class HomeForm {
     }
 
     static Edit_Name(pl, id) {
+        let Home = db.get('Home');
         const fm = Other.CustomForm();
         fm.addLabel(`当前正在编辑:\n名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}`)
         fm.addInput('输入新名称', 'String', Home[pl.realName][id].name);
@@ -97,6 +101,7 @@ export class HomeForm {
     }
 
     static DeleteHome(pl) {
+        let Home = db.get('Home');
         if (Home.hasOwnProperty(pl.realName) && Home[pl.realName].length !== 0) {
             SelectAction(pl, Home[pl.realName], false, id => {
                 pl.sendModalForm(PLUGIN_INFO.Introduce, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.Home.DeleteHome)}`, '确认删除', '返回上一页', (_, res) => {
@@ -129,6 +134,7 @@ export class HomeForm {
     }
 
     static SendRequest(pl) {
+        let Home = db.get('Home');
         if (Home.hasOwnProperty(pl.realName) && Home[pl.realName].length !== 0) {
             SelectAction(pl, Home[pl.realName], false, id => {
                 pl.sendModalForm(PLUGIN_INFO.Introduce, `名称： ${Home[pl.realName][id].name}\n坐标： ${Home[pl.realName][id].x},${Home[pl.realName][id].y},${Home[pl.realName][id].z}\n维度： ${Other.DimidToDimension(Home[pl.realName][id].dimid)}\n${Money_Mod.getEconomyStr(pl, Config.MergeRequest.sendRequest)}\n\n并入成功后不会删除家园传送点且无法自行撤销\n请谨慎操作`, '发送申请', '返回上一页', (_, res) => {
@@ -145,6 +151,7 @@ export class HomeForm {
     }
 
     static RevokeRequest(pl) {
+        let MergeRequest = db.get('MergeRequest');
         const fm = Other.SimpleForm();
         let AllButtons = [];
 

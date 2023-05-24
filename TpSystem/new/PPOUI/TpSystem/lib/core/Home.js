@@ -1,4 +1,4 @@
-import { Gm_Tell, Home, Config, FileOperation } from "../cache.js";
+import { Gm_Tell, Config, db } from "../cache.js";
 import { Money_Mod } from "../Money.js";
 
 export class HomeCore {
@@ -8,6 +8,7 @@ export class HomeCore {
      * @param {String} name 家园名称
      */
     static CreateHome(pl, name) {
+        let Home = db.get('Home');
         if (!Home.hasOwnProperty(pl.realName)) {
             Home[pl.realName] = [];
         }
@@ -21,7 +22,8 @@ export class HomeCore {
                     "z": pl.blockPos.z,
                     "dimid": pl.blockPos.dimid
                 });
-                FileOperation.saveFile();
+                // FileOperation.saveFile();
+                db.set('Home', Home);
                 pl.tell(Gm_Tell + '家园已保存');
             }
         } else {
@@ -50,9 +52,11 @@ export class HomeCore {
      * @param {String} newname 新名称
      */
     static UpdateName(pl, id, newname) {
+        let Home = db.get('Home');
         if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome_Name)) {
             Home[pl.realName][id].name = newname;
-            FileOperation.saveFile();
+            // FileOperation.saveFile();
+            db.set('Home', Home);
             pl.tell(Gm_Tell + '操作已保存');
         }
     }
@@ -63,12 +67,14 @@ export class HomeCore {
      * @param {IntPos | FloatPos} pos 坐标对象
      */
     static UpdatePos(pl, id, pos) {
+        let Home = db.get('Home');
         if (Money_Mod.DeductEconomy(pl, Config.Home.EditHome_Pos)) {
             Home[pl.realName][id].x = pos.x;
             Home[pl.realName][id].y = pos.y;
             Home[pl.realName][id].z = pos.z;
             Home[pl.realName][id].dimid = pos.dimid;
-            FileOperation.saveFile();
+            // FileOperation.saveFile();
+            db.set('Home', Home);
             pl.tell(Gm_Tell + '更新完成！');
         }
     }
@@ -78,9 +84,11 @@ export class HomeCore {
      * @param {Number} id 家园数组索引
      */
     static DeleteHome(pl, id) {
+        let Home = db.get('Home');
         if (Money_Mod.DeductEconomy(pl, Config.Home.DeleteHome)) {
             Home[pl.realName].splice(id, 1);
-            FileOperation.saveFile();
+            // FileOperation.saveFile();
+            db.set("Home", Home);
             pl.tell(Gm_Tell + '删除成功！');
         }
     }

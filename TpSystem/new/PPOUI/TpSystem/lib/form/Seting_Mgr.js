@@ -1,5 +1,5 @@
 import { Other } from "../Other.js";
-import { FileOperation, Gm_Tell, Home, MergeRequest, Warp } from "../cache.js";
+import { FileOperation, Gm_Tell, db } from "../cache.js";
 
 
 export function SetingForm(pl) {
@@ -27,6 +27,7 @@ class HomePanel_Mgr {
      * @param {Object} pl 玩家对象
      */
     static HomePanel(pl) {
+        let Home = db.get('Home');
         const fm = Other.SimpleForm();
         fm.setContent(`· 选择一个玩家以进行管理`);
         let AllPlayerData = [];/* 缓存键 */
@@ -49,6 +50,7 @@ class HomePanel_Mgr {
      * @param {String} name 要操作的玩家 玩家名
      */
     static Level_1(pl, name) {
+        let Home = db.get('Home');
         const fm = Other.SimpleForm();
         fm.setContent(`· 当前正在编辑玩家 ${name} 的家园传送点`);
         fm.addButton('返回上一页', 'textures/ui/icon_import');
@@ -78,6 +80,7 @@ class HomePanel_Mgr {
      * @param {Number} index 操作的家 索引
      */
     static Level_2(pl, name, index) {
+        let Home = db.get('Home');
         const fm = Other.SimpleForm();
         fm.setContent(`当前正在编辑：${name}\n名称： ${Home[name][index].name}\n坐标： ${Home[name][index].x},${Home[name][index].y},${Home[name][index].z}\n维度： ${Other.DimidToDimension(Home[name][index].dimid)}`);
         fm.addButton('前往家', 'textures/ui/send_icon');
@@ -93,7 +96,7 @@ class HomePanel_Mgr {
                 case 1: HomePanel_Mgr.EditHome(pl, name, index); break;
                 case 2:
                     Home[name].splice(index, 1);
-                    FileOperation.saveFile();
+                    db.set('Home', Home);
                     pl.tell(Gm_Tell + '删除成功！');
                     break;
                 case 3: HomePanel_Mgr.Level_1(pl, name); break;
@@ -109,6 +112,7 @@ class HomePanel_Mgr {
      * @param {Number} index 操作的家 索引
      */
     static EditHome(pl, name, index) {
+        let Home = db.get('Home');
         const fm = Other.CustomForm();
         fm.addInput('输入名称', 'String', Home[name][index].name);
         fm.addInput('输入坐标 [使用英文逗号分隔坐标轴]', "String IntPos X,Y,Z", `${Home[name][index].x},${Home[name][index].y},${Home[name][index].z}`);
@@ -125,7 +129,7 @@ class HomePanel_Mgr {
                 "z": input_pos.z,
                 "dimid": input_pos.dimid
             };
-            FileOperation.saveFile();
+            db.set('Home', Home);
             pl.tell(Gm_Tell + '更新成功！');
         })
     }
@@ -145,6 +149,7 @@ class HomePanel_Mgr {
             if (dt[0] == '') return pl.tell(Gm_Tell + '输入框为空！');
             const input = dt[1].split(',');
             const input_pos = new IntPos(Number(input[0]), Number(input[1]), Number(input[2]), parseInt(dt[2]));
+            let Home = db.get('Home');
             if (!Home.hasOwnProperty(name)) {
                 Home[name] = [];
             }
@@ -155,7 +160,7 @@ class HomePanel_Mgr {
                 "z": input_pos.z,
                 "dimid": input_pos.dimid
             });
-            FileOperation.saveFile();
+            db.set('Home', Home);
             pl.tell(Gm_Tell + '添加完成！');
         })
     }
@@ -163,6 +168,7 @@ class HomePanel_Mgr {
 
 class WarpPanel_Mgr {
     static WarpPanel(pl) {
+        let Warp = db.get('Warp');
         const fm = Other.SimpleForm();
         fm.addButton('返回上一页', 'textures/ui/icon_import');
         fm.addButton('新建公共传送点', 'textures/ui/color_plus');
@@ -183,6 +189,7 @@ class WarpPanel_Mgr {
     }
 
     static Level_1(pl, index) {
+        let Warp = db.get('Warp');
         const fm = Other.SimpleForm();
         fm.setContent(`当前正在编辑： ${Warp[index].name}\n坐标： ${Warp[index].x},${Warp[index].y},${Warp[index].z}\n维度： ${Other.DimidToDimension(Warp[index].dimid)}`,)
         fm.addButton("前往此传送点", "textures/ui/send_icon");
@@ -198,7 +205,7 @@ class WarpPanel_Mgr {
                 case 1: WarpPanel_Mgr.EditWarp(pl, index); break;
                 case 2:
                     Warp.splice(index, 1);
-                    FileOperation.saveFile();
+                    db.set('Warp', Warp);
                     pl.tell(Gm_Tell + '删除成功！');
                     break;
                 case 3: WarpPanel_Mgr.WarpPanel(pl); break;
@@ -208,6 +215,7 @@ class WarpPanel_Mgr {
     }
 
     static EditWarp(pl, index) {
+        let Warp = db.get('Warp');
         const fm = Other.CustomForm();
         fm.addInput('输入名称', 'String', Warp[index].name);
         fm.addInput('输入坐标 [使用英文逗号分隔坐标轴]', "String IntPos X,Y,Z", `${Warp[index].x},${Warp[index].y},${Warp[index].z}`);
@@ -224,12 +232,13 @@ class WarpPanel_Mgr {
                 "z": input_pos.z,
                 "dimid": input_pos.dimid
             };
-            FileOperation.saveFile();
+            db.set('Warp', Warp);
             pl.tell(Gm_Tell + '更新成功！');
         })
     }
 
     static CreateWarp(pl) {
+        let Warp = db.get('Warp');
         const fm = Other.CustomForm();
         fm.addInput('输入名称', 'String');
         fm.addInput('输入坐标 [使用英文逗号分隔坐标轴]', "String IntPos X,Y,Z", `${pl.blockPos.x},${pl.blockPos.y},${pl.blockPos.z}`);
@@ -246,7 +255,7 @@ class WarpPanel_Mgr {
                 "z": input_pos.z,
                 "dimid": input_pos.dimid
             });
-            FileOperation.saveFile();
+            db.set('Warp', Warp);
             pl.tell(Gm_Tell + '添加完成！');
         })
     }
@@ -254,6 +263,7 @@ class WarpPanel_Mgr {
 
 class MergeRequest_Mgr {
     static MergeRequest_Panel(pl) {
+        let MergeRequest = db.get('MergeRequest');
         const fm = Other.SimpleForm();
         MergeRequest.forEach(i => {
             fm.addButton(`[玩家]  ${i.player}\n${i.data.name}  ${Other.DimidToDimension(i.data.dimid)} ${i.data.x},${i.data.y},${i.data.z}`)
@@ -267,6 +277,8 @@ class MergeRequest_Mgr {
     }
 
     static Level_1(pl, index) {
+        let Warp = db.get('Warp');
+        let MergeRequest = db.get('MergeRequest');
         const fm = Other.SimpleForm();
         fm.setContent(`[玩家]: ${MergeRequest[index].player}\n[时间]: ${MergeRequest[index].time}\n[GUID]: ${MergeRequest[index].guid}\n[坐标]: ${MergeRequest[index].data.name}  ${Other.DimidToDimension(MergeRequest[index].data.dimid)} ${MergeRequest[index].data.x},${MergeRequest[index].data.y},${MergeRequest[index].data.z}`,);
         fm.addButton("同意并加入公共传送点", 'textures/ui/realms_green_check');
@@ -278,12 +290,13 @@ class MergeRequest_Mgr {
                 case 0:
                     Warp.push(MergeRequest[index].data);
                     MergeRequest.splice(index, 1);
-                    FileOperation.saveFile();
+                    db.set('MergeRequest', MergeRequest);
+                    db.set('Warp', Warp);
                     pl.tell(Gm_Tell + '并入完成！');
                     break;
                 case 1:
                     MergeRequest.splice(index, 1);
-                    FileOperation.saveFile();
+                    db.set('MergeRequest', MergeRequest);
                     pl.tell(Gm_Tell + '已拒绝并删除！');
                     break;
                 case 2:

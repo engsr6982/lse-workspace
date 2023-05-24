@@ -1,11 +1,13 @@
 import { Money_Mod } from "../Money.js";
 import { Other } from "../Other.js";
-import { Gm_Tell, PLUGIN_INFO, PlayerSeting, Warp,Config } from "../cache.js";
+import { Gm_Tell, PLUGIN_INFO, Config, db } from "../cache.js";
 import { WarpCore } from "../core/Warp.js";
 import { SelectAction } from "./SelectAction.js";
 
 export function WarpForm(pl) {
     if (!Config.Warp.Enable) return pl.tell(Gm_Tell + `此功能已被管理员关闭！`);
+    let Warp = db.get('Warp');
+    let PlayerSeting = db.get('PlayerSeting');
     if (Warp.length == 0) return pl.tell(Gm_Tell + '无公共传送点！无法继续执行操作！');
     SelectAction(pl, Warp, true, id => {
         const Pos = new IntPos(Warp[id].x, Warp[id].y, Warp[id].z, Warp[id].dimid);

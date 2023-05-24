@@ -10,7 +10,7 @@ import { WarpForm } from "./Warp.js";
 export const MAPPING_TABLE = {
     HomeUi: HomeForm.Panel,
     WarpUi: WarpForm,
-    // PlayerUi: Forms.PlayerTransportation,
+    // PlayerUi: Forms.PlayerTransportation,// todo tpa的表单函数
     DeathUi: DeathForm,
     RandomUi: TPRForm,
     SetingUi: PlayerSetingForm
