@@ -6,12 +6,13 @@ import { HomeForm } from "./Home.js";
 import { PlayerSetingForm } from "./PlayerSeting.js";
 import { TPRForm } from "./TPR.js";
 import { WarpForm } from "./Warp.js";
+import {TPAEntrance} from "./TPA/TPAEntrance.js"
 
 
 export const MAPPING_TABLE = {
     HomeUi: HomeForm.Panel,
     WarpUi: WarpForm,
-    // PlayerUi: Forms.PlayerTransportation,// todo tpa的表单函数
+    PlayerUi: TPAEntrance,// todo tpa的表单函数
     DeathUi: DeathForm,
     RandomUi: TPRForm,
     SetingUi: PlayerSetingForm

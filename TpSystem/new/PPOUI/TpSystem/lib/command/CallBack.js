@@ -8,6 +8,7 @@ import { RandomTeleportCore } from "../core/TPR.js";
 import { HomeForm } from "../form/Home.js";
 import { WarpForm } from "../form/Warp.js";
 import { TPRForm } from "../form/TPR.js";
+import {TPAEntrance} from "../form/TPAEntrance.js"
 import { PlayerSetingForm } from "../form/PlayerSeting.js";
 import KVDBTransformation from "../KVDB.js";
 
@@ -45,6 +46,7 @@ export function CallBack(_, ori, out, res) {
                 // player: Forms.PlayerTransportation,//todo tpa的表单函数
                 death: TPRForm,
                 tpr: TPRForm,
+                tpa: TPAEntrance,
                 seting: PlayerSetingForm
             }
             if (res.gui_name) {
