@@ -4,7 +4,7 @@ export class OnlinePlayers{
         this.real=[];
         this.simulate=[];
         this.all.forEach((currentValue)=>{
-            if(currentValue.isSimulatedPlayer){
+            if(currentValue.isSimulatedPlayer()){
                 this.simulate.push(currentValue);
             }
             else{

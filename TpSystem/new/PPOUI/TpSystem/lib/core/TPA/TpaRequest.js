@@ -43,20 +43,21 @@ export class TPARequest{
         fm.addButton("拒绝",()=>{
             this.deny();
         });
-        fm.default(()=>{//玩家按下关闭按钮或发送失败，需将请求加入缓存队列
+        //玩家按下关闭按钮或发送失败，需将请求加入缓存队列
+        fm.default=()=>{
             TPARequestPool.add(this);
-        })
+        }
         fm.send(this.reciever);
 
     }
     accept(){
         switch(this.type){
             case "tpa":{
-                this.sender.teleport(reciever.pos);
+                this.sender.teleport(this.reciever.feetPos);
                 break;
             }
             case "tpahere":{
-                this.reciever.teleport(sender.pos);
+                this.reciever.teleport(this.sender.feetPos);
                 break;
             }
         }
@@ -66,8 +67,12 @@ export class TPARequest{
     }
     /**
      * 请求是否有效
+     * @returns {boolean} 是否有效
      */
     get available(){
-
+        if(new Date().getTime()-this.time.getTime()>=this.lifespan){
+            return false;
+        }
+        return true;
     }
 }

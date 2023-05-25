@@ -8,6 +8,9 @@ export class SimpleFormWithPlayer extends SimpleFormCallback{
         super(title,content);
         this.player=player;
     }
+    /**
+     * 向当前实例中存储的玩家发送表单
+     */
     send(){
         super.send(this.player)
     }

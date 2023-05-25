@@ -26,7 +26,7 @@ export class TPARequestPool {
      * 放入一个请求
      * @param {TPARequest} request 要缓存的tpa请求
      */
-    add(request){
+    static add(request){
         this.initPlayer(request.reciever.xuid);
         TPARequestPool.requests[request.reciever.xuid][request.sender.xuid]=request;
     }
@@ -34,7 +34,7 @@ export class TPARequestPool {
      * 初始化请求池中的玩家格
      * @param {string} xuid 玩家xuid
      */
-    initPlayer(xuid){
+    static initPlayer(xuid){
         if(TPARequestPool.requests[xuid]==undefined){
             TPARequestPool.requests[xuid]={};
         }
@@ -44,7 +44,7 @@ export class TPARequestPool {
      * @param {string} sender 发送者的xuid
      * @param {string} reciever 接收者的xuid
      */
-    delete(sender,reciever){
+    static delete(sender,reciever){
         TPARequestPool.requests[reciever][sender]=null;
     }
 }
