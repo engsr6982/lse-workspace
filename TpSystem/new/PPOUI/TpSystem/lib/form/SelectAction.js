@@ -1,4 +1,6 @@
 import { Other } from "../Other.js";
+import { HomeForm } from "./Home.js";
+import { WarpForm } from "./Warp.js";
 
 
 export function SelectAction(pl, Array, Warp = false, callback) {
@@ -19,8 +21,10 @@ export function SelectAction(pl, Array, Warp = false, callback) {
         if (id == Array.length) {
             if (Warp) {
                 //warp
+                return WarpForm(pl);
             } else {
                 //home
+                return HomeForm.Panel(pl);
             }
         }
         callback(id);

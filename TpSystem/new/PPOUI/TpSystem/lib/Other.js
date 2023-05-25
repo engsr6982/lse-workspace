@@ -33,7 +33,7 @@ export class Other {
     static GetOnlinePlayers() {
         let OnlinePlayers = [];
         mc.getOnlinePlayers().forEach(pl => {
-            if (pl.isSimulatedPlayer()) return;
+            if (pl.isSimulatedPlayer()) return; // 去除模拟玩家
             OnlinePlayers.push(pl.realName);
         })
         return OnlinePlayers;
@@ -43,7 +43,7 @@ export class Other {
      * @returns 
      */
     static SimpleForm() {
-        const fm = mc.newSimpleForm();
+        const fm = mc.newSimpleForm(); //懒得构建表单时加标题
         fm.setTitle(PLUGIN_INFO.Introduce);
         fm.setContent(`· 选择一个操作`);
         return fm;
