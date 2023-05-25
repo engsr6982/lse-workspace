@@ -5,59 +5,12 @@ export const PLUGIN_INFO = {
     Introduce: 'TpSystem 传送系统',
     Version: [0, 1, 2, Version.Beta],
     Author: 'PPOUI',
-    MineBBS: 'https://www.minebbs.com/resources/tpsystem-gui-gui.5755/'
+    MineBBS: 'https://www.minebbs.com/resources/tpsystem-gui-gui.5755/',
+    DebugAntiShake: false//Debug监听器防抖
 }
 
 export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}\\`;
 export const Gm_Tell = `§e§l[§d${PLUGIN_INFO.Name}§e]§r§a `;
-
-// KVDB数据库
-export const db = new KVDatabase(_filePath + 'db');
-
-/**配置文件 */
-export let Config = {}/* __init.Config */
-
-// 缓存
-/**主页UI */
-export let MainUI = []
-/**TPA缓存 */
-export let TPACache = []
-/**返回死亡点无敌 */
-export let DeathInvincible = [];
-
-export class FileOperation {
-    // 配置文路径
-    static _Config = _filePath + 'Config.json';
-    static _MainUI = _filePath + 'GUI\\MainUI.json';
-
-    /**检查文件 */
-    static async auditFile() {
-        if (!file.exists(this._Config)) file.writeTo(this._Config, JSON.stringify(__init.Config, null, '\t'));
-        if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(__init.MainUI, null, '\t'));
-    }
-
-    /**读取文件 */
-    static async readFile() {
-        try {
-            this.auditFile();
-            Config = JSON.parse(file.readFrom(this._Config));
-            MainUI = JSON.parse(file.readFrom(this._MainUI));
-        } catch (e) {
-            throw new Error(e);
-        }
-    }
-
-    /**保存文件 */
-    static async saveFile() {
-        try {
-            file.writeTo(this._Config, JSON.stringify(Config, null, '\t'));
-            file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
-            this.readFile();
-        } catch (e) {
-            throw new Error(e);
-        }
-    }
-}
 
 /**待释放配置文件 */
 export const __init = {
@@ -131,3 +84,52 @@ export const __init = {
         { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }
     ]
 }
+
+// KVDB数据库
+export const db = new KVDatabase(_filePath + 'db');
+
+/**配置文件 */
+export let Config = /* {} */__init.Config
+
+// 缓存
+/**主页UI */
+export let MainUI = []
+/**TPA缓存 */
+export let TPACache = []
+/**返回死亡点无敌 */
+export let DeathInvincible = [];
+
+export class FileOperation {
+    // 配置文路径
+    static _Config = _filePath + 'Config.json';
+    static _MainUI = _filePath + 'GUI\\MainUI.json';
+
+    /**检查文件 */
+    static async auditFile() {
+        if (!file.exists(this._Config)) file.writeTo(this._Config, JSON.stringify(__init.Config, null, '\t'));
+        if (!file.exists(this._MainUI)) file.writeTo(this._MainUI, JSON.stringify(__init.MainUI, null, '\t'));
+    }
+
+    /**读取文件 */
+    static async readFile() {
+        try {
+            this.auditFile();
+            Config = JSON.parse(file.readFrom(this._Config));
+            MainUI = JSON.parse(file.readFrom(this._MainUI));
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+
+    /**保存文件 */
+    static async saveFile() {
+        try {
+            file.writeTo(this._Config, JSON.stringify(Config, null, '\t'));
+            file.writeTo(this._MainUI, JSON.stringify(MainUI, null, '\t'));
+            this.readFile();
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+}
+

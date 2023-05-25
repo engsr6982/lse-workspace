@@ -32,7 +32,8 @@ export class Money_Mod {
             mons = pl.getScore(Config.Money.MoneyName);
         }
         if (!Config.Money.Enable) dmoney = 0;//关闭经济，无需扣费
-        return `此次操作需消耗[${dmoney}]${Config.Money.MoneyName}, 当前${Config.Money.MoneyName}: ${mons}`;
+        if (!dmoney === null || dmoney === undefined) dmoney = `§c参数错误！§r`;
+        return `§l此操作需消耗§9[§e${dmoney}§9]§r§l${Config.Money.MoneyName}, 当前${Config.Money.MoneyName}: §a${mons}`;
     }
     /**
      * 获取玩家经济

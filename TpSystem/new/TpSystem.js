@@ -22,8 +22,9 @@ function init() {
         logger.setLogLevel(5);
         logger.warn('你已开启Debug模式，将会输出Debug信息');
         mc.listen("onUseItemOn", (pl, it/* , bl, si */) => {
-            if (it.type == 'minecraft:stick') {
+            if (it.type == 'minecraft:stick' && PLUGIN_INFO.DebugAntiShake == false) {
                 pl.runcmd("tps ");
+                PLUGIN_INFO.DebugAntiShake = true;// 防抖  不防抖可太尼玛难受了
             }
         })
     }
