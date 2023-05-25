@@ -1,5 +1,6 @@
 import { Other } from "../Other.js";
-import { _filePath } from "../cache.js";
+import { TPAForm } from "../TPA/TPAForm.js";
+import { PLUGIN_INFO, _filePath } from "../cache.js";
 import { DeathForm } from "./Death.js";
 import { HomeForm } from "./Home.js";
 import { PlayerSetingForm } from "./PlayerSeting.js";
@@ -30,6 +31,7 @@ export function Main(pl, Array = []) {
     });
     if (Array.length == 0) return pl.tell(`数组为空！ 无法发送表单！`);
     pl.sendForm(fm, (pl, id) => {
+        if (PLUGIN_INFO.DebugAntiShake == true) PLUGIN_INFO.DebugAntiShake = false;
         if (id == null) return Other.CloseTell(pl);
         const sw = Array[id];
         switch (sw.type) {

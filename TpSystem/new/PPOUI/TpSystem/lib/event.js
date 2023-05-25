@@ -79,6 +79,7 @@ export function RegEvent() {
 
     // 受伤事件
     mc.listen("onMobHurt", function (mob/* , source, damage, cause */) {
+        if (DeathInvincible.length == 0) return;// 无缓存
         if (mob.isPlayer()) {
             // 是玩家 获取玩家对象
             const pl = mc.getPlayer(mob.uniqueId);
