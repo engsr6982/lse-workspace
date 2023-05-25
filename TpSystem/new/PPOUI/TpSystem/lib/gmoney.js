@@ -1,7 +1,7 @@
 /**
  * @author Minimouse
  */
-class gmoney {
+export class gmoney {
 	constructor(type, object="") {
 		this.type = type;
 		this.object = object;
@@ -39,4 +39,3 @@ class gmoney {
 		}
 	}
 }
-module.exports=gmoney;
