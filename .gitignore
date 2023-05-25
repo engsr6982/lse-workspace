@@ -8,5 +8,4 @@ node_modules
 SecondaryDevelopment.md
 
 Cache
-
-db
+.DS_Store
