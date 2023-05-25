@@ -17,11 +17,11 @@ export class TPAForm extends SimpleFormWithPlayer{
         let online=new OnlinePlayers();
         let newRequest;
         //点击按钮后，程序将立即创建一个tpa请求
-        online.real.forEach((currentValue)=>{
-            super.addButton(currentValue.name,()=>{
-                newRequest=new TPARequest(player,currentValue,type,Config.TPA.CacheExpirationTime);
+        for(let i in online.real){
+            super.addButton(online.real[i].name,()=>{
+                newRequest=new TPARequest(player,online.real[i],type,Config.TPA.CacheExpirationTime);
                 newRequest.ask();
-            })
-        })
+            })         
+        }
     }
 }
