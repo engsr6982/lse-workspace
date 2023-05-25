@@ -1,5 +1,4 @@
 import { Other } from "../Other.js";
-import { TPAForm } from "../TPA/TPAForm.js";
 import { PLUGIN_INFO, _filePath } from "../cache.js";
 import { DeathForm } from "./Death.js";
 import { HomeForm } from "./Home.js";

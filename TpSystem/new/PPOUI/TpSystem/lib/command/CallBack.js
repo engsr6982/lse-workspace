@@ -2,15 +2,15 @@
 /// <reference path="c:\Users\Administrator\Documents\aids/dts/HelperLib-master/src/index.d.ts"/> 
 
 import { MAPPING_TABLE, Main } from "../form/Main.js";
-import { FileOperation, MainUI, _filePath, db } from "../cache.js";
+import { FileOperation, MainUI, db } from "../cache.js";
 import { SetingForm } from "../form/Seting_Mgr.js";
 import { RandomTeleportCore } from "../core/TPR.js";
 import { HomeForm } from "../form/Home.js";
 import { WarpForm } from "../form/Warp.js";
 import { TPRForm } from "../form/TPR.js";
-import {TPAEntrance} from "../form/TPAEntrance.js"
 import { PlayerSetingForm } from "../form/PlayerSeting.js";
 import KVDBTransformation from "../KVDB.js";
+import { TPAEntrance } from "../form/TPA/TPAEntrance.js";
 
 export function CallBack(_, ori, out, res) {
     logger.debug(JSON.stringify(res));
@@ -43,7 +43,6 @@ export function CallBack(_, ori, out, res) {
             const Table = {
                 home: HomeForm.Panel,
                 warp: WarpForm,
-                // player: Forms.PlayerTransportation,//todo tpa的表单函数
                 death: TPRForm,
                 tpr: TPRForm,
                 tpa: TPAEntrance,

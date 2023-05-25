@@ -13,7 +13,7 @@ export function RegCommand() {
     // tps [gui] [home|warp|player|death|random|seting]
     cmd.setEnum("gui", ['gui']);
     cmd.optional('action', ParamType.Enum, 'gui', 1);
-    cmd.setEnum('gui_enum', ['home', 'warp',/*  'player',  */'death', 'tpr', 'seting']);
+    cmd.setEnum('gui_enum', ['home', 'warp', 'tpa', 'death', 'tpr', 'seting']);
     cmd.optional('gui_name', ParamType.Enum, 'gui_enum', 'gui_enum', 1);
     cmd.overload(['gui', 'gui_enum']);
     //tps reload
