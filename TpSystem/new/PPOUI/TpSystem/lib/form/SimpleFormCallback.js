@@ -2,7 +2,7 @@
  * 将回调与按钮绑定的表单类
  * @author Minimouse
  */
-class SimpleFormCallback{
+export class SimpleFormCallback{
     constructor(title=" ",content=" "){
         this.fm=mc.newSimpleForm();
         this.fm.setTitle(title);
@@ -71,4 +71,3 @@ class Button{
         this.image=image;
     }
 }
-module.exports=SimpleFormCallback;

@@ -1,9 +1,9 @@
-const SimpleFormCallback=require("../lib/SimpleFormCallback.js");
+import { SimpleFormCallback } from "./SimpleFormCallback.js";
 /**
  * @author Minimouse
  * 进一步规范SimpleForm，将表单与玩家绑定
  */
-class SimpleFormWithPlayer extends SimpleFormCallback{
+export class SimpleFormWithPlayer extends SimpleFormCallback{
     constructor(player,title,content){
         super(title,content);
         this.player=player;
@@ -12,4 +12,3 @@ class SimpleFormWithPlayer extends SimpleFormCallback{
         super.send(this.player)
     }
 }
-module.exports=SimpleFormWithPlayer;
