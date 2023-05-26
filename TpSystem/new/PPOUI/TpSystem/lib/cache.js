@@ -1,12 +1,18 @@
 
 /**插件信息 */
 export const PLUGIN_INFO = {
+    /**插件名 */
     Name: 'TpSystem',
+    /**插件描述 */
     Introduce: 'TpSystem 传送系统',
+    /**版本 */
     Version: [0, 1, 4, Version.Beta],
+    /**作者 */
     Author: 'PPOUI',
+    /**MineBBS资源地址 */
     MineBBS: 'https://www.minebbs.com/resources/tpsystem-gui-gui.5755/',
-    DebugAntiShake: false//Debug监听器防抖
+    /**Debug监听器防抖 */
+    DebugAntiShake: false//
 }
 
 export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}\\`;

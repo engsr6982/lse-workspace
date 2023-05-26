@@ -2,6 +2,7 @@ import {OnlinePlayers} from "../../OnlinePlayers.js"
 import {SimpleFormWithPlayer} from "../SimpleFormWithPlayer.js"
 import {TPARequest,Available,AvailDescription} from "../../core/TPA/TPARequest.js"
 import {Config} from "../../cache.js";
+import { Listener } from "../../listenAPI.js";
 
 /**
  * TPA表单，只发起tpa，不负责tpa过程
@@ -22,7 +23,9 @@ export class TPAForm extends SimpleFormWithPlayer{
                 newRequest=new TPARequest(player,online.real[i],type,Config.TPA.CacheExpirationTime);
                 //发送请求，存储请求结果并向玩家发送
                 let askResult=newRequest.ask();
-                if(askResult!=Available.Available){player.tell(AvailDescription(askResult))};
+                let TPARequestSendEvent=new Listener("onTpSystemTpaRequestSend");
+                if(askResult!=Available.Available){player.tell(AvailDescription(askResult))}
+                TPARequestSendEvent.exec(newRequest,(askResult==Available.Available))
             })         
         }
     }
