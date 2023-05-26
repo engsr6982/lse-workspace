@@ -3,7 +3,7 @@
 export const PLUGIN_INFO = {
     Name: 'TpSystem',
     Introduce: 'TpSystem 传送系统',
-    Version: [0, 1, 4, Version.Beta],
+    Version: [0, 1, 5, Version.Beta],
     Author: 'PPOUI',
     MineBBS: 'https://www.minebbs.com/resources/tpsystem-gui-gui.5755/',
     DebugAntiShake: false//Debug监听器防抖

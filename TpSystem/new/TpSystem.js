@@ -1,9 +1,10 @@
 import { RegCommand } from "./plugins/PPOUI/TpSystem/lib/command/RegCommand.js";
 
-import { FileOperation, PLUGIN_INFO, Config, db } from "./plugins/PPOUI/TpSystem/lib/cache.js";
+import { FileOperation, PLUGIN_INFO} from "./plugins/PPOUI/TpSystem/lib/cache.js";
 
 import { RegEvent } from "./plugins/PPOUI/TpSystem/lib/event.js";
 import { RegInterval } from "./plugins/PPOUI/TpSystem/lib/Interval.js";
+import KVDBTransformation from "./plugins/PPOUI/TpSystem/lib/KVDB.js";
 
 function init() {
     // 注册插件
@@ -39,21 +40,7 @@ function init() {
     mc.listen('onServerStarted', () => {
         RegCommand();
 
-        // 初始化键值数据库（防止初次使用null导致报错）
-        ['Home', 'Warp', 'Death', 'PlayerSeting', 'MergeRequest'].forEach(i => {
-            const KVDB_table = {// 映射每个键对应的类型
-                Home: {},
-                Death: {},
-                PlayerSeting: {},
-                Warp: [],
-                MergeRequest: []
-            }
-            const status = db.get(i);
-            if (status == null) {
-                logger.warn(`[KVDB数据库] 键：${i} 的值为：${status} !  已初始化为空${/* typeof KVDB_table[i] */ Object.prototype.toString.call(KVDB_table[i])}`);
-                db.set(i, KVDB_table[i]);
-            }
-        })
+        new KVDBTransformation().init();// 初始化数据库
     })
 
     logger.info(`版本: ${PLUGIN_INFO.Version.join().replace(/\,\d$/, '').replace(/,/g, '.')}`);
