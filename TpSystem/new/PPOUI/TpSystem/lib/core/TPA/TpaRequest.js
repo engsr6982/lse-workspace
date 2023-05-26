@@ -1,5 +1,4 @@
-import {TPARequestPool} from "./TPARequestPool.js"
-import {SimpleFormCallback} from "../../form/SimpleFormCallback.js";
+import {TPAAskForm} from "../../form/TPA/TPAAskForm.js"
 
 /**
  * 请求类
@@ -36,18 +35,9 @@ export class TPARequest{
      */
     ask(){
         if(!this.available){return false;}//无效
-        let fm=new SimpleFormCallback(this.type,this.sender.name);
-        fm.addButton("接受",()=>{
-            this.accept();
-        });
-        fm.addButton("拒绝",()=>{
-            this.deny();
-        });
-        //玩家按下关闭按钮或发送失败，需将请求加入缓存队列
-        fm.default=()=>{
-            TPARequestPool.add(this);
-        }
-        fm.send(this.reciever);
+        let fm=new TPAAskForm(this);
+
+        fm.send();
 
     }
     accept(){
@@ -61,9 +51,10 @@ export class TPARequest{
                 break;
             }
         }
+        this.sender.tell(this.reciever.name+"接受了您的"+this.type+"请求")
     }
     deny(){
-
+        this.sender.tell(this.reciever.name+"拒绝了您的"+this.type+"请求")
     }
     /**
      * 请求是否有效
