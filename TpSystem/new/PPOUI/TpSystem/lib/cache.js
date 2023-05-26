@@ -22,8 +22,9 @@ export const __init = {
         },
         "Money": {//经济配置
             "Enable": true,//开关
-            "LLMoney": true,//是否启用LLMoney
-            "MoneyName": "money"//经济名称
+            "MoneyType": "llmoney",//经济类型  llmoney 或 score
+            "ScoreType": "money",//计分板经济的计分板 llmomey模式不可用
+            "MoneyName": "金币"//经济名称
         },
         "Home": {//家园传送配置
             "Enable": true,
@@ -78,7 +79,7 @@ export const __init = {
     MainUI: [
         { "name": '家园传送', "image": 'textures/ui/village_hero_effect', "type": "inside", "open": "HomeUi" },
         { "name": '公共传送', "image": 'textures/ui/icon_best3', "type": "inside", "open": "WarpUi" },
-        // { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },//todo
+        { "name": '玩家传送', "image": 'textures/ui/icon_multiplayer', "type": "inside", "open": "PlayerUi" },//todo
         { "name": '死亡传送', "image": 'textures/ui/friend_glyph_desaturated', "type": "inside", "open": "DeathUi" },
         { "name": '随机传送', "image": 'textures/ui/mashup_world', "type": "inside", "open": "RandomUi" },
         { "name": '个人设置', "image": 'textures/ui/icon_setting', "type": "inside", "open": "SetingUi" }

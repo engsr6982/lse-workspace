@@ -9,12 +9,13 @@ export class Money_Mod {
      */
     static addMoney(pl, amoney) {
         if (Config.Money.Enable) { // 判断经济类型
-            if (Config.Money.LLMoney) {
-                // LL
-                return money.add(pl.xuid, amoney); 
-            } else {
-                //score
-                return pl.addScore(Config.Money.MoneyName,amoney);
+            switch (Config.Money.MoneyType) {
+                case "llmoney":
+                    return money.add(pl.xuid, amoney);
+                case "score":
+                    return pl.addScore(Config.Money.ScoreType, amoney);
+                default:
+                    logger.warn('未知经济类型' + Config.Money.MoneyType);
             }
         }
     }
@@ -26,10 +27,16 @@ export class Money_Mod {
      */
     static getEconomyStr(pl, dmoney) {
         let mons;
-        if (Config.Money.LLMoney) {
-            mons = money.get(pl.xuid);
-        } else {
-            mons = pl.getScore(Config.Money.MoneyName);
+        switch (Config.Money.MoneyType) {
+            case "llmoney":
+                mons = money.get(pl.xuid);
+                break;
+            case "score":
+                mons = pl.getScore(Config.Money.ScoreType);
+                break;
+            default:
+                mons = `§c未知经济类型${Config.Money.MoneyType}§r`;
+                break;
         }
         if (!Config.Money.Enable) dmoney = 0;//关闭经济，无需扣费
         if (!dmoney === null || dmoney === undefined) dmoney = `§c参数错误！§r`;
@@ -38,13 +45,16 @@ export class Money_Mod {
     /**
      * 获取玩家经济
      * @param {Object} pl 玩家对象
-     * @returns Number
+     * @returns Number/String
      */
     static getEconomy(pl) {
-        if (Config.Money.LLMoney) {
-            return money.get(pl.xuid);
-        } else {
-            return pl.getScore(Config.Money.MoneyName);
+        switch (Config.Money.MoneyType) {
+            case "llmoney":
+                return money.get(pl.xuid);
+            case "score":
+                return pl.getScore(Config.Money.ScoreType);
+            default:
+                return `§c未知经济类型${Config.Money.MoneyType}§r`
         }
     }
     /**
@@ -55,27 +65,28 @@ export class Money_Mod {
      */
     static DeductEconomy(pl, delMoney) {
         if (Config.Money.Enable) {
-            // 启用经济
-            if (Config.Money.LLMoney) {
-                // LL
-                if (money.get(pl.xuid) >= delMoney) {
-                    // 经济充足
-                    return money.reduce(pl.xuid, Number(delMoney));
-                } else {
-                    pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
-                    return false;
-                }
-            } else {
-                // Socre
-                if (pl.getScore(Config.Money.MoneyName) >= delMoney) {
-                    return pl.reduceScore(Config.Money.MoneyName, Number(delMoney));
-                } else {
-                    pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
-                    return false
-                }
+            // 启用经济  判断经济类型
+            switch (Config.Money.MoneyType) {
+                case "llmoney":
+                    if (money.get(pl.xuid) >= delMoney) {
+                        // 经济充足
+                        return money.reduce(pl.xuid, Number(delMoney));
+                    } else {
+                        pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
+                        return false;
+                    }
+                    break;
+                case "score":
+                    if (pl.getScore(Config.Money.ScoreType) >= delMoney) {
+                        return pl.reduceScore(Config.Money.ScoreType, Number(delMoney));
+                    } else {
+                        pl.tell(Gm_Tell + `${Config.Money.MoneyName}不足！ 无法继续操作!`);
+                        return false
+                    }
+                    break;
             }
         } else {
-            //关闭经济
+            // 关闭经济 直接返回true
             return true;
         }
     }
