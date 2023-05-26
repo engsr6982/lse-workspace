@@ -1,12 +1,18 @@
 
 /**插件信息 */
 export const PLUGIN_INFO = {
+    /**插件名 */
     Name: 'TpSystem',
+    /**插件描述 */
     Introduce: 'TpSystem 传送系统',
+    /**版本 */
     Version: [0, 1, 5, Version.Beta],
+    /**作者 */
     Author: 'PPOUI',
+    /**MineBBS资源地址 */
     MineBBS: 'https://www.minebbs.com/resources/tpsystem-gui-gui.5755/',
-    DebugAntiShake: false//Debug监听器防抖
+    /**Debug监听器防抖 */
+    DebugAntiShake: false//
 }
 
 export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}\\`;
@@ -39,12 +45,15 @@ export const __init = {
             "Enable": true,
             "GoWarp": 0//前往传送点 经济
         },
-        "TPA": {//玩家传送配置//todo  无实际功能（未开发）
+        "TPA": {
+            /**启用 */
             "Enable": true,//todo
-            "Player_Player": 0,//玩家传玩家 经济//todo
+            /** //玩家传玩家所需花费*/
+            "Player_Player": 0, //todo
             // "Player_Home": 0,//玩家穿家 经济//todo 需砍掉
-            "CacheExpirationTime": 30,//缓存过期时间，以毫秒为单位//todo
-            "CacheExpirationTimeUnit": "second"//缓存过期时间单位 "second"秒 "minute"分钟//todo
+            /** 缓存过期时间，以毫秒为单位*/
+            "CacheExpirationTime": 30,////todo
+            //"CacheExpirationTimeUnit": "second"//缓存过期时间单位 "second"秒 "minute"分钟//todo
         },
         "Death": {//死亡传送配置
             "Enable": true,

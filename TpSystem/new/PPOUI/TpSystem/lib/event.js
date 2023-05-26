@@ -1,7 +1,10 @@
 import { Config, DeathInvincible, db } from "./cache.js";
 import { MAPPING_TABLE } from "./form/Main.js";
+import { Listener } from "./listenAPI.js";
+import { PLUGIN_INFO } from "./cache.js";
 
 export function RegEvent() {
+    //监听事件
     /* 监听进服事件 */
     mc.listen('onJoin', (pl) => {
         if (pl.isSimulatedPlayer()) return;
@@ -84,4 +87,6 @@ export function RegEvent() {
             }
         }
     })
+    //注册监听器
+    Listener.init(PLUGIN_INFO.Name);
 }

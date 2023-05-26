@@ -58,10 +58,11 @@ export class Money_Mod {
         }
     }
     /**
-     * 扣除经济
-     * @param {Object} pl 
-     * @param {Number} Money 
-     * @returns Boolean
+     * 扣除经济  
+     * 玩家经济不足的时候会自动中断，不会把玩家的钱扣成负的   
+     * @param {Player} pl 
+     * @param {number} delMoney
+     * @returns {boolean} 是否成功扣钱
      */
     static DeductEconomy(pl, delMoney) {
         if (Config.Money.Enable) {
@@ -84,6 +85,10 @@ export class Money_Mod {
                         return false
                     }
                     break;
+                default:
+                    pl.tell(Gm_Tell + "出现了一个错误，导致插件无法完成该操作，请联系服务器管理员。")
+                    logger.error("不支持的经济类型："+Config.Money.MoneyType)
+                    return false;
             }
         } else {
             // 关闭经济 直接返回true
