@@ -44,7 +44,7 @@ export function RegEvent() {
     //玩家重生
     mc.listen('onRespawn', (pl) => {
         if (pl.isSimulatedPlayer()) return;
-        if (pl.gameMode !== 0 || pl.gameMode !== 2) return;//非生存/冒险 模式不发送表单
+        if (pl.gameMode !== 0 && pl.gameMode !== 2) return;//非生存/冒险 模式不发送表单
         let count = 50;
         if (pl.pos.dimid == 0 || pl.getRespawnPosition().dimid == pl.pos.dimid) {
             // 在主世界 或 重生维度在当前维度
