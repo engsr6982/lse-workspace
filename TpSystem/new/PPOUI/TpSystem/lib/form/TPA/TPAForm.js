@@ -1,6 +1,6 @@
 import {OnlinePlayers} from "../../OnlinePlayers.js"
 import {SimpleFormWithPlayer} from "../SimpleFormWithPlayer.js"
-import {TPARequest} from "../../core/TPA/TPARequest.js"
+import {TPARequest,Available,AvailDescription} from "../../core/TPA/TPARequest.js"
 import {Config} from "../../cache.js";
 
 /**
@@ -20,7 +20,9 @@ export class TPAForm extends SimpleFormWithPlayer{
         for(let i in online.real){
             super.addButton(online.real[i].name,()=>{
                 newRequest=new TPARequest(player,online.real[i],type,Config.TPA.CacheExpirationTime);
-                newRequest.ask();
+                //发送请求，存储请求结果并向玩家发送
+                let askResult=newRequest.ask();
+                if(askResult!=Available.Available){player.tell(AvailDescription(askResult))};
             })         
         }
     }
