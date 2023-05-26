@@ -1,5 +1,6 @@
 import {SimpleFormWithPlayer} from "../SimpleFormWithPlayer.js";
 import {TPARequestPool} from "../../core/TPA/TPARequestPool.js"
+import { Available } from "../../core/TPA/TPARequest.js";
 
 export class TPAAskForm extends SimpleFormWithPlayer{
     /**
@@ -22,7 +23,9 @@ export class TPAAskForm extends SimpleFormWithPlayer{
         //玩家按下关闭按钮或发送失败，需将请求加入缓存队列（todo）
         super.default=()=>{
             //TPARequestPool.add(request);
-            this.send();
+            //目前的版本是只要请求有效就不断的发直到发送成功
+            if(request.available==Available.Available){this.send();}
+            
         }
     }
 }

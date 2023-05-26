@@ -96,10 +96,15 @@ export class TPARequest{
 }
 /**枚举请求无效原因，可惜js不支持枚举，只能写成number */
 export const Available={
+    /**请求有效 */
     Available:0,
+    /**过期 */
     Expired:1,
+    /**发送者离线 */
     SenderOffline:2,
+    /**目标离线 */
     RecieverOffline:3,
+    /**发送者余额不足 */
     Unaffordable:4
 }
 export function AvailDescription(avail){
