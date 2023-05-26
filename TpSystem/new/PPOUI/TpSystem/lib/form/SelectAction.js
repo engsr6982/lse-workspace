@@ -1,6 +1,7 @@
 import { Other } from "../Other.js";
+import { MainUI } from "../cache.js";
 import { HomeForm } from "./Home.js";
-import { WarpForm } from "./Warp.js";
+import { Main } from "./Main.js";
 
 
 export function SelectAction(pl, Array, Warp = false, callback) {
@@ -17,11 +18,11 @@ export function SelectAction(pl, Array, Warp = false, callback) {
 
     fm.addButton('返回上一页', 'textures/ui/icon_import');
     pl.sendForm(fm, (pl, id) => {
-        if (id == null) return Other.CloseTell();
+        if (id == null) return Other.CloseTell(pl);
         if (id == Array.length) {
             if (Warp) {
                 //warp
-                return WarpForm(pl);
+                return Main(pl, MainUI);
             } else {
                 //home
                 return HomeForm.Panel(pl);

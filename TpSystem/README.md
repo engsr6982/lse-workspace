@@ -37,9 +37,9 @@
     },
     "Money": {//经济配置
         "Enable": true,//开关
-        "MoneyType": "llmoney",//经济类型  llmoney 或 score
+        "MoneyType": "llmoney",//经济类型  可选 llmoney 或 score 
         "ScoreType": "money",//计分板经济的计分板 llmomey模式不可用
-        "MoneyName": "金币"//经济名称
+        "MoneyName": "金币"//经济名称 
     },
     "Home": {//家园传送配置
         "Enable": true,
