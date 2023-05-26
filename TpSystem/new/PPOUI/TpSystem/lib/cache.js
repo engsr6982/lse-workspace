@@ -6,7 +6,7 @@ export const PLUGIN_INFO = {
     /**插件描述 */
     Introduce: 'TpSystem 传送系统',
     /**版本 */
-    Version: [0, 1, 4, Version.Beta],
+    Version: [0, 1, 5, Version.Beta],
     /**作者 */
     Author: 'PPOUI',
     /**MineBBS资源地址 */
