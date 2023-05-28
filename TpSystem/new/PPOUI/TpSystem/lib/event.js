@@ -90,3 +90,5 @@ export function RegEvent() {
     //注册监听器
     Listener.init(PLUGIN_INFO.Name);
 }
+export let TPARequestSendEvent=new Listener("onTpSystemTpaRequestSend");
+
