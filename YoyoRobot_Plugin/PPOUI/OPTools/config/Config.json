@@ -1,0 +1,13 @@
+{
+    "version": "2.1.2",
+    "language": "zh_CN",
+    "Kick_Txt": "你已被管理员踢出服务器",
+    "Broad_head": "§e[§d广播§r§e] §r",
+    "Cleaner_API": 0,
+    "Clear_Cmd": "kill @e[type=item]",
+    "Network": true,
+    "Ban_Cmd":{
+        "Ban": "ban #&#${Player}#&# ${time} ${Reason}",
+        "UnBan": "unban #&#${Player}#&#"    
+    }
+}

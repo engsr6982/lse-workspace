@@ -1,0 +1,63 @@
+[
+    {
+        "name": "^帮助$",
+        "msg": "请仔细阅读～",
+        "img": "https://mcid.25565.top/robot_cmd.jpeg",
+        "type": "help",
+        "Admin": true,
+        "Enable": true
+    },
+    {
+        "name": "^守护进程列表$",
+        "api_path": "/api/service/remote_services_list?apikey={}",
+        "type": "get_list",
+        "Admin": true,
+        "Enable": true
+    },
+    {
+        "name": "^启动\\s\\S+\\s\\S+$",
+        "api_path": "/api/protected_instance/open?apikey={}&remote_uuid={}&uuid={}",
+        "type": "instance",
+        "Operate": "start",
+        "Admin": true,
+        "Enable": true
+    },
+    {
+        "name": "^重启\\s\\S+\\s\\S+$",
+        "api_path": "/api/protected_instance/restart?apikey={}&remote_uuid={}&uuid={}",
+        "type": "instance",
+        "Operate": "rest",
+        "Admin": true,
+        "Enable": true
+    },
+    {
+        "name": "^关闭\\s\\S+\\s\\S+$",
+        "api_path": "/api/protected_instance/stop?apikey={}&remote_uuid={}&uuid={}",
+        "type": "instance",
+        "Operate": "stop",
+        "Admin": true,
+        "Enable": true
+    },
+    {
+        "name": "^终止\\s\\S+\\s\\S+$",
+        "api_path": "/api/protected_instance/kill?apikey={}&remote_uuid={}&uuid={}",
+        "type": "instance",
+        "Operate": "kill",
+        "Admin": true,
+        "Enable": true
+    },
+    {
+        "name": "^查询\\s\\S+\\s\\S+$",
+        "api_path": "/api/service/remote_service_instances?apikey={}&remote_uuid={}&instance_name={}&page=1&page_size=5",
+        "Admin": true,
+        "type": "serach",
+        "Enable": true
+    },
+    {
+        "name": "^发送命令\\s\\S+\\s\\S+(.+)$",
+        "api_path": "/api/protected_instance/command?apikey={}&remote_uuid={}&uuid={}&command={}",
+        "Admin": true,
+        "type": "command",
+        "Enable": true
+    }
+]

@@ -1,0 +1,103 @@
+{
+    "Enable": true,
+    "Group": [
+        424958821,
+        948914545,
+        363457102,
+        450825881,
+        450825881
+    ],
+    "Admin": [],
+    "Reg": [
+        {
+            "reg": "^菜单$",
+            "type": "menu",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^到账语音生成\\s[1-9]\\d*(\\.\\d+)?$",
+            "type": "zfbm",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^历史上的今天$",
+            "type": "today",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^热搜\\s\\S+$",
+            "type": "Hot_search",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^一言$",
+            "type": "yiyan",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^哔哩哔哩每周必看$",
+            "type": "weekly",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^天气\\s\\S+$",
+            "type": "weather",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^网易云歌曲\\s[0-9]\\d*$",
+            "type": "songinfo",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^随机图片$",
+            "type": "img",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^图片\\s\\S+$",
+            "type": "img",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^答案之书\\s\\S+$",
+            "type": "book_answers",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^今日运势$",
+            "type": "Fortune",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^查服\\s[a-zA-Z0-9.]+:\\d{1,5}$",
+            "type": "mc_server",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^查je服\\s[a-zA-Z0-9.]+:\\d{1,5}$",
+            "type": "mc_server_je",
+            "admin": false,
+            "Enable": true
+        },
+        {
+            "reg": "^群禁$",
+            "type": "group_ban",
+            "admin": false,
+            "Enable": true
+        }
+    ]
+}
