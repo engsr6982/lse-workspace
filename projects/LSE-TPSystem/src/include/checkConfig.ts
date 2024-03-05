@@ -5,10 +5,9 @@ import { __config__, config, dataFile } from "../utils/data.js";
 export async function checkConfig() {
     const checker = new JSONChecker(__config__, config, true);
 
-    checker.currentJSON = await checker.fillMissingProperties();
+    await checker.fillMissingProperties();
+    await checker.removeExtraProperties();
 
-    const nc: Config_Structure = (await checker.removeExtraProperties()) as Config_Structure;
-
-    dataFile.writeFile(`${pluginFloder.global}Config.json`, JSON.stringify(nc, null, 4));
+    dataFile.writeFile(`${pluginFloder.global}Config.json`, JSON.stringify(checker.currentJSON, null, 4));
     dataFile.initData();
 }

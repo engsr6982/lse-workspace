@@ -33,13 +33,12 @@ initMoneyModule();
 // 初始化数据库
 leveldb.initLevelDB();
 
-// 检查配置文件
-checkConfig();
-
 mc.listen("onServerStarted", () => {
     // 注册命令
     regCommand();
     // 初始化映射
     homeMap.initHomeMapping();
     warpMap.initWarpMapping();
+    // 检查配置文件
+    checkConfig();
 });
