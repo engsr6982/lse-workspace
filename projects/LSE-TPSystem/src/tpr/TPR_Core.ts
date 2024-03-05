@@ -15,6 +15,44 @@ function CheckWorld(player: Player) {
     return true;
 }
 
+let findPosCore: (
+    pos: { x: number; z: number; dimid: number },
+    whi: {
+        startingValue: number;
+        endValue: number;
+        stopValue: number;
+    },
+    bl: string[],
+    offset: {
+        offset1: number;
+        offset2: number;
+    },
+) => { status: 0 | 1; x: number; y: number; z: number; dimid: number } = null;
+
+function findPos(player: Player, inX: number, inZ: number) {
+    const whi: {
+        startingValue: number;
+        endValue: number;
+        stopValue: number;
+    } = player.pos.dimid !== 1 ? { startingValue: 301, stopValue: -62, endValue: -64 } : { startingValue: 110, stopValue: 5, endValue: 0 };
+    const { status, x, y, z, dimid } = findPosCore(
+        { x: inX, z: inZ, dimid: player.pos.dimid },
+        whi,
+        ["minecraft:lava", "minecraft:flowing_lava"],
+        {
+            offset1: 1,
+            offset2: 2,
+        },
+    );
+
+    if (status === 1) {
+        player.teleport(new FloatPos(x + 0.5, y, z + 0.5, dimid));
+        sendMessage(player, "传送完成！");
+    } else {
+        sendMessage(player, "传送失败，未找到安全坐标或插件异常");
+    }
+}
+
 /**
  * 随机传送核心
  * @param player 玩家对象
@@ -56,10 +94,13 @@ export function TPR_Core(player: Player) {
         player.teleport(InitialTargetCoordinates);
         sendMessage(player, "等待区块加载...");
 
+        if (ll.hasExported("ZoneCheckV3", "findPos") && findPosCore == null) {
+            findPosCore = ll.imports("ZoneCheckV3", "findPos");
+        }
         Interval_ID = setInterval(() => {
             try {
                 if (player.blockPos.y !== InitialY_Axis) {
-                    _run();
+                    findPosCore ? findPos(player, randomCoordinateObject.x, randomCoordinateObject.z) : _run();
                     clearInterval(Interval_ID);
                 }
             } catch (e) {

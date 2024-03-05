@@ -19,7 +19,7 @@ config.logLevel <= 5 && config.logLevel >= 0 ? logger.setLogLevel(config.logLeve
 !file.exists(pluginFloder.import_) ? file.mkdir(pluginFloder.import_) : undefined;
 !file.exists(pluginFloder.export_) ? file.mkdir(pluginFloder.export_) : undefined;
 
-// 注册插件
+// @ts-ignore 注册插件
 ll.registerPlugin(pluginInformation.name, pluginInformation.introduce, pluginInformation.version, {
     Author: pluginInformation.author,
 });

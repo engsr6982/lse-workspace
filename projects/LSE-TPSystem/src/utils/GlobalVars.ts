@@ -4,7 +4,7 @@ export const pluginInformation = {
     /**插件描述 */
     introduce: "LSE-TPSystem 传送系统",
     /**版本 */
-    version: [1, 0, 7, Version.Release],
+    version: [1, 0, 7],
     /**作者 */
     author: "PPOUI",
     /**MineBBS资源地址 */
