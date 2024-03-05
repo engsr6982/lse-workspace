@@ -49,6 +49,7 @@ interface Config_Structure {
     };
     Tpr: {
         Enable: boolean;
+        UseZoneCheckV3API: boolean;
         randomRange: {
             // 随机范围
             min: number; // 最小值

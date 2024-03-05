@@ -43,6 +43,7 @@ export const __config__: Config_Structure = {
     },
     Tpr: {
         Enable: true,
+        UseZoneCheckV3API: false,
         randomRange: {
             min: 100,
             max: 1000,

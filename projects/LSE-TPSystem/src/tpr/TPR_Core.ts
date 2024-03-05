@@ -100,13 +100,15 @@ export function TPR_Core(player: Player) {
         Interval_ID = setInterval(() => {
             try {
                 if (player.blockPos.y !== InitialY_Axis) {
-                    findPosCore ? findPos(player, randomCoordinateObject.x, randomCoordinateObject.z) : _run();
+                    findPosCore && config.Tpr.UseZoneCheckV3API
+                        ? findPos(player, randomCoordinateObject.x, randomCoordinateObject.z)
+                        : _run();
                     clearInterval(Interval_ID);
                 }
             } catch (e) {
                 _fail(player, e);
             }
-        }, 200);
+        }, 400);
 
         function _run() {
             try {
