@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2021", // 目标代码版本
+    "module": "ES6", // 模块加载器类型
+    "strict": false, // 是否启用严格模式
+    "allowJs": true, // 是否允许编译JS文件
+    "checkJs": true, // 是否检查JS文件
+    "skipLibCheck": true, // 是否跳过库的类型检查
+    "alwaysStrict": false, // 是否强制使用严格模式
+    "noEmitOnError": true, // 是否在发生编译错误时停止输出文件
+    "removeComments": true, // 是否移除注释
+    "isolatedModules": true, // 是否启用独立编译模式
+    "esModuleInterop": true, // 是否启用ES模块Interop
+    "forceConsistentCasingInFileNames": true, // 是否强制文件名大小写一致
+    "noImplicitAny": true, // 禁止隐式Any
+    "noFallthroughCasesInSwitch": true, // switch case 必须有 break/return/throw
+  },
+  "exclude": [
+    "**/.*.ts", // 过滤以.开头的文件
+    "**/.*.d.ts",
+    "**/dist/**/*", // 过滤编译文件夹
+    "**/docs/**/*",
+    "./#tools/**", // 过滤工具
+    "./projects/FakePlayer/**", // 过滤待重构plugin
+  ]
+}

@@ -1,0 +1,10 @@
+[
+    {
+        "Cmd": "banui",
+        "Describe": "测试",
+        "PermType": "Admin",
+        "PluginVerification": false,
+        "Type": "Ban_Ui"
+    }
+]
+

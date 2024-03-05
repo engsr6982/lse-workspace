@@ -1,0 +1,21 @@
+{
+    "title": "UMenu表单模板",
+    "content": [
+        "你好 ${realName}",
+        "玩家:${realName}"
+    ],
+    "buttons": [
+        {
+            "name": "返回",
+            "describe": "",
+            "image": "",
+            "money": 0,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "form",
+            "run": "main.json"
+        }
+    ]
+}

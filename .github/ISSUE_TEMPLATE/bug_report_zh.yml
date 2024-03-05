@@ -1,0 +1,47 @@
+name: "反馈Bug"
+description: 反馈插件的Bug
+labels: [ "bug" ]
+body: 
+  - type: input
+    id: plugin
+    attributes:
+      label: "问题插件"
+      placeholder: 输入有问题的插件名
+    validations:
+      required: true
+  - type: input
+    id: ll
+    attributes:
+      label: "LSE 版本"
+      placeholder: 输入您的 LSE 版本
+    validations:
+      required: true
+  - type: input
+    id: bds
+    attributes:
+      label: BDS 版本
+      placeholder: 输入您的 BDS 版本 如：1.20.11
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么?
+      placeholder: 清晰地描述你的问题
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现此问题的步骤
+      description: 尽可能清晰且详细的描述如何复现
+      placeholder: |
+        1. 做了什么
+        2. ...
+        3. ...
+  - type: textarea
+    id: logs
+    attributes:
+      label: 有关的日志/输出
+      description: 请粘贴有关此问题的日志到此处
+      render: raw

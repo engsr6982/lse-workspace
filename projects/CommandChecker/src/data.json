@@ -1,0 +1,16 @@
+[
+    {
+        "cmd": "fp",
+        "whiteList": [],
+        "type": "SCenter",
+        "HalfLength": 5,
+        "CentralCoordinate": {
+            "x": 0,
+            "y": null,
+            "z": 0,
+            "dimid": 0
+        },
+        "blacklistWithinRegion": true
+    }
+
+]

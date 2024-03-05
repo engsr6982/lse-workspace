@@ -1,0 +1,176 @@
+{
+    "title": "UMenu表单模板",
+    "content": [
+        "你好 ${realName}",
+        "玩家:${realName}"
+    ],
+    "buttons": [
+        {
+            "name": "cmd",
+            "describe": "执行命令 消耗经济:#{money} ",
+            "image": "textures/ui/color_plus",
+            "money": 1,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "cmd",
+            "run": "say 114514"
+        },
+        {
+            "name": "Form",
+            "describe": "一个普普通通按钮",
+            "image": "",
+            "money": 0,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "form",
+            "run": "form1.json"
+        },
+        {
+            "name": "Tell",
+            "describe": "一个普普通通按钮",
+            "image": "",
+            "money": 0,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "tell",
+            "run": "你好啊，陌生人"
+        },
+        {
+            "name": "Eval",
+            "describe": "一个普普通通按钮",
+            "image": "",
+            "money": 0,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "eval",
+            "run": ".EvalTest.js"
+        },
+        {
+            "name": "subform",
+            "describe": "一个普普通通按钮",
+            "image": "",
+            "money": 0,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "subform",
+            "run": {
+                "title": "",
+                "content": "${name}",
+                "buttons": [
+                    {
+                        "name": "返回",
+                        "describe": "#{name} ",
+                        "image": "textures/ui/color_plus",
+                        "money": 0,
+                        "permission": [
+                            "any",
+                            []
+                        ],
+                        "type": "cmd",
+                        "run": "umenu"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "ModalForm",
+            "describe": "一个普普通通按钮",
+            "image": "",
+            "money": 0,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "modalform",
+            "run": {
+                "title": "UMenu 模式表单",
+                "content": "我是内容",
+                "button1": {
+                    "name": "确认",
+                    "money": 0,
+                    "permission": [
+                        "any",
+                        []
+                    ],
+                    "type": "cmd",
+                    "run": "msg @a 我点了确认"
+                },
+                "button2": {
+                    "name": "取消",
+                    "money": 0,
+                    "permission": [
+                        "any",
+                        []
+                    ],
+                    "type": "tell",
+                    "run": "表单已放弃"
+                }
+            }
+        },
+        {
+            "name": "ContentForm",
+            "describe": "一个普普通通按钮",
+            "image": "",
+            "money": 0,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "contentform",
+            "run": {
+                "title": "UMenu ContentForm表单",
+                "content": "这是内容表单 玩家${name}",
+                "close": {
+                    "money": 0,
+                    "permission": [
+                        "any",
+                        []
+                    ],
+                    "type": "tell",
+                    "run": "表单已放弃"
+                },
+                "submit": {
+                    "money": 0,
+                    "permission": [
+                        "any",
+                        []
+                    ],
+                    "type": "tell",
+                    "run": "表单提交成功"
+                }
+            }
+        },
+        {
+            "name": "Tag",
+            "describe": "需要tag打开此功能",
+            "image": "",
+            "money": 0,
+            "permission": [
+                "any",
+                []
+            ],
+            "type": "tag",
+            "run": {
+                "tag": "test",
+                "withtag": {
+                    "type": "tell",
+                    "run": "你拥有TAG：test"
+                },
+                "notag": {
+                    "type": "tell",
+                    "run": "你没有TAG：test"
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+name: "新功能请求/建议"
+description: 提供建议/请求一个新的功能
+labels: ["enhancement"]
+body:
+- type: textarea
+  id: solution
+  attributes:
+    label: 您认为还缺少什么?
+    description: 简明扼要地描述你想要什么

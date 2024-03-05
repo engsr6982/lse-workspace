@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": [
+    "src",
+    "include",
+    "../../HelperLib/src",
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "noImplicitAny": true, // 禁止隐式Any
+    // "removeComments": false, 
+    // "declaration": true
+  }
+}
