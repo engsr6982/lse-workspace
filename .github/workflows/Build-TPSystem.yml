@@ -38,7 +38,7 @@ jobs:
 
             - name: HelperLib => lse
               run: |
-                cd ./projects/HelperLib
+                cd ./HelperLib
                 git checkout lse
                 git branch
                 cd ../
