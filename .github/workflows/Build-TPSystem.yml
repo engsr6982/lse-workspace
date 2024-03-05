@@ -54,7 +54,7 @@ jobs:
               run: pnpm install
 
             - name: 单独编译 TPSystem
-              run: pnpm -r --filter=./projects/LSE-TPSystem run dist
+              run: pnpm -r --filter=./projects/LSE-TPSystem run build
 
             - name: 运行 npm run pack
               run: npm run pack ./projects/LSE-TPSystem/dist
