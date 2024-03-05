@@ -36,25 +36,18 @@ jobs:
               with:
                   version: 8
 
-            - name: LSE-Modules => main
+            - name: HelperLib => lse
               run: |
-                cd ./projects/LSE-Modules
-                git checkout main
+                cd ./HelperLib
+                git checkout lse
                 git branch
-                cd ../../
-
-            - name: LSE-TPSystem => main
-              run: |
-                cd ./projects/LSE-TPSystem
-                git checkout main
-                git branch
-                cd ../../
+                cd ../
 
             - name: 运行 pnpm install
               run: pnpm install
 
             - name: 单独编译 TPSystem
-              run: pnpm -r --filter=./projects/LSE-TPSystem run dist
+              run: pnpm -r --filter=./projects/LSE-TPSystem run build
 
             - name: 运行 npm run pack
               run: npm run pack ./projects/LSE-TPSystem/dist
