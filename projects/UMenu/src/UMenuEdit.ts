@@ -1,6 +1,6 @@
 const pluginInfo = {
     name: "UMenu Edit",
-    version: [1, 0, 0],
+    version: [1, 0, 0, Version.Release] as readonly [number, number, number, Version],
     author: "PPOUI",
 };
 

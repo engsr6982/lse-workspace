@@ -1,9 +1,8 @@
-
 /**插件信息 */
 export const PLUGIN_INFO = {
     Name: "FakePlayer",
     Introduce: "模拟玩家/假人",
-    Version: [4, 4, 0, Version.Release],
+    Version: [4, 4, 0, Version.Release] as readonly [number, number, number, Version],
     Author: "PPOUI",
     MineBBS: "https://www.minebbs.com/resources/fp-gui-csv.5031/",
 };

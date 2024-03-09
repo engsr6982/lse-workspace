@@ -5,7 +5,7 @@ export const PLUGIN_INFO = {
     /**插件描述 */
     Introduce: "CommandChecker",
     /**版本 */
-    Version: [0, 2, 0, Version.Beta],
+    Version: [0, 2, 0, Version.Release] as readonly [number, number, number, Version],
     /**作者 */
     Author: "PPOUI",
     /**MineBBS资源地址 */

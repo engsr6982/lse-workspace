@@ -3,7 +3,7 @@
 const PLUGINS_NAME = "Server_Announcements";
 const PLUGINS_JS = `${PLUGINS_NAME}服务器公告插件`;
 // @ts-ignore
-const PLUGINS_VERSION = [2, 2, 0];
+const PLUGINS_VERSION = [2, 2, 0, Version.Release] as readonly [number, number, number, Version];
 // @ts-ignore
 const PLUGINS_ZZ = "PPOUI";
 // @ts-ignore
