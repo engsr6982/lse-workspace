@@ -1,15 +1,15 @@
-name: Build UMenu
+name: Build CommandChecker
 
 on:
     push:
         paths:
-            - .github/workflows/Build-UMenu.yml
-            - projects/UMenu/**
+            - .github/workflows/Build-CommandChecker.yml
+            - projects/CommandChecker/**
             - projects/LSE-Modules/**
     pull_request:
         paths:
-            - .github/workflows/Build-UMenu.yml
-            - projects/UMenu/**
+            - .github/workflows/Build-CommandChecker.yml
+            - projects/CommandChecker/**
             - projects/LSE-Modules/**
     workflow_dispatch:
 
@@ -46,16 +46,16 @@ jobs:
             - name: 运行 pnpm install
               run: pnpm install
 
-            - name: 单独编译 UMenu
-              run: pnpm -r --filter=./projects/UMenu run build
+            - name: 单独编译 CommandChecker
+              run: pnpm -r --filter=./projects/CommandChecker run build
 
             - name: 运行 npm run pack
-              run: npm run pack ./projects/UMenu/dist
+              run: npm run pack ./projects/CommandChecker/dist
 
             - name: 上传文件
               uses: actions/upload-artifact@v2
               with:
-                  name: UMenu
-                  path: UMenu-*.zip
+                  name: CommandChecker
+                  path: CommandChecker-*.zip
                   # 没有找到文件则报错
                   if-no-files-found: error

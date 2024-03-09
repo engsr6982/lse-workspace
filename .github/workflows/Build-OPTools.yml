@@ -36,25 +36,18 @@ jobs:
               with:
                   version: 8
 
-            - name: LSE-Modules => main
+            - name: HelperLib => lse
               run: |
-                cd ./projects/LSE-Modules
-                git checkout main
+                cd ./HelperLib
+                git checkout lse
                 git branch
-                cd ../../
-
-            - name: LSE-OPTools => main
-              run: |
-                cd ./projects/LSE-OPTools
-                git checkout main
-                git branch
-                cd ../../
+                cd ../
 
             - name: 运行 pnpm install
               run: pnpm install
 
             - name: 单独编译 OPTools
-              run: pnpm -r --filter=./projects/LSE-OPTools run dist
+              run: pnpm -r --filter=./projects/LSE-OPTools run build
 
             - name: 运行 npm run pack
               run: npm run pack ./projects/LSE-OPTools/dist
