@@ -1,21 +1,20 @@
 /**插件信息 */
-export const PLUGIN_INFO = {
-    Name: "FakePlayer",
-    Introduce: "模拟玩家/假人",
-    Version: [4, 4, 0, Version.Release] as readonly [number, number, number, Version],
-    Author: "PPOUI",
-    MineBBS: "https://www.minebbs.com/resources/fp-gui-csv.5031/",
+export const pluginInformation = {
+    name: "FakePlayer",
+    introduce: "模拟玩家/假人",
+    version: [4, 4, 0, Version.Release] as readonly [number, number, number, Version],
+    author: "PPOUI",
 };
 
 /**消息前缀 */
-export const Gm_Tell = file.exists(`.\\plugins\\${PLUGIN_INFO.Author}\\debug`)
-    ? `§e§l[§d${PLUGIN_INFO.Name}§e]§r§b `
-    : `§e§l[§d${PLUGIN_INFO.Name} Debug§e]§r§b `;
+export const Gm_Tell = file.exists(`.\\plugins\\${pluginInformation.author}\\debug`)
+    ? `§e§l[§d${pluginInformation.name}§e]§r§b `
+    : `§e§l[§d${pluginInformation.name} Debug§e]§r§b `;
 
 /**待释放配置文件 */
 export const __inits = {
     /**配置文件 */
-    _Config: {
+    config: {
         /**自动上线 */ AutomaticOnline: true,
         /**假人无敌 */ InterceptDamage: true,
         /**自动复活 */ AutomaticResurrection: true,
@@ -31,36 +30,37 @@ export const __inits = {
 };
 
 /**文件路径 */
-export const _filePath = `.\\Plugins\\${PLUGIN_INFO.Author}\\${PLUGIN_INFO.Name}\\`;
+export const _filePath = `.\\Plugins\\${pluginInformation.author}\\${pluginInformation.name}\\`;
 
 /**配置文件 */
-export let Config = __inits._Config;
+export let Config = __inits.config;
 
-export class FileOper {
-    static path_Config = _filePath + "Config.json";
+export class ConfigOperation {
+    private static configPath = _filePath + "Config.json";
 
     /**
      * 检查所有文件
      */
-    static checkFile() {
-        if (!file.exists(this.path_Config)) {
-            file.writeTo(this.path_Config, JSON.stringify(__inits._Config, null, "\t"));
+    private static checkFile() {
+        if (!file.exists(this.configPath)) {
+            file.writeTo(this.configPath, JSON.stringify(__inits.config, null, "\t"));
         }
     }
 
     /**
      * 读取所有文件
      */
-    static readFile() {
+    static initConfig() {
         this.checkFile();
         try {
-            Config = JSON.parse(file.readFrom(this.path_Config));
+            Config = JSON.parse(file.readFrom(this.configPath));
         } catch (err) {
             logger.error(`${err}\n${err.stack}`);
         }
     }
 
-    static setConfig(newConfig) {
+    static setConfig(newConfig: { [key: string]: any }) {
+        // @ts-ignore
         Config = newConfig;
         return this;
     }
@@ -69,10 +69,10 @@ export class FileOper {
      * 保存所有文件
      * @returns
      */
-    static save_File() {
+    static saveConfig() {
         try {
-            file.writeTo(this.path_Config, JSON.stringify(Config, null, 4));
-            this.readFile();
+            file.writeTo(this.configPath, JSON.stringify(Config, null, 4));
+            this.initConfig();
             return true;
         } catch (err) {
             logger.error(`${err}\n${err.stack}`);

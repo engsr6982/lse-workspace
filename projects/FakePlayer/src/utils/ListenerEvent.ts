@@ -1,8 +1,8 @@
 import { Listener } from "../modules/listenAPI.js";
-import { PLUGIN_INFO } from "./cache.js";
+import { pluginInformation } from "./cache.js";
 
 // 初始化事件功能
-Listener.init(PLUGIN_INFO.Name);
+Listener.init(pluginInformation.name);
 
 export const onDummySimulationOperation = new Listener("onDummySimulationOperation");
 

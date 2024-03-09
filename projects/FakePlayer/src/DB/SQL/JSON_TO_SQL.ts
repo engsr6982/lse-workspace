@@ -1,6 +1,5 @@
-
-import { insertFP } from "../utils/SQL.js";
-import { _filePath } from "../utils/cache.js";
+import { insertFP } from "./SQL.js";
+import { _filePath } from "../../utils/cache.js";
 
 export function update() {
     const old_data = _filePath + "data\\Save_SimulatedPlayer.json";

@@ -1,8 +1,7 @@
-
 import dummyExample from "./example.js";
-import { deleteDataByBindPlayerAndName, getAllData, insertFP } from "../utils/SQL.js";
-import { cache } from "./instanceCache.js";
-import { kvdb } from "../utils/KVDB.js";
+import { deleteDataByBindPlayerAndName, getAllData, insertFP } from "../DB/SQL/SQL.js";
+import { instanceCache } from "./instanceCache.js";
+import { kvdb } from "../DB/LevelDB/kvdb.js";
 import { Time_Mod } from "../modules/Time.js";
 import { Config } from "../utils/cache.js";
 
@@ -34,9 +33,9 @@ export class FPManager {
             const data = getAllData();
             if (data) {
                 data.forEach((fp) => {
-                    if (cache.has(fp.Name)) return;
+                    if (instanceCache.has(fp.Name)) return;
                     if (!this._isTheNameLegal(fp.Name)) return;
-                    const inst = cache.set(fp.Name, new dummyExample(fp.Name));
+                    const inst = instanceCache.set(fp.Name, new dummyExample(fp.Name));
                     inst.initData(fp);
                     inst.checkOnline(); // 更新在线状态
                 });
@@ -55,8 +54,8 @@ export class FPManager {
      */
     static createSimulateionPlayer(fp) {
         if (!this._isTheNameLegal(fp.Name)) return false;
-        if (cache.has(fp.Name)) return false;
-        cache.set(fp.Name, new dummyExample(fp.Name)).initData(fp);
+        if (instanceCache.has(fp.Name)) return false;
+        instanceCache.set(fp.Name, new dummyExample(fp.Name)).initData(fp);
         insertFP(fp); // 写入sql
         return true;
     }
@@ -66,12 +65,12 @@ export class FPManager {
      * @param {String} name
      */
     static DestroyInstance(name) {
-        if (!cache.has(name)) return false;
-        const instance = cache.get(name); // 获取实例
+        if (!instanceCache.has(name)) return false;
+        const instance = instanceCache.get(name); // 获取实例
         instance.stopLoop(); // 停止循环操作
         instance.offOnline(); // 下线
         const { BindPlayer, Name, Bag } = instance; // 备份fp对象
-        cache.delete(Name); // 从缓存中清除
+        instanceCache.delete(Name); // 从缓存中清除
         return kvdb.delete(Bag) && deleteDataByBindPlayerAndName(BindPlayer, name); // 从sql删除数据
     }
 
@@ -85,8 +84,8 @@ export class FPManager {
      * @returns bool 是否上线成功
      */
     static online(name) {
-        if (!cache.has(name)) return false;
-        return cache.get(name).online();
+        if (!instanceCache.has(name)) return false;
+        return instanceCache.get(name).online();
     }
 
     /**
@@ -95,8 +94,8 @@ export class FPManager {
      * @returns bool 是否下线成功
      */
     static offOnline(name) {
-        if (!cache.has(name)) return false;
-        const i = cache.get(name);
+        if (!instanceCache.has(name)) return false;
+        const i = instanceCache.get(name);
         insertFP(i);
         return i.offOnline();
     }
@@ -107,8 +106,8 @@ export class FPManager {
      * @returns boolean 是否上线成功
      */
     static onlineAll(check = false) {
-        for (let exam in cache.example) {
-            const inst = cache.example[exam];
+        for (let exam in instanceCache.example) {
+            const inst = instanceCache.example[exam];
             switch (check) {
                 case true:
                     if (inst.isAutoOnline) {
@@ -130,8 +129,8 @@ export class FPManager {
      * @returns boolean 是否下线成功
      */
     static offOnlineAll() {
-        for (let exam in cache.example) {
-            const inst = cache.example[exam];
+        for (let exam in instanceCache.example) {
+            const inst = instanceCache.example[exam];
             if (!inst.checkOnline()) return;
             inst.offOnline();
         }
@@ -149,9 +148,9 @@ export class FPManager {
      * @returns boolean
      */
     static setLookPos(name, pos) {
-        if (!cache.has(name)) return false;
+        if (!instanceCache.has(name)) return false;
         if ((!pos) instanceof IntPos) return false;
-        return cache.get(name).setOrientation(pos);
+        return instanceCache.get(name).setOrientation(pos);
     }
 
     /**
@@ -163,8 +162,8 @@ export class FPManager {
      * @returns Boolean
      */
     static operation(name, oper, time, slot = undefined) {
-        if (!cache.has(name)) return false;
-        const inst = cache.get(name);
+        if (!instanceCache.has(name)) return false;
+        const inst = instanceCache.get(name);
         const status = inst.setLoop(oper, slot);
         inst.set_CycleTime(time);
         if (status) {
@@ -180,8 +179,8 @@ export class FPManager {
      * @returns bool 是否停止成功
      */
     static offoperation(name) {
-        if (!cache.has(name)) return false;
-        const inst = cache.get(name);
+        if (!instanceCache.has(name)) return false;
+        const inst = instanceCache.get(name);
         return inst.stopLoop();
     }
 
@@ -190,8 +189,8 @@ export class FPManager {
      * @returns bool 是否停止成功
      */
     static offoperationall() {
-        for (let exam in cache.example) {
-            const inst = cache.example[exam];
+        for (let exam in instanceCache.example) {
+            const inst = instanceCache.example[exam];
             inst._OperationType = "";
             inst.stopLoop();
         }
@@ -206,10 +205,10 @@ export class FPManager {
      */
     static tp(name, pos) {
         if ((!pos) instanceof IntPos) return null;
-        if (!cache.has(name)) return false;
+        if (!instanceCache.has(name)) return false;
         // 避免传送到方块边缘，IntPos转FloatPos
         const newPos = new FloatPos(pos.x + 0.5, pos.y, pos.z + 0.5, pos.dimid);
-        const fpinst = cache.get(name);
+        const fpinst = instanceCache.get(name);
         const status = fpinst.delivery(newPos);
         if (status) {
             insertFP(fpinst);
@@ -218,18 +217,18 @@ export class FPManager {
     }
 
     static talkAs(name, msg) {
-        if (!cache.get(name)) return false;
-        return cache.get(name).sendTalkAs(msg);
+        if (!instanceCache.get(name)) return false;
+        return instanceCache.get(name).sendTalkAs(msg);
     }
 
     static runCmd(name, cmd) {
-        if (!cache.has(name)) return false;
-        return cache.get(name).runCmd(cmd);
+        if (!instanceCache.has(name)) return false;
+        return instanceCache.get(name).runCmd(cmd);
     }
 
     static setFunc(name, key, value) {
-        if (!cache.has(name)) return false;
-        const fp_inst = cache.get(name);
+        if (!instanceCache.has(name)) return false;
+        const fp_inst = instanceCache.get(name);
         const fp = fp_inst; // 获取fp对象
         fp[key] = value; // 更新对应数据
         fp_inst.initData(fp); // 更新实例
@@ -245,8 +244,8 @@ export class FPManager {
      * @returns {FP_Array_Object}
      */
     static getAllInfo() {
-        return Object.keys(cache.example).map((exam) => {
-            return cache.example[exam];
+        return Object.keys(instanceCache.example).map((exam) => {
+            return instanceCache.example[exam];
         });
     }
 
@@ -256,7 +255,7 @@ export class FPManager {
      * @returns {T_FP_INFO}
      */
     static getInfo(name) {
-        return cache.has(name) ? cache.get(name) : null;
+        return instanceCache.has(name) ? instanceCache.get(name) : null;
     }
 
     /**

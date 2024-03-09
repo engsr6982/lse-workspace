@@ -1,7 +1,6 @@
-
 import { FPManager } from "../FPManager/Manager.js";
-import { cache } from "../FPManager/instanceCache.js";
-import { Gm_Tell, PLUGIN_INFO } from "../utils/cache.js";
+import { instanceCache } from "../FPManager/instanceCache.js";
+import { Gm_Tell, pluginInformation } from "../utils/cache.js";
 import { _Perm_Object, perm } from "../Perm/index.js";
 
 // 无权限
@@ -24,12 +23,12 @@ class GUIForm {
 
     customform() {
         const fm = mc.newCustomForm();
-        fm.setTitle(PLUGIN_INFO.Name);
+        fm.setTitle(pluginInformation.name);
         return fm;
     }
     simpleForm() {
         const fm = mc.newSimpleForm();
-        fm.setTitle(PLUGIN_INFO.Name);
+        fm.setTitle(pluginInformation.name);
         fm.setContent(`选择一个操作`);
         return fm;
     }
@@ -45,7 +44,7 @@ class GUIForm {
         fm.addButton("假人管理\n");
         fm.addButton("模拟操作\n");
         fm.addButton("假人操作\n");
-        file.exists(`.\\plugins\\${PLUGIN_INFO.Author}\\debug`) ? fm.addButton(`[管理]权限组GUI`) : null;
+        file.exists(`.\\plugins\\${pluginInformation.author}\\debug`) ? fm.addButton(`[管理]权限组GUI`) : null;
         const thiz = this;
         player.sendForm(fm, (pl, id) => {
             switch (id) {
@@ -498,10 +497,10 @@ class GUIForm {
                 case 1:
                     this._selectSlot(
                         player,
-                        cache.get(fp.Name).getPlayer().getInventory(),
+                        instanceCache.get(fp.Name).getPlayer().getInventory(),
                         (item) => {
                             pl.giveItem(item.item);
-                            cache.get(fp.Name).getPlayer().refreshItems();
+                            instanceCache.get(fp.Name).getPlayer().refreshItems();
                         },
                         fp,
                         this._selectAction,
@@ -529,7 +528,7 @@ class GUIForm {
             switch (id) {
                 case 0:
                     if (pl.getHand().isNull()) return pl.tell(Gm_Tell + `当前未手持任何物品！`);
-                    if (cache.get(fp.Name).getPlayer().giveItem(pl.getHand())) {
+                    if (instanceCache.get(fp.Name).getPlayer().giveItem(pl.getHand())) {
                         pl.getHand().setNull();
                         pl.refreshItems();
                     }
@@ -539,7 +538,7 @@ class GUIForm {
                         pl,
                         pl.getInventory(),
                         (item) => {
-                            cache.get(fp.Name).getPlayer().giveItem(item.item);
+                            instanceCache.get(fp.Name).getPlayer().giveItem(item.item);
                             pl.refreshItems();
                         },
                         fp,

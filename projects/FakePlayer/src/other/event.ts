@@ -1,6 +1,5 @@
-
 import { FPManager } from "../FPManager/Manager.js";
-import { cache } from "../FPManager/instanceCache.js";
+import { instanceCache } from "../FPManager/instanceCache.js";
 import { Config } from "../utils/cache.js";
 
 export function RegEvent() {
@@ -44,7 +43,7 @@ export function RegEvent() {
         mc.listen("onInventoryChange", async (player) => {
             if (player.isSimulatedPlayer()) {
                 player.refreshItems();
-                cache.get(player.realName).updateBagToKVDB() ? logger.debug(`updated`) : logger.debug(`update err`);
+                instanceCache.get(player.realName).updateBagToKVDB() ? logger.debug(`updated`) : logger.debug(`update err`);
                 player.refreshItems();
             }
         });

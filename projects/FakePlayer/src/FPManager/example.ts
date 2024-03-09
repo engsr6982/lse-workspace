@@ -1,6 +1,5 @@
-
-import { Time_Mod } from "../modules/Time.js";
-import { kvdb } from "../utils/KVDB.js";
+import { time as Times } from "../../../LSE-Modules/src/Time.js";
+import { kvdb } from "../DB/LevelDB/kvdb.js";
 import { Config } from "../utils/cache.js";
 import { parsePos, posToObject, stringifyExample } from "../utils/conversion.js";
 import { onDummyLookPos, onDummySimulationOperation } from "../utils/ListenerEvent.js";
@@ -11,7 +10,7 @@ export default class dummyExample {
      * @param {String} name 模拟玩家名称
      * @returns {dummyExample} 模拟实例 实例化后请调用initData初始化数据
      */
-    constructor(name) {
+    constructor(name: string) {
         const test = mc.getPlayer(name);
         if (test != null) {
             // throw new Error("Instantiation failed, name is already taken");
@@ -20,10 +19,11 @@ export default class dummyExample {
         this.Name = name;
     }
 
+    Name: string;
     /**上线坐标(initData) */
-    OnlinePos = null;
+    OnlinePos: IntPos | FloatPos = null;
     /**所属玩家(initData) */
-    BindPlayer = null;
+    BindPlayer: string = null;
     /**是否无敌(initData) */
     isInvincible = false;
     /**是否自动复活(initData) */
@@ -34,43 +34,11 @@ export default class dummyExample {
     /**是否在线(checkOnline) */
     _isOnline = false;
     /**等待执行任务ID(startLoop) */
-    _TimeID = null;
+    _TimeID: number = null;
     /**循环周期(startLoop) */
     _CycleTime = 1000; // 默认1秒
     /**模拟操作类型(setLoop) */
     _OperationType = "";
-
-    /**
-     * 获取实例信息
-     * @returns {T_FP_INFO}
-     */
-    // getInstInfo() {
-    //     const toObject = (pos) => { return { x: pos.x, y: pos.y, z: pos.z, dimid: pos.dimid }; };
-    //     return {
-    //         /**模拟玩家名称(constructor) */
-    //         Name: this.Name,
-    //         /**上线坐标(initData) */
-    //         OnlinePos: toObject(this.OnlinePos),
-    //         /**所属玩家(initData) */
-    //         BindPlayer: this.BindPlayer,
-    //         /**是否无敌(initData) */
-    //         isInvincible: this.isInvincible,
-    //         /**是否自动复活(initData) */
-    //         isAutoResurrection: this.isAutoResurrection,
-    //         /**是否自动上线(initData) */
-    //         isAutoOnline: this.isAutoOnline,
-    //         /**假人背包(updateBag) */
-    //         Bag: this.Bag,
-    //         /**是否在线(checkOnline) */
-    //         _isOnline: this._isOnline,
-    //         /**等待执行任务ID(startLoop) */
-    //         _TimeID: this._TimeID,
-    //         /**循环周期(startLoop) */
-    //         _CycleTime: this._CycleTime,
-    //         /**模拟操作类型(setLoop) */
-    //         _OperationType: this._OperationType
-    //     };
-    // }
 
     /**
      * 初始化数据
@@ -166,7 +134,7 @@ export default class dummyExample {
         if (this.checkOnline()) {
             // 写入背包
             this.writeBagToPlayer() ? logger.info(`succ`) : logger.error(`err`);
-            this.onlineTime = Config.MaxOnline.Enable ? Time_Mod.getEndTimes(Number(Config.MaxOnline.Time), "minute") : null;
+            this.onlineTime = Config.MaxOnline.Enable ? Times.getEndTimes(Number(Config.MaxOnline.Time), "minute") : null;
             return true;
         }
         return false;
@@ -281,7 +249,7 @@ export default class dummyExample {
      * 私有方法 请访问startLoop方法
      * @returns Boolean
      */
-    _Loop = () => {
+    private _Loop = () => {
         if (this._OperationType == "") return false;
         if (!this.checkOnline()) return false;
         const p = this.getPlayer();
@@ -312,7 +280,7 @@ export default class dummyExample {
      * @param {String} msg 消息内容
      * @returns Boolean
      */
-    sendTalkAs(msg) {
+    sendTalkAs(msg: string) {
         if (!this.checkOnline()) return false;
         const p = this.getPlayer();
         return p.talkAs(msg);
@@ -323,7 +291,7 @@ export default class dummyExample {
      * @param {String} cmd 命令内容
      * @returns Boolean
      */
-    runCmd(cmd) {
+    runCmd(cmd: string) {
         if (!this.checkOnline()) return false;
         const p = this.getPlayer();
         return p.runcmd(cmd);

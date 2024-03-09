@@ -1,6 +1,5 @@
-
-import { _filePath } from "./cache.js";
-import { posToObject } from "./conversion.js";
+import { _filePath } from "../../utils/cache.js";
+import { posToObject } from "../../utils/conversion.js";
 
 // 创建文件夹
 !file.exists(_filePath + "data") ? file.mkdir(_filePath + "data") : null;
