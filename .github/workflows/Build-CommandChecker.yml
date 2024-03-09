@@ -50,7 +50,7 @@ jobs:
               run: pnpm -r --filter=./projects/CommandChecker run build
 
             - name: 运行 npm run pack
-              run: npm run pack ./projects/CommandChecker/dist
+              run: npm run pack ./projects/CommandChecker/dist/CommandChecker.js
 
             - name: 上传文件
               uses: actions/upload-artifact@v2
