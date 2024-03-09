@@ -29,7 +29,7 @@ let findPosCore: (
     },
 ) => { status: 0 | 1; x: number; y: number; z: number; dimid: number } = null;
 
-function findPos(player: Player, inX: number, inZ: number) {
+function findPos(player: Player, inX: number, inZ: number, ifFailToPos: FloatPos) {
     const whi: {
         startingValue: number;
         endValue: number;
@@ -50,6 +50,7 @@ function findPos(player: Player, inX: number, inZ: number) {
         sendMessage(player, "传送完成！");
     } else {
         sendMessage(player, "传送失败，未找到安全坐标或插件异常");
+        player.teleport(ifFailToPos);
     }
 }
 
@@ -59,7 +60,7 @@ function findPos(player: Player, inX: number, inZ: number) {
  */
 export function TPR_Core(player: Player) {
     let Interval_ID: number = null;
-    let BackUpPos: IntPos = null;
+    let BackUpPos: FloatPos = null;
     try {
         if (!CheckWorld(player)) {
             sendMessage(player, "随机传送在当前维度不可用！");
@@ -101,7 +102,7 @@ export function TPR_Core(player: Player) {
             try {
                 if (player.blockPos.y !== InitialY_Axis) {
                     findPosCore && config.Tpr.UseZoneCheckV3API
-                        ? findPos(player, randomCoordinateObject.x, randomCoordinateObject.z)
+                        ? findPos(player, randomCoordinateObject.x, randomCoordinateObject.z, BackUpPos)
                         : _run();
                     clearInterval(Interval_ID);
                 }
