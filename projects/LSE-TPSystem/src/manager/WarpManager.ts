@@ -1,4 +1,4 @@
-import { SimpleForm_Back } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleFormWithBack } from "../../../LSE-Modules/src/form/SimpleForms.js";
 import { dimidArray, tellTitle } from "../utils/GlobalVars.js";
 import { leveldb } from "../utils/leveldb.js";
 import {
@@ -21,7 +21,7 @@ class WarpManager {
     }
 
     private selectWarp(player: Player) {
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 pl.runcmd(`${getRegCommand()} mgr`);
@@ -54,7 +54,7 @@ class WarpManager {
     private operationPage(player: Player, targetWarp: string) {
         const warp = leveldb.getWarp()[warpMap.map[targetWarp]];
 
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 this.index(pl);

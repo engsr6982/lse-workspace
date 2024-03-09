@@ -1,12 +1,12 @@
-import { ModalForms } from "../modules/ModalForm.js";
+import { ModalForms } from "../../../LSE-Modules/src/form/ModalForms.js";
 import { config } from "../utils/data.js";
-import { tellTitle } from "../utils/GlobalVars.js";
+import { pluginInformation, tellTitle } from "../utils/GlobalVars.js";
 import { leveldb } from "../utils/leveldb.js";
 import { formatVec3ToString, hasOwnProperty_, sendCloseFormTip, sendMessage } from "../utils/util.js";
 import { money_Instance } from "../include/money.js";
 import { deathCore_Instance } from "./DeathCore.js";
 import { ruleCore_Instance } from "../rule/RuleCore.js";
-import { SimpleForms } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleForms } from "../../../LSE-Modules/src/form/SimpleForms.js";
 
 function initListen() {
     if (config.Death.Enable) {
@@ -33,21 +33,20 @@ class DeathForm {
         if (d[player.realName].length === 0) return sendMessage(player, "你还没有死亡点信息！");
 
         const death = d[player.realName][0];
-        const md = new ModalForms(
-            undefined,
-            `时间: ${death.time}\n坐标: ${formatVec3ToString(death)}\n\n${money_Instance.getPlayerMoneyStr(
-                player,
-                config.Death.GoDeathMoney,
-            )}`,
-        );
+        const md = new ModalForms(pluginInformation.name);
 
-        md.setButton_0_call("确认传送", () => {
+        md.contentText = `时间: ${death.time}\n坐标: ${formatVec3ToString(death)}\n\n${money_Instance.getPlayerMoneyStr(
+            player,
+            config.Death.GoDeathMoney,
+        )}`;
+
+        md.setConfirm("确认传送", () => {
             deathCore_Instance.goDeath(player);
         });
-        md.setButton_1_call("取消", () => {
+        md.setCancel("取消", () => {
             sendCloseFormTip(player);
         });
-        md.setDefault_call(() => {
+        md.setDefault(() => {
             sendCloseFormTip(player);
         });
 
@@ -82,15 +81,16 @@ class DeathForm {
             time: string;
         },
     ) {
-        const fm = new ModalForms(undefined, `时间: ${info.time}\n坐标: ${formatVec3ToString(info)}`);
+        const fm = new ModalForms(pluginInformation.name);
+        fm.contentText = `时间: ${info.time}\n坐标: ${formatVec3ToString(info)}`;
 
-        fm.setButton_0_call("返回", () => {
+        fm.setConfirm("返回", () => {
             this.sendQueryDeath(player);
         });
-        fm.setButton_1_call("关闭", () => {
+        fm.setCancel("关闭", () => {
             sendCloseFormTip(player);
         });
-        fm.setDefault_call(() => {
+        fm.setDefault(() => {
             sendCloseFormTip(player);
         });
 

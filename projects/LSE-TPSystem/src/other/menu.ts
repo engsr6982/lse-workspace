@@ -1,4 +1,4 @@
-import { SimpleForms } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleForms } from "../../../LSE-Modules/src/form/SimpleForms.js";
 import { pluginInformation } from "../utils/GlobalVars.js";
 import { sendCloseFormTip } from "../utils/util.js";
 

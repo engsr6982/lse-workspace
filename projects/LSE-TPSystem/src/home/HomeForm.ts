@@ -4,13 +4,13 @@ import { leveldb } from "../utils/leveldb.js";
 import { formatVec3ToString, getRegCommand, hasOwnProperty_, sendCloseFormTip, sendMessage } from "../utils/util.js";
 import { money_Instance } from "../include/money.js";
 import { homeCore_Instance } from "./HomeCore.js";
-import { SimpleForm_Back } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleFormWithBack } from "../../../LSE-Modules/src/form/SimpleForms.js";
 
 class HomeForm {
     constructor() {}
 
     index(player: Player) {
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 pl.runcmd(getRegCommand());
@@ -68,7 +68,7 @@ class HomeForm {
     }
 
     _chooseHome(player: Player, call: (home: { name: string; data: Vec3 & dataDate }) => void, back: (player: Player) => void) {
-        const fm = new SimpleForm_Back(tellTitle, back, "top");
+        const fm = new SimpleFormWithBack(tellTitle, back, "top");
         const allHome = leveldb.getHome();
 
         if (!hasOwnProperty_(allHome, player.realName)) return sendMessage(player, "你还没有家园传送点！");
@@ -106,7 +106,7 @@ class HomeForm {
         this._chooseHome(
             player,
             (dt) => {
-                const fm = new SimpleForm_Back(
+                const fm = new SimpleFormWithBack(
                     tellTitle,
                     (pl) => {
                         this.editHome(pl);

@@ -1,4 +1,4 @@
-import { SimpleForms } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleForms } from "../../../LSE-Modules/src/form/SimpleForms.js";
 
 export class SimpleFormWithPlayer extends SimpleForms {
     player: Player;

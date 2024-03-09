@@ -1,4 +1,4 @@
-import { SimpleForm_Back } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleFormWithBack } from "../../../LSE-Modules/src/form/SimpleForms.js";
 import { prCore_Instance } from "../pr/PrCore.js";
 import { tellTitle } from "../utils/GlobalVars.js";
 import { leveldb } from "../utils/leveldb.js";
@@ -12,7 +12,7 @@ class PrManager {
     }
 
     private selectPr(player: Player) {
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 pl.runcmd(`${getRegCommand()} mgr`);
@@ -35,7 +35,7 @@ class PrManager {
 
     private operationPage(player: Player, index: number, guid: string) {
         const pr = leveldb.getPr()[index];
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 this.index(pl);

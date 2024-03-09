@@ -1,4 +1,4 @@
-import { SimpleForm_Back } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleFormWithBack } from "../../../LSE-Modules/src/form/SimpleForms.js";
 import { homeCore_Instance } from "../home/HomeCore.js";
 import { homeMap } from "../home/Mapping.js";
 import { dimidArray, tellTitle } from "../utils/GlobalVars.js";
@@ -22,7 +22,7 @@ class HomeManager {
 
     // Step 1
     private selectPlayer(player: Player) {
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 pl.runcmd(`${getRegCommand()} mgr`);
@@ -45,7 +45,7 @@ class HomeManager {
 
     // step 2
     private chooseHome(player: Player, targetPlayer: string) {
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 this.index(pl);
@@ -82,7 +82,7 @@ class HomeManager {
     private operationPage(player: Player, targetPlayer: string, targetHome: string) {
         const home = leveldb.getHome()[targetPlayer][homeMap.map[targetPlayer][targetHome]];
 
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 this.chooseHome(pl, targetPlayer);

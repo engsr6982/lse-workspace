@@ -1,4 +1,4 @@
-import { SimpleForm_Back } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleFormWithBack } from "../../../LSE-Modules/src/form/SimpleForms.js";
 import { permCoreInstance } from "../include/permission.js";
 import { tellTitle } from "../utils/GlobalVars.js";
 import { leveldb } from "../utils/leveldb.js";
@@ -8,7 +8,7 @@ class WarpForm {
     constructor() {}
 
     index(player: Player) {
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 pl.runcmd(`${getRegCommand()}`);
@@ -45,7 +45,7 @@ class WarpForm {
 
     private selectWarp(player: Player, call: (warp: { name: string; data: Vec3 & dataDate }) => void) {
         const warps = leveldb.getWarp();
-        const fm = new SimpleForm_Back(
+        const fm = new SimpleFormWithBack(
             tellTitle,
             (pl) => {
                 this.index(pl);

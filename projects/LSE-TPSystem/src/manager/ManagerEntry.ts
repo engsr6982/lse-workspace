@@ -5,7 +5,7 @@ import { permFormInstance } from "../include/permission.js";
 import { homeMgr } from "./HomeManager.js";
 import { warpMgr } from "./WarpManager.js";
 import { prMgr } from "./PrManager.js";
-import { SimpleForms } from "../../../LSE-Modules/src/uform/SimpleForms.js";
+import { SimpleForms } from "../../../LSE-Modules/src/form/SimpleForms.js";
 
 export function ManagerEntry(player: Player) {
     const fm = new SimpleForms(tellTitle);
