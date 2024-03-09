@@ -1,6 +1,8 @@
-
 // 对iLand API的二次封装，方便调用
 class iLand_ {
+    iLAPI: {
+        [ket: string]: (...args: any) => any;
+    };
     constructor() {
         this.iLAPI = {
             /**通过坐标查询领地 */
@@ -21,7 +23,7 @@ class iLand_ {
         });
     }
 
-    hasAPI(key) {
+    hasAPI(key: string) {
         return this.iLAPI.hasOwnProperty(key) ? this.iLAPI[key] !== null : false;
     }
 
@@ -30,7 +32,7 @@ class iLand_ {
      * @param {String} key ILAPI
      * @returns {Function}
      */
-    getAPI(key) {
+    getAPI(key: string): (...args: any) => any {
         if (!this.hasAPI(key)) throw new Error(`iLand API [namespace: ${key}] not exported`);
         return this.iLAPI[key];
     }
@@ -41,7 +43,7 @@ class iLand_ {
      * @param {Boolean} cache （可选参数）不访问缓存
      * @returns {String | -1} 领地ID / -1
      */
-    posGetLand(pos, cache = false) {
+    posGetLand(pos: IntPos | FloatPos, cache = false): boolean {
         const func = this.getAPI("ILAPI_PosGetLand");
         return func(pos, cache);
     }
@@ -52,7 +54,7 @@ class iLand_ {
      * @param {String} perm 权限名
      * @returns {Boolean} 权限控制项状态
      */
-    checkPerm(id, perm) {
+    checkPerm(id: string, perm: string): boolean {
         const func = this.getAPI("ILAPI_CheckPerm");
         return func(id, perm);
     }
@@ -63,7 +65,7 @@ class iLand_ {
      * @param {String} xuid 玩家XUID
      * @returns {Boolean} 是否是领地主人
      */
-    isLandOwner(id, xuid) {
+    isLandOwner(id: string, xuid: string): boolean {
         const func = this.getAPI("ILAPI_IsLandOwner");
         return func(id, xuid);
     }
