@@ -16,11 +16,10 @@
     "noFallthroughCasesInSwitch": true, // switch case 必须有 break/return/throw
   },
   "exclude": [
-    "**/.*.ts", // 过滤以.开头的文件
+    "**/.*.ts",
     "**/.*.d.ts",
-    "**/dist/**/*", // 过滤编译文件夹
+    "**/dist/**/*",
     "**/docs/**/*",
-    "./#tools/**", // 过滤工具
-    "./projects/FakePlayer/**", // 过滤待重构plugin
+    "./#tools/**",
   ]
 }
