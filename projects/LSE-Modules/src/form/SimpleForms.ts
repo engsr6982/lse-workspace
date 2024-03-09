@@ -77,7 +77,7 @@ export class SimpleForms {
     }
 }
 
-export class SimpleForm_Back extends SimpleForms {
+export class SimpleFormWithBack extends SimpleForms {
     private img: string = "textures/ui/icon_import";
     private back: callback_;
     private position: "top" | "bottom";
