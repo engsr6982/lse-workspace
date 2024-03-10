@@ -1,6 +1,6 @@
 //listenAPI - 小鼠同学版权所有 2023.4.7
 
-// 根据调用反向推导出的数据类型，无法保证准确性
+// 根据调用反向推导出的数据类型
 
 interface TryreregItem {
     listenedPluginName: string;
@@ -14,7 +14,7 @@ let serverStarted: boolean = false;
 const tryrereg: Array<TryreregItem> = [];
 
 interface ListenerItem {
-    callback: (arg: any, ...args: Array<any>) => boolean;
+    callback: (...args: any[]) => boolean;
     namespace: string;
     name: string;
 }
@@ -68,12 +68,7 @@ export class Listener {
      * @param {string} eventname 要监听的事件名
      * @param {function} callback 回调函数，返回一个布尔可作为判断是否要拦截事件
      */
-    static on(
-        listenedPluginName: string,
-        pluginName: string,
-        eventname: string,
-        callback: (arg: string, ...args: Array<string>) => boolean,
-    ) {
+    static on(listenedPluginName: string, pluginName: string, eventname: string, callback: (...args: any[]) => boolean) {
         if (!serverStarted && !ll.listPlugins().includes(listenedPluginName)) {
             //logger.warn("监听器注册失败，被监听插件可能未加载完毕，服务器开启后将再次尝试注册")
             tryrereg.push({
@@ -92,13 +87,13 @@ export class Listener {
      * @param arg 回调函数传入的参数，因作者技术有限目前最多支持10个，后面所有变量均可作为可选，如有需要可修改源码此处参数
      * @returns  监听此事件的插件是否要拦截此事件（至少一个插件返回了false）
      */
-    exec(args: any, ...args2: Array<any>): boolean {
+    exec(...args: any[]): boolean {
         //开始执行监听
         let returned = true;
         let i;
         for (i in this.listenerList) {
             if (this.listenerList[i].callback != undefined && ll.hasExported(this.listenerList[i].namespace, this.listenerList[i].name)) {
-                if (this.listenerList[i].callback(args, args2) == false) {
+                if (this.listenerList[i].callback(...args) == false) {
                     returned = false;
                 }
             }
