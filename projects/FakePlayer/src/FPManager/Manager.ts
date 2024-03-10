@@ -1,4 +1,4 @@
-import dummyExample from "./example.js";
+import dummyExample from "./dummyExample.js";
 import { deleteDataByBindPlayerAndName, getAllData, insertFP } from "../DB/SQL/SQL.js";
 import { instanceCache } from "./instanceCache.js";
 import { kvdb } from "../DB/LevelDB/kvdb.js";
