@@ -1,22 +1,18 @@
-import dummyExample from "./dummyExample.js";
-import { deleteDataByBindPlayerAndName, getAllData, insertFP } from "../DB/SQL/SQL.js";
+import { dummyExample } from "./example.js";
+import { deleteDataByBindPlayerAndName, getAllData, insertFP } from "../DB/SQL.js";
 import { instanceCache } from "./instanceCache.js";
-import { kvdb } from "../DB/LevelDB/kvdb.js";
-import { Time_Mod } from "../modules/Time.js";
-import { Config } from "../utils/cache.js";
+import { kvdb } from "../DB/LevelDB.js";
+import { time as Time_Mod } from "../../../LSE-Modules/src/Time.js";
+import { Config } from "../utils/config.js";
 
 export class FPManager {
-    //==========================//
-    //          私有方法        //
-    //==========================//
-
     /**
      * 名称是否合法 (允许1-16字节，允许中文字母数字下划线)
      * @param {String} name
      * @returns 是否合法
      */
-    static _isTheNameLegal(name) {
-        // 请勿修改，修改后导致的一系列问题请自行解决
+    static _isTheNameLegal(name: string) {
+        //! 请勿修改，修改后导致的一系列问题请自行解决
         return RegExp(/^[a-zA-Z0-9_\u4e00-\u9fa5]{1,16}$/).test(name);
     }
 
@@ -28,7 +24,7 @@ export class FPManager {
      * 初始化所有数据到全局缓存
      * @returns bool 是否初始化成功
      */
-    static init() {
+    static initCache() {
         try {
             const data = getAllData();
             if (data) {
@@ -271,7 +267,7 @@ Config.MaxOnline.Enable
     ? setInterval(async () => {
           Config.MaxOnline.Enable
               ? FPManager.getOnlineDummies().forEach(async (i) => {
-                    if (Time_Mod.CheckTime(i.onlineTime)) {
+                    if (Time_Mod.checkEndTime(i.onlineTime)) {
                         i.offOnline()
                             ? logger.info(`假人[${i.Name}]已到达最大在线时长，已下线`)
                             : logger.warn(`假人[${i.Name}]已到达最大在线时长，下线失败!`);

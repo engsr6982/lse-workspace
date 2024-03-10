@@ -1,8 +1,8 @@
 import { RegCommand } from "./command/RegCommand.js";
-import { CheckConfigFile } from "./include/jsonchecker.js";
-import { RegEvent } from "./other/event.js";
-import { update } from "./DB/SQL/JSON_TO_SQL.js";
-import { ConfigOperation, pluginInformation } from "./utils/cache.js";
+import { CheckConfigFile } from "./include/JsonChecker.js";
+import { RegEvent } from "./Event/McEvent.js";
+import { ConfigOperation } from "./utils/config.js";
+import { pluginInformation } from "./utils/GlobalVars.js";
 
 function init() {
     // 注册插件
@@ -16,8 +16,6 @@ function init() {
     mc.listen("onServerStarted", () => {
         // 注册命令
         RegCommand();
-        // json更新sql
-        update();
         // 检查配置文件
         CheckConfigFile();
     });

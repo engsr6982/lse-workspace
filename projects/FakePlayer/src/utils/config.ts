@@ -1,15 +1,4 @@
-/**插件信息 */
-export const pluginInformation = {
-    name: "FakePlayer",
-    introduce: "模拟玩家/假人",
-    version: [4, 4, 0, Version.Release] as readonly [number, number, number, Version],
-    author: "PPOUI",
-};
-
-/**消息前缀 */
-export const Gm_Tell = file.exists(`.\\plugins\\${pluginInformation.author}\\debug`)
-    ? `§e§l[§d${pluginInformation.name}§e]§r§b `
-    : `§e§l[§d${pluginInformation.name} Debug§e]§r§b `;
+import { pluginInformation } from "./GlobalVars.js";
 
 /**待释放配置文件 */
 export const __inits = {

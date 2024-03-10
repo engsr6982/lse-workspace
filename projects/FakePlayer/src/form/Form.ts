@@ -1,6 +1,6 @@
 import { FPManager } from "../FPManager/Manager.js";
 import { instanceCache } from "../FPManager/instanceCache.js";
-import { Gm_Tell, pluginInformation } from "../utils/cache.js";
+import { Gm_Tell, pluginInformation } from "../utils/GlobalVars.js";
 import { _Perm_Object, perm } from "../Perm/index.js";
 
 // 无权限

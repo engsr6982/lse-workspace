@@ -1,4 +1,4 @@
-import { _filePath } from "../../utils/cache.js";
+import { _filePath } from "../utils/config.js";
 
 const KVDB_Path = _filePath + "data\\KVDB_Bag";
 

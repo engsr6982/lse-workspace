@@ -1,16 +1,17 @@
-import { _filePath } from "../../utils/cache.js";
-import { posToObject } from "../../utils/conversion.js";
+import { _filePath } from "../utils/config.js";
+import { pos2Object } from "../utils/utils.js";
 
-// 创建文件夹
 !file.exists(_filePath + "data") ? file.mkdir(_filePath + "data") : null;
 
-// eslint-disable-next-line no-undef
-export const session = new DBSession("sqlite3", {
+export const sql = new DBSession("sqlite3", {
     path: `${_filePath}data\\data.sqlite`,
+    create: true,
+    readonly: false,
+    readwrite: true,
 });
 
 // 创建表
-session.exec(`
+sql.exec(`
     CREATE TABLE IF NOT EXISTS "tab" (
         BindPlayer TEXT NOT NULL,
         Name TEXT NOT NULL,
@@ -31,7 +32,7 @@ session.exec(`
 export function insertFP(fp) {
     try {
         // 准备SQL语句
-        const stmt = session.prepare(`
+        const stmt = sql.prepare(`
         INSERT OR REPLACE INTO "tab" (
             BindPlayer, 
             Name, 
@@ -68,7 +69,7 @@ export function insertFP(fp) {
             isInvincible: fp.isInvincible,
             isAutoResurrection: fp.isAutoResurrection,
             isAutoOnline: fp.isAutoOnline,
-            OnlinePos: JSON.stringify(posToObject(fp.OnlinePos)), // 假设OnlinePos是一个对象，我们将其转换为字符串存储
+            OnlinePos: JSON.stringify(pos2Object(fp.OnlinePos)), // 假设OnlinePos是一个对象，我们将其转换为字符串存储
             Bag: /* JSON.stringify(fp.Bag) */ fp.Bag,
         });
 
@@ -82,7 +83,7 @@ export function insertFP(fp) {
 }
 
 export function findDataByBindPlayerAndName(bindPlayer, name) {
-    const stmt = session.prepare(`
+    const stmt = sql.prepare(`
         SELECT * FROM "tab" WHERE BindPlayer = $BindPlayer AND Name = $Name
     `);
     stmt.bind({
@@ -100,7 +101,7 @@ export function findDataByBindPlayerAndName(bindPlayer, name) {
 // colorLog("green", findDataByBindPlayerAndName("PPOUI6982", "aa"));
 
 export function findDataByName(name) {
-    const stmt = session.prepare(`
+    const stmt = sql.prepare(`
         SELECT * FROM "tab" WHERE Name = $Name
     `);
     stmt.bind({
@@ -131,7 +132,7 @@ function parseFP(data = []) {
 }
 
 export function findAllDataByBindPlayer(bindPlayer) {
-    const stmt = session.prepare(`
+    const stmt = sql.prepare(`
         SELECT * FROM "tab" WHERE BindPlayer = $BindPlayer
     `);
     stmt.bind({
@@ -153,7 +154,7 @@ export function findAllDataByBindPlayer(bindPlayer) {
  * @returns
  */
 export function findAllDataWithAutoOnlineTrue() {
-    const stmt = session.prepare(`
+    const stmt = sql.prepare(`
         SELECT * FROM "tab" WHERE isAutoOnline = 1
     `);
     const result = stmt.fetchAll();
@@ -168,7 +169,7 @@ export function findAllDataWithAutoOnlineTrue() {
 // colorLog("green", findAllDataWithAutoOnlineTrue());
 
 export function deleteDataByBindPlayerAndName(bindPlayer, name) {
-    const stmt = session.prepare(`
+    const stmt = sql.prepare(`
         DELETE FROM "tab" WHERE BindPlayer = $BindPlayer AND Name = $Name
     `);
     stmt.bind({
@@ -183,7 +184,7 @@ export function deleteDataByBindPlayerAndName(bindPlayer, name) {
 // colorLog("green", success);
 
 export function getAllData() {
-    const stmt = session.prepare(`
+    const stmt = sql.prepare(`
         SELECT * FROM "tab"
     `);
     const result = stmt.fetchAll();

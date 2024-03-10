@@ -1,8 +1,7 @@
-
 import { FPManager } from "../FPManager/Manager.js";
-import { form, noPermissions } from "../other/Form.js";
+import { form, noPermissions } from "../form/Form.js";
 import { _Perm_Object, perm_Form } from "../Perm/index.js";
-import { generateCSVLog } from "../other/csv.js";
+import { generateCSVLog } from "../include/CsvLogger.js";
 import { perm } from "../Perm/index.js";
 
 /**

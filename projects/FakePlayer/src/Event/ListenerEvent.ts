@@ -1,5 +1,5 @@
 import { Listener } from "../modules/listenAPI.js";
-import { pluginInformation } from "./cache.js";
+import { pluginInformation } from "../utils/GlobalVars.js";
 
 Listener.init(pluginInformation.name);
 

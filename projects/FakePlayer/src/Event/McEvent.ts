@@ -1,13 +1,13 @@
 import { FPManager } from "../FPManager/Manager.js";
 import { instanceCache } from "../FPManager/instanceCache.js";
-import { Config } from "../utils/cache.js";
+import { Config } from "../utils/config.js";
 
 export function RegEvent() {
     try {
         // 自动上线
         if (Config.AutomaticOnline) {
             mc.listen("onServerStarted", async () => {
-                FPManager.init() ? FPManager.onlineAll(true) : logger.error(`初始化全局实例缓存失败`);
+                FPManager.initCache() ? FPManager.onlineAll(true) : logger.error(`初始化全局实例缓存失败`);
                 // logger.debug(JSON.stringify(cache.get("q"), null, 2));
             });
         }

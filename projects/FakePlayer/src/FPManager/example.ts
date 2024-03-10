@@ -1,5 +1,5 @@
-import { onDummyLookPos, onDummyOffline, onDummyOnline, onDummySimulationOperation, onDummyTryRespawn } from "../utils/ListenerEvent.js";
-import { stringifyExample } from "../utils/conversion.js";
+import { onDummyLookPos, onDummyOffline, onDummyOnline, onDummySimulationOperation, onDummyTryRespawn } from "../Event/ListenerEvent.js";
+import { stringifyExample } from "../utils/utils.js";
 
 interface initDataType {
     isAutoRespawn: boolean; // 自动重生
