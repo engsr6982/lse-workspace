@@ -29,7 +29,7 @@ sql.exec(`
  * @param {T_FP_INFO} fp
  * @returns
  */
-export function insertFP(fp) {
+export function insertFP(fp: initDataType) {
     try {
         // 准备SQL语句
         const stmt = sql.prepare(`
@@ -52,7 +52,7 @@ export function insertFP(fp) {
         )
         `);
 
-        const toNumber = (bool) => {
+        const toNumber = (bool: boolean) => {
             return bool ? 1 : 0;
         };
         fp.isInvincible = toNumber(fp.isInvincible);
@@ -82,7 +82,7 @@ export function insertFP(fp) {
     }
 }
 
-export function findDataByBindPlayerAndName(bindPlayer, name) {
+export function findDataByBindPlayerAndName(bindPlayer: string, name: string) {
     const stmt = sql.prepare(`
         SELECT * FROM "tab" WHERE BindPlayer = $BindPlayer AND Name = $Name
     `);
@@ -100,7 +100,7 @@ export function findDataByBindPlayerAndName(bindPlayer, name) {
 
 // colorLog("green", findDataByBindPlayerAndName("PPOUI6982", "aa"));
 
-export function findDataByName(name) {
+export function findDataByName(name: string) {
     const stmt = sql.prepare(`
         SELECT * FROM "tab" WHERE Name = $Name
     `);
@@ -117,7 +117,7 @@ export function findDataByName(name) {
 
 // colorLog("green", findDataByName("bb"));
 
-function parseFP(data = []) {
+function parseFP(data: any[] = []) {
     return data.map((row) => {
         return {
             Name: row[1],
@@ -131,7 +131,7 @@ function parseFP(data = []) {
     });
 }
 
-export function findAllDataByBindPlayer(bindPlayer) {
+export function findAllDataByBindPlayer(bindPlayer: string) {
     const stmt = sql.prepare(`
         SELECT * FROM "tab" WHERE BindPlayer = $BindPlayer
     `);
@@ -168,7 +168,7 @@ export function findAllDataWithAutoOnlineTrue() {
 
 // colorLog("green", findAllDataWithAutoOnlineTrue());
 
-export function deleteDataByBindPlayerAndName(bindPlayer, name) {
+export function deleteDataByBindPlayerAndName(bindPlayer: string, name: string) {
     const stmt = sql.prepare(`
         DELETE FROM "tab" WHERE BindPlayer = $BindPlayer AND Name = $Name
     `);
