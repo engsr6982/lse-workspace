@@ -1,4 +1,7 @@
+import { time } from "../../../LSE-Modules/src/Time.js";
+import { levelDB } from "../DB/LevelDB.js";
 import { onDummyLookPos, onDummyOffline, onDummyOnline, onDummySimulationOperation, onDummyTryRespawn } from "../Event/ListenerEvent.js";
+import { Config } from "../utils/config.js";
 import { stringifyExample } from "../utils/utils.js";
 
 const _LoopTypeList = ["attack", "destroy", "item"] as const;
@@ -21,6 +24,7 @@ export class dummyExample {
     isInvincible: boolean; //是否无敌
     isAutoRespawn: boolean; // 自动重生
     isAutoOnline: boolean; //自动上线
+    offlineTime: string; // 下线时间
 
     isOnline: boolean; // 当前是否在线
     bagGUIDKey: string; // 背包ID（数据库Key）
@@ -58,18 +62,19 @@ export class dummyExample {
         if (onDummyOnline.exec(stringifyExample(this))) {
             const p = mc.spawnSimulatedPlayer(this.name, this.onlinePos);
             this.uuid = p.uuid;
-            return true;
+            this.writeBag();
+            this.offlineTime = Config.MaxOnline.Enable ? time.getEndTimeStr(Config.MaxOnline.Time) : undefined; // 设置最大在线时长
         }
-        return false;
+        return this.checkOnline();
     }
 
     offline() {
         if (!this.checkOnline()) return false;
-        const p = this.get();
         if (onDummyOffline.exec(stringifyExample(this))) {
-            return p.simulateDisconnect();
+            this.setBagToLevelDB();
+            this.get().simulateDisconnect();
         }
-        return false;
+        return this.checkOnline();
     }
 
     tryRespawn() {
@@ -88,6 +93,52 @@ export class dummyExample {
         return s;
     }
 
+    // playerBag
+
+    getBagFromLevelDB(): string {
+        return levelDB.get(this.bagGUIDKey) || null;
+    }
+
+    setBagToLevelDB() {
+        if (!this.checkOnline()) return false;
+        const snbt = this.get().getNbt().toSNBT();
+        if (snbt) {
+            return levelDB.set(this.bagGUIDKey, snbt);
+        }
+        return false;
+    }
+
+    writeBag() {
+        if (!this.checkOnline()) return false;
+        const snbtString = this.getBagFromLevelDB();
+        if (!snbtString) return false;
+        const snbt = NBT.parseSNBT(snbtString);
+        if (!snbt) return false;
+
+        const nbtObject: {
+            [key: string]: NbtType;
+        } = {
+            Mainhand: snbt.getTag("Mainhand"),
+            Offhand: snbt.getTag("Offhand"),
+            Armor: snbt.getTag("Armor"),
+            Inventory: snbt.getTag("Inventory"),
+        };
+
+        const pl = this.get();
+        const playerNBT = pl.getNbt(); // 备份NBT用于修改数据
+
+        Object.keys(nbtObject).forEach((key) => {
+            if (nbtObject[key]) {
+                playerNBT.setTag(key.toString(), nbtObject[key]) ? logger.info(`恢复假人背包: ${key}`) : logger.error(`set ${key} error`);
+            }
+        });
+        pl.setNbt(playerNBT); // 写入NBT
+        pl.refreshItems();
+        return true;
+    }
+
+    // simulatedOperation
+
     setDummyLookAt(target: IntPos | FloatPos | Block | Entity) {
         if (!this.checkOnline()) return false;
         if (onDummyLookPos.exec(stringifyExample(this))) {
@@ -99,7 +150,7 @@ export class dummyExample {
     loopSlot: number; // 循环操作（使用物品槽位）
     loopType: LoopTypes; // 操作类型
     loopCycleTime: number = 1000; // 循环周期
-    loopID: number; // setTimeout的ID
+    private loopID: number; // setTimeout的ID
 
     loopStart() {
         try {
