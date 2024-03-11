@@ -1,7 +1,7 @@
 import { dummyExample } from "./example.js";
-import { deleteDataByBindPlayerAndName, getAllData, insertFP } from "../DB/SQL.js";
+import { sql } from "../DB/SQL.js";
 import { instanceCache } from "./instanceCache.js";
-import { kvdb } from "../DB/LevelDB.js";
+import { levelDB } from "../DB/LevelDB.js";
 import { time as Time_Mod } from "../../../LSE-Modules/src/Time.js";
 import { Config } from "../utils/config.js";
 
@@ -20,116 +20,75 @@ export class FPManager {
     //          实例操作        //
     //==========================//
 
-    /**
-     * 初始化所有数据到全局缓存
-     * @returns bool 是否初始化成功
-     */
     static initCache() {
         try {
-            const data = getAllData();
+            const data = sql.getAllData();
             if (data) {
                 data.forEach((fp) => {
-                    if (instanceCache.has(fp.Name)) return;
-                    if (!this._isTheNameLegal(fp.Name)) return;
-                    const inst = instanceCache.set(fp.Name, new dummyExample(fp.Name));
+                    if (instanceCache.has(fp.name)) return;
+                    if (!this._isTheNameLegal(fp.name)) return;
+                    const inst = new dummyExample(fp.name);
                     inst.initData(fp);
-                    inst.checkOnline(); // 更新在线状态
+                    inst.checkOnline();
+                    instanceCache.set(fp.name, inst);
                 });
             }
             return true;
         } catch (e) {
-            logger.error(`${e}\n${e.stack}`);
+            logger.error(`Fail in Function: initCache\n${e}\n${e.stack}`);
             return false;
         }
     }
 
-    /**
-     * 创建模拟实例
-     * @param {Object} fp 模拟玩家配置json对象
-     * @returns Boolean
-     */
-    static createSimulateionPlayer(fp) {
-        if (!this._isTheNameLegal(fp.Name)) return false;
-        if (instanceCache.has(fp.Name)) return false;
-        instanceCache.set(fp.Name, new dummyExample(fp.Name)).initData(fp);
-        insertFP(fp); // 写入sql
+    static createDummyExample(fp: SQL_insertRow) {
+        if (!this._isTheNameLegal(fp.name)) return false;
+        if (instanceCache.has(fp.name)) return false;
+        const dummy = new dummyExample(fp.name);
+        dummy.initData(fp);
+        sql.insertRow(fp);
+        instanceCache.set(fp.name, dummy);
         return true;
     }
 
-    /**
-     * 销毁模拟实例
-     * @param {String} name
-     */
-    static DestroyInstance(name) {
+    static destroyInstance(name: string) {
         if (!instanceCache.has(name)) return false;
-        const instance = instanceCache.get(name); // 获取实例
-        instance.stopLoop(); // 停止循环操作
-        instance.offOnline(); // 下线
-        const { BindPlayer, Name, Bag } = instance; // 备份fp对象
-        instanceCache.delete(Name); // 从缓存中清除
-        return kvdb.delete(Bag) && deleteDataByBindPlayerAndName(BindPlayer, name); // 从sql删除数据
+        const inst = instanceCache.get(name);
+        inst.loopStop();
+        inst.offline();
+        const { bindPlayer, bagGUIDKey } = inst;
+        instanceCache.delete(name); // 从缓存中清除
+        return levelDB.delete(bagGUIDKey) && sql.deleteDataByBindPlayerAndName(bindPlayer, name); // 从sql删除数据
     }
 
     //==========================//
     //           上下线         //
     //==========================//
 
-    /**
-     * 上线指定假人
-     * @param {string} name
-     * @returns bool 是否上线成功
-     */
-    static online(name) {
+    static online(name: string) {
         if (!instanceCache.has(name)) return false;
         return instanceCache.get(name).online();
     }
 
-    /**
-     * 下线指定假人
-     * @param {string} name
-     * @returns bool 是否下线成功
-     */
-    static offOnline(name) {
+    static offline(name: string) {
         if (!instanceCache.has(name)) return false;
         const i = instanceCache.get(name);
-        insertFP(i);
-        return i.offOnline();
+        sql.insertRow(i);
+        return i.offline();
     }
 
-    /**
-     * 上线所有模拟玩家
-     * @param {boolean} check 是否检查自动上线属性(isAutoOnline)
-     * @returns boolean 是否上线成功
-     */
-    static onlineAll(check = false) {
-        for (let exam in instanceCache.example) {
-            const inst = instanceCache.example[exam];
-            switch (check) {
-                case true:
-                    if (inst.isAutoOnline) {
-                        if (inst.checkOnline()) return false; // 已在线
-                        inst.online();
-                    }
-                    break;
-                case false:
-                    if (inst.checkOnline()) return false; // 已在线
-                    inst.online();
-                    break;
-            }
-        }
+    static onlineAll(check_isAutoOnline = false) {
+        instanceCache.forEach((inst) => {
+            if (inst.checkOnline()) return false; // 已在线
+            check_isAutoOnline ? (inst.isAutoOnline ? inst.online() : undefined) : inst.online;
+        });
         return true;
     }
 
-    /**
-     * 下线所有模拟玩家
-     * @returns boolean 是否下线成功
-     */
-    static offOnlineAll() {
-        for (let exam in instanceCache.example) {
-            const inst = instanceCache.example[exam];
+    static offlineAll() {
+        instanceCache.forEach((inst) => {
             if (!inst.checkOnline()) return;
-            inst.offOnline();
-        }
+            inst.offline();
+        });
         return true;
     }
 
@@ -139,138 +98,69 @@ export class FPManager {
 
     /**
      * 设置模拟朝向
-     * @param {string} name
-     * @param {IntPos} pos
-     * @returns boolean
      */
-    static setLookPos(name, pos) {
+    static setDummyLookAt(name: string, targetPos: IntPos | FloatPos) {
         if (!instanceCache.has(name)) return false;
-        if ((!pos) instanceof IntPos) return false;
-        return instanceCache.get(name).setOrientation(pos);
+        return instanceCache.get(name).setDummyLookAt(targetPos);
     }
 
     /**
-     * 设置模拟操作类型并开始模拟操作
-     * @param {string} name 假人名称
-     * @param {string} oper 操作类别  attack / destroy / item
-     * @param {Number} time 间隔时间
-     * @param {Number} slot 槽位 (item可用)
-     * @returns Boolean
+     * 设置模拟操作信息并开始模拟操作
      */
-    static operation(name, oper, time, slot = undefined) {
+    static setOperationInfo(name: string, type: LoopTypes, time: number, slot: number = undefined) {
         if (!instanceCache.has(name)) return false;
         const inst = instanceCache.get(name);
-        const status = inst.setLoop(oper, slot);
-        inst.set_CycleTime(time);
-        if (status) {
-            return inst.startLoop();
-        } else {
-            return false;
-        }
+        inst.loopType = type;
+        inst.loopSlot = slot;
+        inst.loopCycleTime = time;
+        return inst.loopStart();
     }
 
-    /**
-     * 停止指定假人模拟操作
-     * @param {string} name
-     * @returns bool 是否停止成功
-     */
-    static offoperation(name) {
+    static stopOperation(name: string) {
         if (!instanceCache.has(name)) return false;
         const inst = instanceCache.get(name);
-        return inst.stopLoop();
+        return inst.loopStop();
     }
 
-    /**
-     * 停止所有模拟操作
-     * @returns bool 是否停止成功
-     */
-    static offoperationall() {
-        for (let exam in instanceCache.example) {
-            const inst = instanceCache.example[exam];
-            inst._OperationType = "";
-            inst.stopLoop();
-        }
+    static stopOperationAll() {
+        instanceCache.forEach((inst) => {
+            inst.loopStop();
+        });
         return true;
     }
 
-    /**
-     * 传送模拟玩家到坐标
-     * @param {String} name
-     * @param {IntPos} pos
-     * @returns boolean 是否传送成功
-     */
-    static tp(name, pos) {
-        if ((!pos) instanceof IntPos) return null;
+    static setProperty(name: string, key: Propertys, value: boolean) {
         if (!instanceCache.has(name)) return false;
-        // 避免传送到方块边缘，IntPos转FloatPos
-        const newPos = new FloatPos(pos.x + 0.5, pos.y, pos.z + 0.5, pos.dimid);
-        const fpinst = instanceCache.get(name);
-        const status = fpinst.delivery(newPos);
-        if (status) {
-            insertFP(fpinst);
-            return true;
-        } else return false;
-    }
-
-    static talkAs(name, msg) {
-        if (!instanceCache.get(name)) return false;
-        return instanceCache.get(name).sendTalkAs(msg);
-    }
-
-    static runCmd(name, cmd) {
-        if (!instanceCache.has(name)) return false;
-        return instanceCache.get(name).runCmd(cmd);
-    }
-
-    static setFunc(name, key, value) {
-        if (!instanceCache.has(name)) return false;
-        const fp_inst = instanceCache.get(name);
-        const fp = fp_inst; // 获取fp对象
-        fp[key] = value; // 更新对应数据
-        fp_inst.initData(fp); // 更新实例
-        return insertFP(fp_inst); // 更新sql
+        const fp = instanceCache.get(name);
+        fp[key] = value;
+        return sql.insertRow(fp);
     }
 
     //==========================//
-    //          信息获取        //
+    //          实例获取         //
     //==========================//
 
-    /**
-     * 获取所有假人信息
-     * @returns {FP_Array_Object}
-     */
-    static getAllInfo() {
-        return Object.keys(instanceCache.example).map((exam) => {
-            return instanceCache.example[exam];
-        });
+    static getAllDummyInst(): dummyExample[] {
+        return [...instanceCache.values()];
     }
 
-    /**
-     * 获取指定假人信息
-     * @param {string} name
-     * @returns {T_FP_INFO}
-     */
-    static getInfo(name) {
+    static getDummyInst(name: string): dummyExample {
         return instanceCache.has(name) ? instanceCache.get(name) : null;
     }
 
-    /**
-     * 获取在线假人列表
-     * @returns {import("./tab.js").FP_Array_Object} 在线假人列表[Object, Object, ...]
-     */
-    static getOnlineDummies() {
-        return this.getAllInfo().filter((dummy) => dummy._isOnline);
+    static getOnlineDummy() {
+        return this.getAllDummyInst().filter((dummy) => dummy.isOnline);
     }
 }
 
 Config.MaxOnline.Enable
     ? setInterval(async () => {
           Config.MaxOnline.Enable
-              ? FPManager.getOnlineDummies().forEach(async (i) => {
-                    if (Time_Mod.checkEndTime(i.onlineTime)) {
-                        i.offOnline()
-                            ? logger.info(`假人[${i.Name}]已到达最大在线时长，已下线`)
-                            : logger.warn(`假人[${i.Name}]已到达最大在线时长，下线失败!`);
+              ? FPManager.getOnlineDummy().forEach(async (i) => {
+                    if (Time_Mod.checkEndTime(i.offlineTime)) {
+                        i.offline()
+                            ? logger.info(`假人[${i.name}]已到达最大在线时长，已下线`)
+                            : logger.warn(`假人[${i.name}]已到达最大在线时长，下线失败!`);
                     }
                 })
               : null;

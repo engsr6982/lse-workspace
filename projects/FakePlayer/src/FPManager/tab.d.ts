@@ -10,3 +10,9 @@ interface initDataType {
 interface SQL_insertRow extends initDataType {
     name: string;
 }
+
+const _LoopTypeList = ["attack", "destroy", "item"] as const;
+type LoopTypes = (typeof _LoopTypeList)[number];
+
+const _SetPropertysList = ["isInvincible", "isAutoRespawn", "isAutoOnline"] as const;
+type Propertys = (typeof _SetPropertysList)[number];

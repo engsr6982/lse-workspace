@@ -3,10 +3,6 @@ import { levelDB } from "../DB/LevelDB.js";
 import { onDummyLookPos, onDummyOffline, onDummyOnline, onDummySimulationOperation, onDummyTryRespawn } from "../Event/ListenerEvent.js";
 import { Config } from "../utils/config.js";
 import { stringifyExample } from "../utils/utils.js";
-
-const _LoopTypeList = ["attack", "destroy", "item"] as const;
-type LoopTypes = (typeof _LoopTypeList)[number];
-
 export class dummyExample {
     constructor(name: string) {
         if (mc.getPlayer(name)) {
@@ -30,10 +26,6 @@ export class dummyExample {
     bagGUIDKey: string; // 背包ID（数据库Key）
 
     /// func
-
-    getData() {
-        return JSON.stringify(this);
-    }
 
     initData(data: initDataType) {
         const { isAutoOnline, isAutoRespawn, isInvincible, bagGUIDKey, bindPlayer, onlinePos } = data;
