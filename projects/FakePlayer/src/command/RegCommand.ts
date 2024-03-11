@@ -1,4 +1,3 @@
-
 import { CallBack } from "./Callback.js";
 
 export function RegCommand() {
@@ -93,7 +92,7 @@ export function RegCommand() {
     //fp setfunc <name> <key> <value>
     cmd.setEnum("setfunc", ["setfunc"]);
     cmd.mandatory("action", ParamType.Enum, "setfunc");
-    cmd.setEnum("func", ["isinvincible", "isautoonline", "isautoresurrection"]);
+    cmd.setEnum("func", ["isinvincible", "isautoonline", "isautorespawn"]);
     cmd.mandatory("func_key", ParamType.Enum, "func", "func", 1);
     cmd.mandatory("func_value", ParamType.Bool);
     cmd.overload(["setfunc", "name", "func", "func_value"]);

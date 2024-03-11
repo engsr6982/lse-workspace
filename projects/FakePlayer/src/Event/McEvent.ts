@@ -8,7 +8,6 @@ export function RegEvent() {
         if (Config.AutomaticOnline) {
             mc.listen("onServerStarted", async () => {
                 FPManager.initCache() ? FPManager.onlineAll(true) : logger.error(`初始化全局实例缓存失败`);
-                // logger.debug(JSON.stringify(cache.get("q"), null, 2));
             });
         }
 
@@ -16,13 +15,9 @@ export function RegEvent() {
         if (Config.AutomaticResurrection) {
             mc.listen("onPlayerDie", (pl) => {
                 if (pl.isSimulatedPlayer()) {
-                    const info = FPManager.getInfo(pl.realName);
-                    if (info.isAutoResurrection) {
-                        const name = pl.realName;
-                        FPManager.offOnline(pl.realName);
-                        setTimeout(() => {
-                            FPManager.online(name);
-                        }, 500);
+                    const inst = FPManager.getDummyInst(pl.realName);
+                    if (inst.isAutoRespawn) {
+                        inst.get().simulateRespawn();
                     }
                 }
             });
@@ -33,7 +28,7 @@ export function RegEvent() {
             mc.listen("onMobHurt", function (mob) {
                 if (mob.isPlayer()) {
                     const p = mc.getPlayer(mob.uniqueId);
-                    const info = FPManager.getInfo(p.realName);
+                    const info = FPManager.getDummyInst(p.realName);
                     if (info != null && info.isInvincible) return false;
                 }
             });
@@ -43,7 +38,9 @@ export function RegEvent() {
         mc.listen("onInventoryChange", async (player) => {
             if (player.isSimulatedPlayer()) {
                 player.refreshItems();
-                instanceCache.get(player.realName).updateBagToKVDB() ? logger.debug(`updated`) : logger.debug(`update err`);
+                instanceCache.get(player.realName).setBagToLevelDB()
+                    ? logger.debug(`setBagToLevelDB success`)
+                    : logger.error(`Fail in Function: setBagToLevelDB`);
                 player.refreshItems();
             }
         });

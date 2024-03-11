@@ -218,7 +218,7 @@ class GUIForm {
      */
     dummyUpAndDownLine(player) {
         const fm = this.customform();
-        const fp = FPManager.getAllInfo().filter((p) => p.BindPlayer === player.realName);
+        const fp = FPManager.getAllDummyInst().filter((p) => p.BindPlayer === player.realName);
         fp.forEach((i) => {
             fm.addSwitch(`假人: ${i.Name}\n状态: ${i._isOnline ? "在线" : "离线"}`, i._isOnline || false);
         });
@@ -240,8 +240,8 @@ class GUIForm {
     selectDummy(player, back, callback, online = true) {
         const fm = this.simpleForm();
         const fp = online
-            ? FPManager.getOnlineDummies().filter((p) => p.BindPlayer == player.realName)
-            : FPManager.getAllInfo().filter((p) => p.BindPlayer == player.realName);
+            ? FPManager.getOnlineDummy().filter((p) => p.BindPlayer == player.realName)
+            : FPManager.getAllDummyInst().filter((p) => p.BindPlayer == player.realName);
         fm.addButton("返回上一页", "textures/ui/icon_import");
         fp.forEach((i) => {
             online ? fm.addButton(`假人: ${i.Name}`) : fm.addButton(`假人: ${i.Name}\n状态: ${i._isOnline ? "在线" : "离线"}`);
@@ -425,7 +425,7 @@ class GUIForm {
      */
     closeSimulationOperation(player) {
         const fm = this.simpleForm();
-        const fp = FPManager.getOnlineDummies().filter((p) => p.BindPlayer == player.realName && p.TimeID != null);
+        const fp = FPManager.getOnlineDummy().filter((p) => p.BindPlayer == player.realName && p.TimeID != null);
         fp.forEach((p) => {
             fm.addButton(
                 `假人: ${p.Name}\n操作类型: ${
