@@ -6,3 +6,7 @@ interface initDataType {
     bindPlayer: string; //绑定玩家
     bagGUIDKey: string;
 }
+
+interface SQL_insertRow extends initDataType {
+    name: string;
+}
