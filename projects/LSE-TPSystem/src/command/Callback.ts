@@ -5,7 +5,7 @@ import { homeForm_Instance } from "../home/HomeForm.js";
 import { permCoreInstance } from "../include/permission.js";
 import { TPAEntrance } from "../tpa/form/TPAEntrance.js";
 import { cmdTpaCall_accept_or_deny, cmdTpaCall_to_or_here } from "../tpa/form/cmdTpaCall.js";
-import { TPRForm } from "../tpr/TPRForm.js";
+import { tprForm } from "../tpr/TprForm.js";
 import { config, dataFile, formJSON } from "../utils/data.js";
 import { tellTitle } from "../utils/GlobalVars.js";
 import { leveldb } from "../utils/leveldb.js";
@@ -169,7 +169,7 @@ export function commandCallback(_: Command, ori: CommandOrigin, out: CommandOutp
             ori.player ? deathForm_Instance.sendGoDeath(ori.player) : sendPlayersUseTip(out);
             break;
         case "tpr":
-            ori.player ? TPRForm(ori.player) : sendPlayersUseTip(out);
+            ori.player ? tprForm(ori.player) : sendPlayersUseTip(out);
             break;
         // case "menu":
         //     ori.player ? menu(ori.player, formJSON) : sendPlayersUse(out);

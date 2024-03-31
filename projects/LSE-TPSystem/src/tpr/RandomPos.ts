@@ -8,8 +8,9 @@ const ZoneCheck_API: {
 /**
  * 生成随机坐标
  */
-export function RandomCoordinates() {
+export function tprRandomPos() {
     const { randomRange, restrictedArea } = config.Tpr; // 获取配置项Config
+
     const _random = () => {
         const { max, min } = randomRange;
         const num = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -22,6 +23,7 @@ export function RandomCoordinates() {
             ZoneCheck_API["Circle"] = ll.imports("ZoneCheckV3", "RandomAreaPosition::getRandomCoordinateInCircle");
             ZoneCheck_API["Square"] = ll.imports("ZoneCheckV3", "RandomAreaPosition::getRandomCoordinateInSquare");
         }
+
         switch (restrictedArea.Type) {
             case "Circle":
                 return ZoneCheck_API["Circle"](restrictedArea.Pos.x, restrictedArea.Pos.z, restrictedArea.Pos.radius);

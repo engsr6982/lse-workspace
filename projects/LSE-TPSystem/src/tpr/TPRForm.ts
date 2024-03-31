@@ -2,10 +2,10 @@ import { config } from "../utils/data.js";
 import { pluginInformation } from "../utils/GlobalVars.js";
 import { sendCloseFormTip, sendMessage } from "../utils/util.js";
 import { money_Instance } from "../include/money.js";
-import { TPR_Core } from "./TPR_Core.js";
+import { prepareTpr } from "./PrePareTpr.js";
 
 /**随机传送-表单 */
-export function TPRForm(player: Player) {
+export function tprForm(player: Player) {
     // 检查功能状态
     if (!config.Tpr.Enable) return sendMessage(player, "管理员关闭了此功能！");
     // 发送表单确认一下
@@ -18,7 +18,7 @@ export function TPRForm(player: Player) {
             switch (res) {
                 // 调用传送函数
                 case true:
-                    TPR_Core(pl);
+                    prepareTpr(pl);
                     break;
                 // 返回上一页
                 case false:
