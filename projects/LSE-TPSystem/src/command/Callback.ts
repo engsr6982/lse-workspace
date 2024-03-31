@@ -5,7 +5,6 @@ import { homeForm_Instance } from "../home/HomeForm.js";
 import { permCoreInstance } from "../include/permission.js";
 import { TPAEntrance } from "../tpa/form/TPAEntrance.js";
 import { cmdTpaCall_accept_or_deny, cmdTpaCall_to_or_here } from "../tpa/form/cmdTpaCall.js";
-import { tprForm } from "../tpr/TprForm.js";
 import { config, dataFile, formJSON } from "../utils/data.js";
 import { tellTitle } from "../utils/GlobalVars.js";
 import { leveldb } from "../utils/leveldb.js";
@@ -15,6 +14,7 @@ import { warpForm_Instance } from "../warp/WarpForm.js";
 import { prForm_Instance } from "../pr/PrForm.js";
 import { ManagerEntry } from "../manager/ManagerEntry.js";
 import { ruleForm_Instance } from "../rule/RuleForm.js";
+import { tprForm } from "../tpr/TPRForm.js";
 
 const sendPlayersUseTip = (out: CommandOutput) => {
     return out.error(tellTitle + "此功能仅限玩家使用!");
