@@ -49,30 +49,29 @@ interface Config_Structure {
     };
     Tpr: {
         Enable: boolean;
-        UseZoneCheckV3API: boolean;
+        Money: number; // 消耗经济
+        UseZoneCheckV3API: boolean; // 是否使用ZoneCheckV3API
         randomRange: {
-            // 随机范围
-            min: number; // 最小值
-            max: number; // 最大值
+            min: number; // 随机范围最小值
+            max: number; // 随机范围最大值
         };
         Dimension: {
-            // 维度配置
             Overworld: boolean; // 主世界
             TheNether: boolean; // 地狱
             TheEnd: boolean; // 末地
         };
         restrictedArea: {
             // 区域限制配置 依赖ZoneCheck API
-            Enable: true;
+            Enable: boolean;
             Type: "Circle" | "Square"; // 圆Circle 方Square
             Pos: {
                 // 中心坐标
                 x: 0; // 中心X
                 z: 0; // 中心 Z
                 radius: 10; // 半径
+                usePlayerPosCenter: boolean; // 是否使用玩家坐标作为中心点
             };
         };
-        Money: number; // 消耗经济
     };
     Pr: {
         Enable: boolean;

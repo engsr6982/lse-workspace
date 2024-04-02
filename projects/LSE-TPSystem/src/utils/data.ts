@@ -54,12 +54,13 @@ export const __config__: Config_Structure = {
             TheEnd: true,
         },
         restrictedArea: {
-            Enable: true,
+            Enable: false,
             Type: "Circle",
             Pos: {
                 x: 0,
                 z: 0,
                 radius: 10,
+                usePlayerPosCenter: false,
             },
         },
         Money: 0,
