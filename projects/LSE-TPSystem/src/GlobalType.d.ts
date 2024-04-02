@@ -50,7 +50,7 @@ interface Config_Structure {
     Tpr: {
         Enable: boolean;
         Money: number; // 消耗经济
-        UseZoneCheckV3API: boolean; // 是否使用ZoneCheckV3API
+        UseZoneCheckV3API: boolean; // 是否使用ZoneCheckV3API否则使用旧API
         randomRange: {
             min: number; // 随机范围最小值
             max: number; // 随机范围最大值

@@ -24,7 +24,7 @@ export function prepareTpr(player: Player) {
 
     sendMessage(player, "正在准备传送所需的数据，请稍候...");
 
-    const random = tprRandomPos();
+    const random = tprRandomPos(player);
     const targetPos = new IntPos(random.x, 500, random.z, player.pos.dimid);
 
     const forPosInfo = {
