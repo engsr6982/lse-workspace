@@ -1,5 +1,5 @@
-import { tprTeleportTargetPos } from "./TeleportTargetPos.js";
-import { tprFail } from "./TprFail.js";
+import { tprNotSecurityPos, tprSuccess } from "./ProcessingResults.js";
+import { tprFail } from "./ProcessingResults.js";
 
 let ZoneCheck_FindPos: (
     pos: Arg1,
@@ -27,10 +27,12 @@ export function tprZoneCheckCore(player: Player, forPosInfo: Arg2, targetPos: In
 
         // 检查ZoneChekcV3的findPos方法是否返回了预期的值
         if (status === 1) {
-            tprTeleportTargetPos(player, new IntPos(x, y, z, dimid));
+            tprSuccess(player, new IntPos(x, y, z, dimid));
         } else {
-            throw new Error("Fail in ZoneCheckV3.findPos, beacuse function return status is 0");
+            // throw new Error("Fail in ZoneCheckV3.findPos, beacuse function return status is 0");
+            tprNotSecurityPos(player, BackUpPos);
         }
+        throw new Error("Fail in ZoneCheckV3.findPos, unknown error");
     } catch (error) {
         tprFail(player, error, BackUpPos);
     }

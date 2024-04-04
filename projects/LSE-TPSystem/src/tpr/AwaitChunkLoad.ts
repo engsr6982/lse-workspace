@@ -1,5 +1,5 @@
 import { sendMessage } from "../utils/util.js";
-import { tprFail } from "./TprFail.js";
+import { tprFail } from "./ProcessingResults.js";
 
 type funcType = (player: Player, forPosInfo: Arg2, targetPos: IntPos, BackUpPos: IntPos) => any;
 

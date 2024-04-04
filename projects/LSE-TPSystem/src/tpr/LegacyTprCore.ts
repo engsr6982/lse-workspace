@@ -1,6 +1,6 @@
 import { sendMessage } from "../utils/util.js";
-import { tprTeleportTargetPos } from "./TeleportTargetPos.js";
-import { tprFail } from "./TprFail.js";
+import { tprSuccess } from "./ProcessingResults.js";
+import { tprFail } from "./ProcessingResults.js";
 
 export function legacyTprCore(player: Player, forPosInfo: Arg2, targetPos: IntPos, BackUpPos: IntPos) {
     try {
@@ -21,7 +21,7 @@ export function legacyTprCore(player: Player, forPosInfo: Arg2, targetPos: IntPo
             } else if (Pos_Y <= forPosInfo.stopValue || ["minecraft:lava", "minecraft:flowing_lava"].indexOf(block_Obj.type) !== -1) {
                 throw Error(`Search for safe coordinates failed`); // 到达结束位置或落脚点是岩浆方块
             } else if (player.pos.dimid !== 1) {
-                tprTeleportTargetPos(player, new IntPos(targetPos.x, Pos_Y, targetPos.z, targetPos.dimid));
+                tprSuccess(player, new IntPos(targetPos.x, Pos_Y, targetPos.z, targetPos.dimid));
                 return;
             } else if (
                 // 地狱特判
@@ -29,7 +29,7 @@ export function legacyTprCore(player: Player, forPosInfo: Arg2, targetPos: IntPo
                 mc.getBlock(new IntPos(to_Pos.x, Pos_Y + 2, to_Pos.z, to_Pos.dimid)).type === "minecraft:air" &&
                 mc.getBlock(new IntPos(to_Pos.x, Pos_Y + 3, to_Pos.z, to_Pos.dimid)).type === "minecraft:air"
             ) {
-                tprTeleportTargetPos(player, new IntPos(targetPos.x, Pos_Y, targetPos.z, targetPos.dimid));
+                tprSuccess(player, new IntPos(targetPos.x, Pos_Y, targetPos.z, targetPos.dimid));
                 return;
             } else {
                 to_Pos = new IntPos(targetPos.x, Pos_Y, targetPos.z, targetPos.dimid);

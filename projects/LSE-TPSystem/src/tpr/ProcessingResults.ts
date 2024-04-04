@@ -17,3 +17,15 @@ export function tprFail(player: Player, e: Error, BackUpPos: FloatPos | IntPos, 
         logger.warn("Players quit the game and TPR failed.");
     }
 }
+
+export function tprSuccess(player: Player, pos: IntPos) {
+    player.teleport(new FloatPos(pos.x, pos.y + 2, pos.z, pos.dimid));
+    sendMessage(player, "传送完成！");
+}
+
+// not found safe position
+export function tprNotSecurityPos(player: Player, backup: IntPos) {
+    player.teleport(backup);
+    money_Instance.addPlayerMoney(player, config.Tpr.Money);
+    sendMessage(player, "§c未找到安全位置, 传送失败！");
+}
