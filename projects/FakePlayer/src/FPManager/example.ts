@@ -4,9 +4,6 @@ import { onDummyLookPos, onDummyOffline, onDummyOnline, onDummySimulationOperati
 import { Config } from "../utils/config.js";
 import { stringifyExample } from "../utils/utils.js";
 export class dummyExample {
-    isAutoResurrection(arg0: string, isAutoResurrection: any) {
-        throw new Error("Method not implemented.");
-    }
     constructor(name: string) {
         if (mc.getPlayer(name)) {
             throw new Error("Instantiation failed, name is already taken");
