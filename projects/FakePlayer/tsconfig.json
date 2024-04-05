@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "include": [
-    "./src",
+    "src",
     "../../HelperLib/src",
     "../LSE-Modules/src/Permission/tab.d.ts"
   ],

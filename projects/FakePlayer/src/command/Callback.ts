@@ -1,5 +1,6 @@
 import { FPManager } from "../FPManager/Manager.js";
-import { form, noPermissions } from "../form/Form.js";
+import { index } from "../Form/index.js";
+import { noPermissions } from "../Form/Tools.js";
 import { generateCSVLog } from "../include/CsvLogger.js";
 import { permissionCore as perm, permissionForm as perm_Form } from "../include/Permission.js";
 
@@ -271,7 +272,7 @@ export function CallBack(_: Command, ori: CommandOrigin, out: CommandOutput, res
                 : logger.error(`移除管理员失败，玩家${res.opname} 不是插件管理员`);
             break;
         default:
-            ori.player != null ? form.index(ori.player) : out.error("获取玩家对象失败");
+            ori.player != null ? index(ori.player) : out.error("获取玩家对象失败");
             break;
     }
 }
