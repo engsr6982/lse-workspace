@@ -14,7 +14,7 @@ import { warpForm_Instance } from "../warp/WarpForm.js";
 import { prForm_Instance } from "../pr/PrForm.js";
 import { ManagerEntry } from "../manager/ManagerEntry.js";
 import { ruleForm_Instance } from "../rule/RuleForm.js";
-import { tprForm } from "../tpr/TPRForm.js";
+import { tprForm } from "../tpr/TprForm.js";
 
 const sendPlayersUseTip = (out: CommandOutput) => {
     return out.error(tellTitle + "此功能仅限玩家使用!");
