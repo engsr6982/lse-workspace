@@ -94,7 +94,7 @@ class FakePlayerManager {
             if (dt == null) return closeForm(pl);
             if (!dt[1]) return input_Null(pl);
             const [x, y, z] = dt[2].split(",").map(Number);
-            pl.runcmd(`fp create ${dt[1]} ${x} ${y} ${z} ${dt[3]}`);
+            pl.runcmd(`fp create "${dt[1]}" ${x} ${y} ${z} ${dt[3]}`);
         });
     }
 

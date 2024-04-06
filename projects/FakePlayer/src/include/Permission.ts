@@ -2,8 +2,8 @@ import PermissionCore from "../../../LSE-Modules/src/Permission/PermissionCore.j
 import PermissionForm from "../../../LSE-Modules/src/Permission/PermissionForm.js";
 import { _filePath } from "../utils/config.js";
 
-export const permissionCore = new PermissionCore(`${_filePath}data\\permission.json`);
-export const permissionForm = new PermissionForm(`${_filePath}lang`, () => {
+export const permissionCore = new PermissionCore(`${_filePath}data\\permission.json`, true);
+export const permissionForm = new PermissionForm(`${_filePath}lang\\`, () => {
     return permissionCore;
 });
 

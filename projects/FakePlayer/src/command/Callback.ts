@@ -14,7 +14,7 @@ import { permissionCore as perm, permissionForm as perm_Form } from "../include/
 // eslint-disable-next-line complexity
 export function CallBack(_: Command, ori: CommandOrigin, out: CommandOutput, res: any) {
     logger.debug(JSON.stringify(res, null, 2));
-    let plxuid;
+    let playerXUID;
     switch (res.action) {
         case "create":
             {
@@ -252,24 +252,30 @@ export function CallBack(_: Command, ori: CommandOrigin, out: CommandOutput, res
                 : out.error("获取玩家对象失败");
             break;
         case "op":
-            if (ori.type !== 7) return out.error("Please on Console use this Command");
-            plxuid = data.name2xuid(res.opname);
-            if (plxuid == null || plxuid == "") {
-                return out.error(`获取玩家[${res.opname}]的XUID失败!`);
+            {
+                if (ori.type !== 7) return out.error("Please on Console use this Command");
+                const tryOnlineGet = mc.getPlayer(res.opname);
+                playerXUID = tryOnlineGet ? tryOnlineGet.xuid : data.name2xuid(res.opname);
+                if (playerXUID == null || playerXUID == "") {
+                    return out.error(`获取玩家[${res.opname}]的XUID失败!`);
+                }
+                perm.addAdminUser(playerXUID)
+                    ? logger.info(`已添加管理员: ${res.opname}`)
+                    : logger.error(`添加管理员失败，玩家${res.opname} 已是插件管理员`);
             }
-            perm.addAdminUser(plxuid)
-                ? logger.info(`已添加管理员: ${res.opname}`)
-                : logger.error(`添加管理员失败，玩家${res.opname} 已是插件管理员`);
             break;
         case "deop":
-            if (ori.type !== 7) return out.error("Please on Console use this Command");
-            plxuid = data.name2xuid(res.opname);
-            if (plxuid == null || plxuid == "") {
-                return out.error(`获取玩家[${res.opname}]的XUID失败!`);
+            {
+                if (ori.type !== 7) return out.error("Please on Console use this Command");
+                const tryOnlineGet = mc.getPlayer(res.opname);
+                playerXUID = tryOnlineGet ? tryOnlineGet.xuid : data.name2xuid(res.opname);
+                if (playerXUID == null || playerXUID == "") {
+                    return out.error(`获取玩家[${res.opname}]的XUID失败!`);
+                }
+                perm.removeAdminUser(playerXUID)
+                    ? logger.info(`已移除管理员: ${res.opname}`)
+                    : logger.error(`移除管理员失败，玩家${res.opname} 不是插件管理员`);
             }
-            perm.removeAdminUser(plxuid)
-                ? logger.info(`已移除管理员: ${res.opname}`)
-                : logger.error(`移除管理员失败，玩家${res.opname} 不是插件管理员`);
             break;
         default:
             ori.player != null ? index(ori.player) : out.error("获取玩家对象失败");

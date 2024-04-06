@@ -35,6 +35,8 @@ class SQL {
     private transferOldTable() {
         try {
             // 从旧表中读取所有数据
+            if (Object.keys(this.dbInst.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='tab';`).fetch()).length == 0)
+                return;
             const oldData = this.dbInst.prepare(`SELECT * FROM "tab"`).fetchAll();
             if (oldData != null) {
                 logger.warn(`检测到 "tab" 表数据，开始迁移到 "data" 表...`);
