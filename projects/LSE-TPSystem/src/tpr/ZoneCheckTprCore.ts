@@ -28,11 +28,12 @@ export function tprZoneCheckCore(player: Player, forPosInfo: Arg2, targetPos: In
         // 检查ZoneChekcV3的findPos方法是否返回了预期的值
         if (status === 1) {
             tprSuccess(player, new IntPos(x, y, z, dimid));
-        } else {
+        } else if (status === 0) {
             // throw new Error("Fail in ZoneCheckV3.findPos, beacuse function return status is 0");
             tprNotSecurityPos(player, BackUpPos);
+        } else {
+            throw new Error("Fail in ZoneCheckV3.findPos, unknown error");
         }
-        throw new Error("Fail in ZoneCheckV3.findPos, unknown error");
     } catch (error) {
         tprFail(player, error, BackUpPos);
     }
