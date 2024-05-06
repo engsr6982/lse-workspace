@@ -60,7 +60,8 @@ class HomeCore {
         if (!money_Instance.deductPlayerMoney(player, config.Home.CreatHomeMoney)) return false; // 检查经济
         const { realName } = player;
         if (Object.keys(leveldb.getHome()[realName] || {}).length >= config.Home.MaxHome) {
-            return sendMessage(player, `创建家园传送点[${name}失败！\n最大家园数量：${config.Home.MaxHome}]`);
+            sendMessage(player, `创建家园传送点[${name}失败！\n最大家园数量：${config.Home.MaxHome}]`);
+            return false;
         }
         return this._addHome(realName, name, convertPosToVec3(player.blockPos));
     }
